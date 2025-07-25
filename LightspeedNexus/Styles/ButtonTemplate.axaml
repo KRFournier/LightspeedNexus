@@ -1,0 +1,75 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					xmlns:c="clr-namespace:LightspeedNexus.Controls">
+
+	<Design.PreviewWith>
+		<Border Padding="20">
+			<StackPanel Spacing="20">
+				<Button Content="Click Me!" />
+				<Button IsEnabled="False" Content="Click Me!" />
+			</StackPanel>
+		</Border>
+	</Design.PreviewWith>
+
+	<ControlTheme x:Key="{x:Type Button}" TargetType="Button">
+		<Setter Property="Background">
+			<SolidColorBrush Color="{StaticResource Blue}" Opacity="0.4"/>
+		</Setter>
+		<Setter Property="Foreground" Value="{DynamicResource ButtonForeground}" />
+		<Setter Property="BorderBrush" Value="{StaticResource Blue}"/>
+		<Setter Property="BorderThickness" Value="{DynamicResource ButtonBorderThemeThickness}" />
+		<Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+		<Setter Property="Padding" Value="10,5.5,10,5"/>
+		<Setter Property="FontFamily" Value="{StaticResource Prototype}"/>
+		<Setter Property="HorizontalAlignment" Value="Left" />
+		<Setter Property="VerticalAlignment" Value="Center" />
+		<Setter Property="RenderTransform" Value="none" />
+		<Setter Property="Transitions">
+			<Transitions>
+				<TransformOperationsTransition Property="RenderTransform" Duration="0:0:.075" />
+			</Transitions>
+		</Setter>
+
+		<Setter Property="Template">
+			<ControlTemplate>
+				<c:LightspeedBorder x:Name="PART_Border"
+					                Background="{TemplateBinding Background}"
+									BorderBrush="{TemplateBinding BorderBrush}"
+								    BorderThickness="{TemplateBinding BorderThickness}"
+									TopLeftBackground="{x:Null}"
+									TopLeftBorderBrush="{x:Null}"
+									BottomRightBackground="{x:Null}"
+									BottomRightBorderBrush="{x:Null}"
+								    Padding="{TemplateBinding Padding}"
+									CornerThickness="6,6,4,8"
+									CornerGap="0">
+					<ContentPresenter x:Name="PART_ContentPresenter"
+									  Background="Transparent"
+									  BorderBrush="Transparent"
+									  BorderThickness="0"
+									  CornerRadius="0"
+									  Content="{TemplateBinding Content}"
+									  ContentTemplate="{TemplateBinding ContentTemplate}"
+									  Padding="0"
+									  RecognizesAccessKey="True"
+									  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+									  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+				</c:LightspeedBorder>
+			</ControlTemplate>
+		</Setter>
+
+		<Style Selector="^:pointerover">
+			<Setter Property="RenderTransform" Value="scale(1.05)" />
+		</Style>
+
+		<Style Selector="^:pressed">
+			<Setter Property="RenderTransform" Value="scale(1.0)" />
+		</Style>
+
+		<Style Selector="^:disabled">
+			<Setter Property="Opacity" Value="0.25" />
+		</Style>
+		
+	</ControlTheme>
+	
+</ResourceDictionary>

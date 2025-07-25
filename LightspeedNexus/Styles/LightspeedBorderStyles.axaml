@@ -1,0 +1,114 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:c="clr-namespace:LightspeedNexus.Controls">
+  
+    <Design.PreviewWith>
+		<Border Padding="20">
+			<StackPanel Spacing="20">
+				<c:LightspeedBorder Classes="item">
+					<TextBlock>Hello, World!</TextBlock>
+				</c:LightspeedBorder>
+				<c:LightspeedBorder Classes="coloritem">
+					<TextBlock>Hello, World!</TextBlock>
+				</c:LightspeedBorder>
+			</StackPanel>
+		</Border>
+    </Design.PreviewWith>
+
+	<Styles.Resources>
+		<Color x:Key="Blue">#21458d</Color>
+		<Color x:Key="Red">#b52d25</Color>
+		<Color x:Key="Green">#218d21</Color>
+		<Color x:Key="Gray">#4c4c4c</Color>
+		<Color x:Key="Orange">#8d6b21</Color>
+	</Styles.Resources>
+
+	<Style Selector="c|LightspeedBorder">
+		<Setter Property="Background">
+			<SolidColorBrush Color="Black" Opacity="0.5"/>
+		</Setter>
+		<Setter Property="BorderBrush" Value="{StaticResource Gray}"/>
+		<Setter Property="BorderThickness" Value="1.0"/>
+		<Setter Property="Padding" Value="20"/>
+		<Setter Property="CornerThickness" Value="20,20,20,30"/>
+		<Setter Property="CornerGap" Value="4,4,4,6"/>
+		<Setter Property="TopLeftBackground" Value="#0021458d"/>
+		<Setter Property="TopLeftBorderBrush" Value="{StaticResource Gray}"/>
+		<Setter Property="BottomRightBackground" Value="#00b52d25"/>
+		<Setter Property="BottomRightBorderBrush" Value="{StaticResource Gray}"/>
+		<Style Selector="^.color">
+			<Setter Property="BorderBrush">
+				<LinearGradientBrush>
+					<LinearGradientBrush.GradientStops>
+						<GradientStop Color="{StaticResource Blue}" Offset="0.0"/>
+						<GradientStop Color="{StaticResource Red}" Offset="1.0"/>
+					</LinearGradientBrush.GradientStops>
+				</LinearGradientBrush>
+			</Setter>
+		</Style>
+		<Style Selector="^.fullcolor">
+			<Setter Property="Background">
+				<SolidColorBrush Color="{StaticResource Gray}" Opacity="0.5"/>
+			</Setter>
+			<Setter Property="TopLeftBorderBrush" Value="{StaticResource Blue}"/>
+			<Setter Property="TopLeftBackground" Value="{StaticResource Blue}"/>
+			<Setter Property="BottomRightBorderBrush" Value="{StaticResource Red}"/>
+			<Setter Property="BottomRightBackground" Value="{StaticResource Red}"/>
+		</Style>
+	</Style>
+
+	<Style Selector="c|LightspeedBorder.hover">
+		<Setter Property="Transitions">
+			<Transitions>
+				<TransformOperationsTransition Property="RenderTransform" Duration="0:0:.075" />
+			</Transitions>
+		</Setter>
+		<Style Selector="^:pointerover">
+			<Setter Property="RenderTransform" Value="scale(1.05)" />
+		</Style>
+	</Style>
+
+	<Style Selector="c|LightspeedBorder.item">
+		<Setter Property="TopLeftBackground" Value="#004c4c4c"/>
+		<Setter Property="BottomRightBackground" Value="#004c4c4c"/>
+		<Setter Property="Transitions">
+			<Transitions>
+				<BrushTransition Property="TopLeftBorderBrush" Duration="0:0:.3" />
+				<BrushTransition Property="TopLeftBackground" Duration="0:0:.3" />
+				<BrushTransition Property="BottomRightBorderBrush" Duration="0:0:.3" />
+				<BrushTransition Property="BottomRightBackground" Duration="0:0:.3" />
+			</Transitions>
+		</Setter>
+		<Style Selector="^:pointerover">
+			<Setter Property="TopLeftBorderBrush" Value="{StaticResource Gray}"/>
+			<Setter Property="TopLeftBackground" Value="{StaticResource Gray}"/>
+			<Setter Property="BottomRightBorderBrush" Value="{StaticResource Gray}"/>
+			<Setter Property="BottomRightBackground" Value="{StaticResource Gray}"/>
+		</Style>
+	</Style>
+
+	<Style Selector="c|LightspeedBorder.coloritem">
+		<Setter Property="Background" Value="#4f000000"/>
+		<Setter Property="TopLeftBackground" Value="#0021458d"/>
+		<Setter Property="TopLeftBorderBrush" Value="#0021458d"/>
+		<Setter Property="BottomRightBackground" Value="#00b52d25"/>
+		<Setter Property="BottomRightBorderBrush" Value="#00b52d25"/>
+		<Setter Property="Transitions">
+			<Transitions>
+				<BrushTransition Property="Background" Duration="0:0:.3" />
+				<BrushTransition Property="TopLeftBorderBrush" Duration="0:0:.3" />
+				<BrushTransition Property="TopLeftBackground" Duration="0:0:.3" />
+				<BrushTransition Property="BottomRightBorderBrush" Duration="0:0:.3" />
+				<BrushTransition Property="BottomRightBackground" Duration="0:0:.3" />
+			</Transitions>
+		</Setter>
+		<Style Selector="^:pointerover">
+			<Setter Property="Background" Value="#4f4c4c4c"/>
+			<Setter Property="TopLeftBorderBrush" Value="{StaticResource Blue}"/>
+			<Setter Property="TopLeftBackground" Value="{StaticResource Blue}"/>
+			<Setter Property="BottomRightBorderBrush" Value="{StaticResource Red}"/>
+			<Setter Property="BottomRightBackground" Value="{StaticResource Red}"/>
+		</Style>
+	</Style>
+	
+</Styles>

@@ -1,0 +1,85 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:vm="clr-namespace:LightspeedNexus.ViewModels"
+			 xmlns:v="clr-namespace:LightspeedNexus.Views"
+             mc:Ignorable="d" d:DesignWidth="1440" d:DesignHeight="810"
+             x:Class="LightspeedNexus.Views.HomeView"
+             x:DataType="vm:HomeViewModel">
+
+	<UserControl.DataContext>
+		<vm:HomeViewModel />
+	</UserControl.DataContext>
+
+	<Grid RowDefinitions="Auto,*"
+		  Margin="16">
+
+		<Viewbox Margin="50"
+				 ClipToBounds="False">
+			<StackPanel Orientation="Horizontal"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Center"
+						ClipToBounds="False">
+				<Image Classes="left_title"
+					   Height="90"
+					   Source="{StaticResource di_LightspeedTitle}"/>
+				<Image Classes="nexusbat"
+					   Height="350"
+					   ClipToBounds="False"
+					   Source="{StaticResource di_NexusBat}"/>
+				<Image Classes="right_title"
+					   Height="90"
+					   Source="{StaticResource di_NexusTitle}"/>
+			</StackPanel>
+		</Viewbox>
+
+		<Panel Classes="slide_up"
+			   Grid.Row="1"
+			   HorizontalAlignment="Stretch">
+			<Viewbox ClipToBounds="False">
+				<Grid RowDefinitions="100,20,100,20,75"
+					  HorizontalAlignment="Center"
+					  VerticalAlignment="Center">
+					<Button Grid.Row="0"
+							HorizontalAlignment="Stretch"
+							VerticalAlignment="Stretch"
+							HorizontalContentAlignment="Center"
+							VerticalContentAlignment="Center">
+						<StackPanel Spacing="8">
+							<TextBlock Classes="large" HorizontalAlignment="Center">New Competition</TextBlock>
+							<TextBlock Classes="info" HorizontalAlignment="Center">Plan a single or multi-event competition</TextBlock>
+						</StackPanel>
+					</Button>
+					<Button Grid.Row="2"
+							HorizontalAlignment="Stretch"
+							VerticalAlignment="Stretch"
+							HorizontalContentAlignment="Center"
+							VerticalContentAlignment="Center">
+						<StackPanel Spacing="8">
+							<TextBlock Classes="large" HorizontalAlignment="Center">Quick Tournament</TextBlock>
+							<TextBlock Classes="info" HorizontalAlignment="Center">Jump straight into a tournament</TextBlock>
+						</StackPanel>
+					</Button>
+					<Button Grid.Row="4"
+							HorizontalAlignment="Stretch"
+							VerticalAlignment="Stretch"
+							HorizontalContentAlignment="Center"
+							VerticalContentAlignment="Center"
+							Command="{Binding GotoFightersCommand}">
+						<Button.Background>
+							<ImageBrush Source="/Assets/line.jpg"
+										Stretch="UniformToFill"
+										Opacity=".5"/>
+						</Button.Background>
+						<TextBlock Classes="large"
+								   HorizontalAlignment="Center"
+								   Text="Fighters"/>
+					</Button>
+				</Grid>
+			</Viewbox>
+		</Panel>
+
+	</Grid>
+	
+</UserControl>

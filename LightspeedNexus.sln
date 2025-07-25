@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.36105.23 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LightspeedNexus", "LightspeedNexus\LightspeedNexus.csproj", "{4A968A40-2BFC-D74A-000A-D4312A5981BD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LightspeedNexus.Desktop", "LightspeedNexus.Desktop\LightspeedNexus.Desktop.csproj", "{6FC0D411-FF69-32AF-4534-9F31CCA5F831}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4A968A40-2BFC-D74A-000A-D4312A5981BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A968A40-2BFC-D74A-000A-D4312A5981BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A968A40-2BFC-D74A-000A-D4312A5981BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A968A40-2BFC-D74A-000A-D4312A5981BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FC0D411-FF69-32AF-4534-9F31CCA5F831}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FC0D411-FF69-32AF-4534-9F31CCA5F831}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FC0D411-FF69-32AF-4534-9F31CCA5F831}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FC0D411-FF69-32AF-4534-9F31CCA5F831}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {32151D9A-C55B-4CED-B05D-6075542DE9E1}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,31 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:c="clr-namespace:LightspeedNexus.Controls">
+
+	<Design.PreviewWith>
+		<Border Padding="20">
+			<StackPanel Spacing="20" Width="300">
+				<TextBox>Normal</TextBox>
+				<TextBox Classes="green">Saber Sport</TextBox>
+			</StackPanel>
+		</Border>
+	</Design.PreviewWith>
+
+	<Style Selector="TextBox.green">
+		<Setter Property="BorderBrush" Value="#194f11"/>
+		<Style Selector="^:pointerover /template/ c|LightspeedBorder#PART_BorderElement">
+			<Setter Property="TopLeftBackground" Value="#194f11"/>
+			<Setter Property="TopLeftBorderBrush" Value="#194f11"/>
+			<Setter Property="BottomRightBackground" Value="#194f11"/>
+			<Setter Property="BottomRightBorderBrush" Value="#194f11"/>
+		</Style>
+		<Style Selector="^:focus /template/ c|LightspeedBorder#PART_BorderElement">
+			<Setter Property="Background" Value="#051403"/>
+			<Setter Property="TopLeftBackground" Value="#194f11"/>
+			<Setter Property="TopLeftBorderBrush" Value="#194f11"/>
+			<Setter Property="BottomRightBackground" Value="#194f11"/>
+			<Setter Property="BottomRightBorderBrush" Value="#194f11"/>
+		</Style>
+	</Style>
+	
+</Styles>

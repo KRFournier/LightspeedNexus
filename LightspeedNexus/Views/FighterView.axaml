@@ -1,0 +1,94 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:LightspeedNexus.ViewModels"
+			 xmlns:v="clr-namespace:LightspeedNexus.Views"
+			 xmlns:c="clr-namespace:LightspeedNexus.Controls"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450"
+             x:Class="LightspeedNexus.Views.FighterView"
+			 x:DataType="vm:FighterViewModel">
+
+	<Design.DataContext>
+		<vm:FighterViewModel FirstName="Kevin"
+							 LastName="Fournier"
+							 Club="LaFollette"/>
+	</Design.DataContext>
+	
+	<Grid RowDefinitions="Auto,10,Auto,10,Auto,10,Auto"
+		  Grid.IsSharedSizeScope="True">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" SharedSizeGroup="Labels"/>
+			<ColumnDefinition Width="10"/>
+			<ColumnDefinition Width="*"/>
+		</Grid.ColumnDefinitions>
+		<TextBlock Grid.Column="0"
+				   Grid.Row="0"
+				   VerticalAlignment="Center"
+				   Text="First Name"/>
+		<TextBox x:Name="FirstField"
+				 Grid.Column="2"
+				 Grid.Row="0"
+				 Text="{Binding FirstName, Mode=TwoWay}"/>
+		<TextBlock Grid.Column="0"
+				   Grid.Row="2"
+				   VerticalAlignment="Center"
+				   Text="Last Name"/>
+		<TextBox Grid.Column="2"
+				 Grid.Row="2"
+				 Text="{Binding LastName, Mode=TwoWay}"/>
+		<TextBlock Grid.Column="0"
+				   Grid.Row="4"
+				   VerticalAlignment="Center"
+				   Text="Club"/>
+		<TextBox Grid.Column="2"
+				 Grid.Row="4"
+				 Text="{Binding Club, Mode=TwoWay}"/>
+		<ItemsControl Grid.ColumnSpan="3"
+					  Grid.Row="6"
+					  ItemsSource="{Binding Ratings}">
+			<ItemsControl.ItemsPanel>
+				<ItemsPanelTemplate>
+					<StackPanel Spacing="10"/>
+				</ItemsPanelTemplate>
+			</ItemsControl.ItemsPanel>
+			<ItemsControl.ItemTemplate>
+				<DataTemplate DataType="vm:WeaponRatingViewModel">
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto" SharedSizeGroup="Labels"/>
+							<ColumnDefinition Width="10"/>
+							<ColumnDefinition Width="*"/>
+						</Grid.ColumnDefinitions>
+						<TextBlock Grid.Column="0"
+								   VerticalAlignment="Center"
+								   Text="{Binding Class}"/>
+						<TextBox Grid.Column="2"
+								 Width="100"
+								 Padding="0"
+								 HorizontalAlignment="Left"
+								 HorizontalContentAlignment="Center"
+								 VerticalContentAlignment="Center"
+								 Text="{Binding Rank}">
+							<TextBox.InnerLeftContent>
+								<Button Classes="clear"
+										IsTabStop="False"
+										Command="{Binding DecrementRankCommand}">
+									<PathIcon Data="{StaticResource chevron_left_regular}"/>
+								</Button>
+							</TextBox.InnerLeftContent>
+							<TextBox.InnerRightContent>
+								<Button Classes="clear"
+										IsTabStop="False"
+										Command="{Binding IncrementRankCommand}">
+									<PathIcon Data="{StaticResource chevron_right_regular}"/>
+								</Button>
+							</TextBox.InnerRightContent>
+						</TextBox>
+					</Grid>
+				</DataTemplate>
+			</ItemsControl.ItemTemplate>
+		</ItemsControl>
+	</Grid>
+	
+</UserControl>

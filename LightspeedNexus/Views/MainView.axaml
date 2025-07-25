@@ -1,0 +1,172 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:LightspeedNexus.ViewModels"
+			 xmlns:v="clr-namespace:LightspeedNexus.Views"
+			 xmlns:c="clr-namespace:LightspeedNexus.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="LightspeedNexus.Views.MainView"
+             x:DataType="vm:MainViewModel"
+			 FontFamily="{StaticResource Prototype}">
+	
+    <Design.DataContext>
+		<vm:MainViewModel ShowLogin="True">
+		</vm:MainViewModel>
+    </Design.DataContext>
+
+	<UserControl.KeyBindings>
+		<KeyBinding Gesture="Cancel" Command="{Binding CancelDialogCommand}"/>
+		<KeyBinding Gesture="Enter" Command="{Binding AcceptDialogCommand}"/>
+	</UserControl.KeyBindings>
+
+	<Panel>
+
+		<Image Stretch="UniformToFill"
+			   Source="/Assets/LightspeedBackground.png"
+			   Opacity="0.5"/>
+
+		<TransitioningContentControl Content="{Binding CurrentPage}"
+									 Margin="10">
+			<TransitioningContentControl.PageTransition>
+				<PageSlide Orientation="Vertical"
+						   Duration="0:0:0.5"
+						   SlideInEasing="CircularEaseOut"
+						   SlideOutEasing="CircularEaseOut"/>
+			</TransitioningContentControl.PageTransition>
+		</TransitioningContentControl>
+
+		<!--Dialog-->
+		<Border Background="Black"
+				Opacity=".80"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch"
+				IsVisible="{Binding Dialog, Converter={x:Static ObjectConverters.IsNotNull}}">
+			<StackPanel Spacing="10"
+						Width="400"
+						HorizontalAlignment="Center"
+						VerticalAlignment="Center">
+				<c:LightspeedBorder Classes="fullcolor">				
+					<ContentControl Content="{Binding Dialog}"/>
+				</c:LightspeedBorder>
+				<StackPanel Orientation="Horizontal"
+							HorizontalAlignment="Right"
+							Spacing="10">
+					<Button Classes="red"
+							Width="75"
+							HorizontalContentAlignment="Center"
+							Content="Cancel"
+							Command="{Binding CancelDialogCommand}"/>
+					<Button Width="75"
+							HorizontalContentAlignment="Center"
+							Content="OK"
+							Command="{Binding AcceptDialogCommand}"/>
+				</StackPanel>
+			</StackPanel>
+		</Border>
+
+		<!--Saber Sport Login-->
+		<Border Background="Black"
+				Opacity=".80"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch"
+				IsVisible="{Binding ShowLogin}">
+			<StackPanel Spacing="10"
+						Width="400"
+						HorizontalAlignment="Center"
+						VerticalAlignment="Center">
+				<c:LightspeedBorder Classes="on"
+									BorderBrush="#194f11"
+									TopLeftBackground="#194f11"
+									TopLeftBorderBrush="#194f11"
+									BottomRightBackground="#194f11"
+									BottomRightBorderBrush="#194f11">
+					<c:LightspeedBorder.Background>
+						<RadialGradientBrush Opacity="0.5">
+							<GradientStop Color="#194f11" Offset="0"/>
+							<GradientStop Color="#051403" Offset="1"/>
+						</RadialGradientBrush>
+					</c:LightspeedBorder.Background>
+					<Grid ColumnDefinitions="Auto,10,*"
+						  RowDefinitions="Auto,10,Auto,10,Auto">
+						<TextBlock Grid.Column="0"
+								   Grid.Row="0"
+								   VerticalAlignment="Center"
+								   Text="Email"/>
+						<TextBox Classes="green"
+								 Grid.Column="2"
+								 Grid.Row="0"
+								 x:Name="EmailField"
+								 Text="{Binding Email}"/>
+						<TextBlock Grid.Column="0"
+								   Grid.Row="2"
+								   VerticalAlignment="Center"
+								   Text="Password"/>
+						<TextBox Classes="green"
+								 Grid.Column="2"
+								 Grid.Row="2"
+								 x:Name="Password"
+								 PasswordChar="*"
+								 Text="{Binding Password}"/>
+						<StackPanel Orientation="Horizontal"
+									HorizontalAlignment="Left"
+									Grid.Column="2"
+									Grid.Row="4"
+									Spacing="9">
+							<Button Classes="gray"
+									HorizontalContentAlignment="Center"
+									Content="Register"
+									Command="{Binding RegisterCommand}"/>
+							<Button Classes="gray"
+									HorizontalContentAlignment="Center"
+									Content="Resend"
+									Command="{Binding ResendCommand}"/>
+							<Button Classes="gray"
+									HorizontalContentAlignment="Center"
+									Content="New Password"
+									Command="{Binding NewPasswordCommand}"/>
+						</StackPanel>
+					</Grid>
+				</c:LightspeedBorder>
+				<StackPanel Orientation="Horizontal"
+							HorizontalAlignment="Right"
+							Spacing="10">
+					<Button Classes="gray"
+							Width="75"
+							HorizontalContentAlignment="Center"
+							Content="Cancel"
+							Command="{Binding CancelLoginCommand}"/>
+					<Button Classes="green"
+							Width="75"
+							HorizontalContentAlignment="Center"
+							Content="OK"
+							Command="{Binding AcceptLoginCommand}"/>
+				</StackPanel>
+			</StackPanel>
+		</Border>
+
+		<!--Message Box-->
+		<Border Background="Black"
+				Opacity=".80"
+				Margin="50"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch"
+				IsVisible="{Binding Message, Converter={x:Static ObjectConverters.IsNotNull}}">
+			<StackPanel Spacing="10"
+						HorizontalAlignment="Center"
+						VerticalAlignment="Center">
+				<c:LightspeedBorder Classes="fullcolor">
+					<TextBlock Text="{Binding Message}"
+							   TextWrapping="Wrap"/>
+				</c:LightspeedBorder>
+				<Button Width="75"
+						HorizontalAlignment="Center"
+						HorizontalContentAlignment="Center"
+						Content="OK"
+						Command="{Binding AcceptDialogCommand}"/>
+			</StackPanel>
+		</Border>
+		
+	</Panel>
+	
+</UserControl>

@@ -1,0 +1,158 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:LightspeedNexus.ViewModels"
+			 xmlns:v="clr-namespace:LightspeedNexus.Views"
+			 xmlns:c="clr-namespace:LightspeedNexus.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="LightspeedNexus.Views.FightersView"
+			 x:DataType="vm:FightersViewModel">
+
+	<Design.DataContext>
+		<vm:FightersViewModel>
+			<vm:FightersViewModel.Fighters>
+				<vm:FighterViewModel OnlineId="123"
+									 FirstName="John"
+									 LastName="Doe"
+									 Club="Super Boys">
+					<vm:FighterViewModel.Ratings>
+						<vm:WeaponRatingViewModel Class="Rey" Rank="A"/>
+						<vm:WeaponRatingViewModel Class="Ren" Rank="C"/>
+						<vm:WeaponRatingViewModel Class="Tano" Rank="U"/>
+					</vm:FighterViewModel.Ratings>
+				</vm:FighterViewModel>
+				<vm:FighterViewModel OnlineId="456"
+									 FirstName="Jane"
+									 LastName="Doe"
+								     Club="Mighty Gals">
+					<vm:FighterViewModel.Ratings>
+						<vm:WeaponRatingViewModel Class="Rey" Rank="E"/>
+						<vm:WeaponRatingViewModel Class="Ren" Rank="D"/>
+						<vm:WeaponRatingViewModel Class="Tano" Rank="C"/>
+					</vm:FighterViewModel.Ratings>
+				</vm:FighterViewModel>
+				<vm:FighterViewModel OnlineId="789"
+									 FirstName="Nate"
+									 LastName="McCroskey-Izzet"
+								     Club="Basin Saber Academy">
+					<vm:FighterViewModel.Ratings>
+						<vm:WeaponRatingViewModel Class="Rey" Rank="E"/>
+						<vm:WeaponRatingViewModel Class="Ren" Rank="U"/>
+						<vm:WeaponRatingViewModel Class="Tano" Rank="U"/>
+					</vm:FighterViewModel.Ratings>
+				</vm:FighterViewModel>
+			</vm:FightersViewModel.Fighters>
+		</vm:FightersViewModel>
+	</Design.DataContext>
+	
+	<Grid RowDefinitions="Auto,*">
+
+		<!--Top Bar-->
+		<Grid ColumnDefinitions="Auto,10,*,10,120,10,Auto,10,Auto"
+			  Margin="0,0,0,10">
+			<Button Classes="clear"
+					Command="{Binding GoHomeCommand}">
+				<PathIcon Data="{StaticResource arrow_left_regular}"/>
+			</Button>
+			<TextBox Grid.Column="2"
+					 Watermark="Search..."
+					 Text="{Binding SearchText}">
+				<TextBox.InnerRightContent>
+					<Button Classes="clear"
+							IsVisible="{Binding $parent[TextBox].Text, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+						    Command="{Binding ClearSearchCommand}">
+						<PathIcon Data="{StaticResource dismiss_regular}"/>
+					</Button>
+				</TextBox.InnerRightContent>
+			</TextBox>
+			<TextBlock Grid.Column="4"
+					   HorizontalAlignment="Center"
+					   VerticalAlignment="Center"
+					   Text="{Binding SortedFighters.Count, StringFormat={}{0} Fighters}"/>
+			<Button Grid.Column="6"
+					Classes="green"
+					Command="{Binding ImportFightersCommand}">
+				<StackPanel Orientation="Horizontal"
+							Spacing="5">
+					<PathIcon Data="{StaticResource cloud_download_regular}"/>
+					<TextBlock>Import from Saber Sport</TextBlock>
+				</StackPanel>
+			</Button>
+			<Button Grid.Column="8"
+					Command="{Binding NewFighterCommand}">
+				<StackPanel Orientation="Horizontal"
+							Spacing="5">
+					<PathIcon Data="{StaticResource add_regular}"/>
+					<TextBlock>New</TextBlock>
+				</StackPanel>
+			</Button>
+		</Grid>
+
+		<!--Fighters-->
+		<ScrollViewer Grid.Row="1"
+					  HorizontalAlignment="Stretch"
+				      VerticalAlignment="Stretch">
+			<ItemsControl ItemsSource="{Binding SortedFighters}">
+				<ItemsControl.ItemsPanel>
+					<ItemsPanelTemplate>
+						<WrapPanel Orientation="Horizontal"
+								   ItemSpacing="10"
+								   LineSpacing="10"/>
+					</ItemsPanelTemplate>
+				</ItemsControl.ItemsPanel>
+				<ItemsControl.ItemTemplate>
+					<DataTemplate DataType="vm:FighterViewModel">
+						<c:LightspeedBorder Classes="coloritem"
+											Padding="12"
+											Width="300">
+							<StackPanel>
+
+								<Grid ColumnDefinitions="*,Auto">
+									<TextBlock Classes="medium"
+											   Text="{Binding FullName}"
+											   VerticalAlignment="Center"
+											   TextTrimming="CharacterEllipsis"/>
+
+									<TextBlock Classes="info tiny"
+											   Grid.Column="1"
+											   VerticalAlignment="Center"
+											   IsVisible="{Binding OnlineId, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+											   Text="{Binding OnlineId, StringFormat='#{0}'}"/>
+								</Grid>
+
+								<TextBlock Classes="info"
+										   FontStyle="Italic"
+										   Margin="0,5"
+										   Text="{Binding Club}"/>
+								<ItemsControl ItemsSource="{Binding Ratings}">
+									<ItemsControl.ItemsPanel>
+										<ItemsPanelTemplate>
+											<WrapPanel Orientation="Horizontal"
+													   ItemSpacing="5"
+													   LineSpacing="5"/>
+										</ItemsPanelTemplate>
+									</ItemsControl.ItemsPanel>
+									<ItemsControl.ItemTemplate>
+										<DataTemplate DataType="vm:WeaponRatingViewModel">
+											<WrapPanel Orientation="Horizontal"
+													   Width="60"
+													   ItemSpacing="5">
+												<TextBlock Classes="info"
+														   Text="{Binding Class}"/>
+												<TextBlock Classes=""
+														   Text="{Binding Rank}"/>
+											</WrapPanel>
+										</DataTemplate>
+									</ItemsControl.ItemTemplate>
+								</ItemsControl>
+							</StackPanel>
+						</c:LightspeedBorder>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</ScrollViewer>
+		
+	</Grid>
+	
+</UserControl>
