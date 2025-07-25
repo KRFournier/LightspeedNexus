@@ -16,7 +16,6 @@ public partial class WeaponRatingViewModel : ViewModelBase
             SetProperty(ref _rating, value);
             OnPropertyChanged(nameof(Class));
             OnPropertyChanged(nameof(Rank));
-            OnPropertyChanged(nameof(Earned));
         }
     }
 
@@ -42,19 +41,6 @@ public partial class WeaponRatingViewModel : ViewModelBase
             {
                 Rating.Rank = value;
                 OnPropertyChanged(nameof(Rank));
-            }
-        }
-    }
-
-    public DateOnly Earned
-    {
-        get => Rating.Earned;
-        set
-        {
-            if (Rating.Earned != value)
-            {
-                Rating.Earned = value;
-                OnPropertyChanged(nameof(Earned));
             }
         }
     }

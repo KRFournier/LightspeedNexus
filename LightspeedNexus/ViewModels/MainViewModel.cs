@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using LightspeedNexus.Messages;
 using LightspeedNexus.Services;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace LightspeedNexus.ViewModels;
@@ -12,11 +13,6 @@ public partial class MainViewModel : ViewModelBase
 {
     [ObservableProperty]
     private ViewModelBase _currentPage = new HomeViewModel();
-
-    [ObservableProperty]
-    private ViewModelBase? _dialog = null;
-
-    private OpenDialogMessage? _dialogMessage = null;
 
     [ObservableProperty]
     private bool _showLogin = false;
@@ -40,14 +36,36 @@ public partial class MainViewModel : ViewModelBase
         WeakReferenceMessenger.Default.Register<OpenDialogMessage>(this, (_, m) =>
         {
             _dialogMessage = m;
-            Dialog = m.Initial;
+            Dialog = m.Item;
+            UsingDeleteButton = m.AdditionalButtons.Contains(DialogButton.Delete);
+        });
+
+        WeakReferenceMessenger.Default.Register<CloseDialogMessage>(this, (_, _) =>
+        {
+            Dialog = null;
+        });
+
+        WeakReferenceMessenger.Default.Register<MessageBoxMessage>(this, (_, m) =>
+        {
+            Message = m.Value;
         });
     }
+
+    #region Dialog Box
+
+    [ObservableProperty]
+    private ViewModelBase? _dialog = null;
+
+    private OpenDialogMessage? _dialogMessage = null;
+
+    [ObservableProperty]
+    private bool _usingDeleteButton = false;
 
     [RelayCommand]
     private void CancelDialog()
     {
         Dialog = null;
+        _dialogMessage?.Respond(OpenDialogMessage.DialogResponse.Cancel);
     }
 
     [RelayCommand]
@@ -55,10 +73,19 @@ public partial class MainViewModel : ViewModelBase
     {
         if (Dialog is not null)
         {
-            _dialogMessage?.Reply(Dialog);
+            _dialogMessage?.Respond(OpenDialogMessage.DialogResponse.Ok);
             Dialog = null;
         }
     }
+
+    [RelayCommand]
+    private void DeleteDialog()
+    {
+        Dialog = null;
+        _dialogMessage?.Respond(OpenDialogMessage.DialogResponse.Delete);
+    }
+
+    #endregion
 
     [RelayCommand]
     private async Task Register()
@@ -91,5 +118,11 @@ public partial class MainViewModel : ViewModelBase
     private void AcceptLogin()
     {
         ShowLogin = false;
+    }
+
+    [RelayCommand]
+    private void AccepMessage()
+    {
+        Message = null;
     }
 }

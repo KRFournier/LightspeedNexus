@@ -5,6 +5,14 @@ using System;
 namespace LightspeedNexus.Messages;
 
 /// <summary>
+/// Additional buttons that may be added to the dialog.
+/// </summary>
+public enum DialogButton
+{
+    Delete
+}
+
+/// <summary>
 /// Notifies the main view that the current page should be set to the given viewmodel
 /// </summary>
 public class NavigatePageMessage(ViewModelBase viewModel) : ValueChangedMessage<ViewModelBase>(viewModel)
@@ -14,17 +22,47 @@ public class NavigatePageMessage(ViewModelBase viewModel) : ValueChangedMessage<
 /// <summary>
 /// Notifies the main view that the given viewmodel should be opened as a dialog
 /// </summary>
-public class OpenDialogMessage(ViewModelBase init, Action<ViewModelBase> handler)
+public class OpenDialogMessage(ViewModelBase item,
+    DialogButton[] additionalButtons,
+    Action<ViewModelBase, OpenDialogMessage.DialogResponse> handler)
 {
+    /// <summary>
+    /// Possible responses from the dialog
+    /// </summary>
+    public enum DialogResponse
+    {
+        None,
+        Ok,
+        Cancel,
+        Delete
+    }
+
     /// <summary>
     /// The initial content for the dialog
     /// </summary>
-    public readonly ViewModelBase Initial = init;
+    public readonly ViewModelBase Item = item;
+
+    /// <summary>
+    /// Whether the dialog should show a delete button
+    /// </summary>
+    public readonly DialogButton[] AdditionalButtons = additionalButtons;
 
     /// <summary>
     /// Final response from the dialog
     /// </summary>
-    public Action<ViewModelBase> Reply = handler;
+    private readonly Action<ViewModelBase, DialogResponse> _handler = handler;
+
+    /// <summary>
+    /// Respond to the caller
+    /// </summary>
+    public void Respond(DialogResponse response) => _handler(Item, response);
+}
+
+/// <summary>
+/// Notifies the main view to close the current dialog
+/// </summary>
+public class CloseDialogMessage()
+{
 }
 
 /// <summary>

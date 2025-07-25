@@ -13,7 +13,6 @@ public class WeaponRating
 {
     public WeaponClass Class { get; set; } = WeaponClass.Rey;
     public Rank Rank { get; set; } = Rank.U;
-    public DateOnly Earned { get; set; } = DateOnly.MinValue;
 
     public static WeaponRating? FromSaberSport(JsonNode? node)
     {
@@ -24,23 +23,8 @@ public class WeaponRating
 
         try
         {
-            // required
             rating.Class = Enum.Parse<WeaponClass>(node["type"]?.GetValue<string>() ?? "", true);
             rating.Rank = node["rank"]?.GetValue<string>();
-
-            // optional
-            if (node["earned"] is JsonValue earned && earned.GetValueKind() == System.Text.Json.JsonValueKind.String)
-            {
-                var earnedStr = earned.GetValue<string>();
-                if (!DateOnly.TryParse(earnedStr, out DateOnly date))
-                {
-                    if (DateOnly.TryParseExact(earnedStr, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out date))
-                        rating.Earned = date;
-                }
-                else
-                    rating.Earned = date;
-            }
-
             return rating;
         }
         catch (Exception ex)
@@ -53,11 +37,7 @@ public class WeaponRating
     public void UpdateFrom(WeaponRating other)
     {
         if (other.Rank > Rank)
-        {
             Rank = other.Rank;
-            if (other.Earned > DateOnly.MinValue)
-                Earned = other.Earned;
-        }
     }
 }
 
@@ -66,16 +46,28 @@ public class WeaponRating
 /// </summary>
 public class Fighter
 {
-    public Guid Id { get; set; } = Guid.NewGuid();
+    public Guid Id { get; set; } = Guid.Empty;
     public int? OnlineId { get; set; } = null;
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
     public string? Club { get; set; } = null;
-    public WeaponRating[] Ratings { get; set; } = [
-        new() { Class = WeaponClass.Rey, Rank = Rank.U, Earned = DateOnly.MinValue },
-        new() { Class = WeaponClass.Ren, Rank = Rank.U, Earned = DateOnly.MinValue },
-        new() { Class = WeaponClass.Tano, Rank = Rank.U, Earned = DateOnly.MinValue },
-        ];
+    public WeaponRating Rey { get; set; } = new() { Class = WeaponClass.Rey, Rank = Rank.U };
+    public WeaponRating Ren { get; set; } = new() { Class = WeaponClass.Ren, Rank = Rank.U };
+    public WeaponRating Tano { get; set; } = new() { Class = WeaponClass.Tano, Rank = Rank.U };
+
+    public Fighter() { }
+
+    public Fighter(Fighter other)
+    {
+        Id = other.Id;
+        OnlineId = other.OnlineId;
+        FirstName = other.FirstName;
+        LastName = other.LastName;
+        Club = other.Club;
+        Rey = new WeaponRating { Class = other.Rey.Class, Rank = other.Rey.Rank };
+        Ren = new WeaponRating { Class = other.Ren.Class, Rank = other.Ren.Rank };
+        Tano = new WeaponRating { Class = other.Tano.Class, Rank = other.Tano.Rank };
+    }
 
     public static Fighter? FromSaberSport(JsonNode? node)
     {
@@ -95,7 +87,30 @@ public class Fighter
             if (node["club"] is JsonValue club && club.GetValueKind() == System.Text.Json.JsonValueKind.String)
                 fighter.Club = club.GetValue<string>();
             if (node["ranks"] is JsonArray ranks)
-                fighter.Ratings = [.. ranks.Select(n => WeaponRating.FromSaberSport(n)).Where(r => r is not null)!];
+            {
+                foreach (var rankNode in ranks)
+                {
+                    var rating = WeaponRating.FromSaberSport(rankNode);
+                    if (rating is not null)
+                    {
+                        switch (rating.Class)
+                        {
+                            case WeaponClass.Rey:
+                                fighter.Rey.UpdateFrom(rating);
+                                break;
+                            case WeaponClass.Ren:
+                                fighter.Ren.UpdateFrom(rating);
+                                break;
+                            case WeaponClass.Tano:
+                                fighter.Tano.UpdateFrom(rating);
+                                break;
+                            default:
+                                Console.WriteLine($"Unknown weapon class: {rating.Class}");
+                                break;
+                        }
+                    }
+                }
+            }
 
             // one last check to make sure there's a name
             if(string.IsNullOrEmpty(fighter.FirstName) || string.IsNullOrEmpty(fighter.LastName))
@@ -114,8 +129,8 @@ public class Fighter
     {
         if (string.IsNullOrEmpty(Club))
             Club = other.Club;
-
-        foreach(var otherRating in other.Ratings)
-            Ratings.FirstOrDefault(r => r.Class == otherRating.Class)?.UpdateFrom(otherRating);
+        Rey.UpdateFrom(other.Rey);
+        Ren.UpdateFrom(other.Ren);
+        Tano.UpdateFrom(other.Tano);
     }
 }

@@ -77,19 +77,39 @@ public partial class FightersViewModel : ViewModelBase, IComparer
     }
 
     [RelayCommand]
-    private void NewFighter()
+    private async Task NewFighter()
     {
         try
         {
-            var message = new OpenDialogMessage(new FighterViewModel(), vm =>
+            var result = await DialogBox(new FighterViewModel());
+            if (result.IsOk)
             {
-                if (vm is FighterViewModel fvm)
-                {
-                    Fighters.Add(fvm);
-                    StorageService.WriteFighter(fvm.Fighter);
-                }
-            });
-            WeakReferenceMessenger.Default.Send(message);
+                Fighters.Add(result.Item);
+                StorageService.WriteFighter(result.Item.Fighter);
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.WriteLine($"Unexpected error creating and saving a new fighter: {e}");
+        }
+    }
+
+    [RelayCommand]
+    private async Task EditFighter(FighterViewModel item)
+    {
+        try
+        {
+            var result = await DialogBox(new FighterViewModel() { Fighter = new(item.Fighter) }, DialogButton.Delete);
+            if (result.IsOk)
+            {
+                item.Fighter = result.Item.Fighter;
+                StorageService.WriteFighter(result.Item.Fighter);
+            }
+            else if (result.IsDeleted)
+            {
+                Fighters.Remove(item);
+                StorageService.DeleteFighter(result.Item.Fighter);
+            }
         }
         catch (Exception e)
         {

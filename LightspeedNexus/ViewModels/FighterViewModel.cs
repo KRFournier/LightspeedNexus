@@ -23,7 +23,10 @@ public partial class FighterViewModel : ViewModelBase
             OnPropertyChanged(nameof(LastName));
             OnPropertyChanged(nameof(FullName));
             OnPropertyChanged(nameof(Club));
-            Ratings = [.. _fighter.Ratings.Select(r => new WeaponRatingViewModel() { Rating = r })];
+            Ratings.Clear();
+            Ratings.Add(new WeaponRatingViewModel() { Rating = _fighter.Rey });
+            Ratings.Add(new WeaponRatingViewModel() { Rating = _fighter.Ren });
+            Ratings.Add(new WeaponRatingViewModel() { Rating = _fighter.Tano });
         }
     }
 

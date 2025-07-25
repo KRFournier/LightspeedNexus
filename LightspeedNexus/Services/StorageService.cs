@@ -90,4 +90,14 @@ public static class StorageService
         var fightersCollection = db.GetCollection<Fighter>("fighters");
         return [.. fightersCollection.FindAll()];
     }
+
+    /// <summary>
+    /// Deletes the given fighter
+    /// </summary>
+    public static void DeleteFighter(Fighter fighter)
+    {
+        using var db = GetDatabase();
+        var fightersCollection = db.GetCollection<Fighter>("fighters");
+        fightersCollection.Delete(fighter.Id);
+    }
 }

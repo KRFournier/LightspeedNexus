@@ -15,33 +15,15 @@
 				<vm:FighterViewModel OnlineId="123"
 									 FirstName="John"
 									 LastName="Doe"
-									 Club="Super Boys">
-					<vm:FighterViewModel.Ratings>
-						<vm:WeaponRatingViewModel Class="Rey" Rank="A"/>
-						<vm:WeaponRatingViewModel Class="Ren" Rank="C"/>
-						<vm:WeaponRatingViewModel Class="Tano" Rank="U"/>
-					</vm:FighterViewModel.Ratings>
-				</vm:FighterViewModel>
+									 Club="Super Boys"/>
 				<vm:FighterViewModel OnlineId="456"
 									 FirstName="Jane"
 									 LastName="Doe"
-								     Club="Mighty Gals">
-					<vm:FighterViewModel.Ratings>
-						<vm:WeaponRatingViewModel Class="Rey" Rank="E"/>
-						<vm:WeaponRatingViewModel Class="Ren" Rank="D"/>
-						<vm:WeaponRatingViewModel Class="Tano" Rank="C"/>
-					</vm:FighterViewModel.Ratings>
-				</vm:FighterViewModel>
+								     Club="Mighty Gals"/>
 				<vm:FighterViewModel OnlineId="789"
 									 FirstName="Nate"
 									 LastName="McCroskey-Izzet"
-								     Club="Basin Saber Academy">
-					<vm:FighterViewModel.Ratings>
-						<vm:WeaponRatingViewModel Class="Rey" Rank="E"/>
-						<vm:WeaponRatingViewModel Class="Ren" Rank="U"/>
-						<vm:WeaponRatingViewModel Class="Tano" Rank="U"/>
-					</vm:FighterViewModel.Ratings>
-				</vm:FighterViewModel>
+								     Club="Basin Saber Academy"/>
 			</vm:FightersViewModel.Fighters>
 		</vm:FightersViewModel>
 	</Design.DataContext>
@@ -104,44 +86,45 @@
 				<ItemsControl.ItemTemplate>
 					<DataTemplate DataType="vm:FighterViewModel">
 						<c:LightspeedBorder Classes="coloritem"
-											Padding="12"
-											Width="300">
-							<StackPanel>
+											Padding="0"
+											Width="300"
+											DoubleTapped="LightspeedBorder_DoubleTapped">
+							<StackPanel Margin="12">
 
 								<Grid ColumnDefinitions="*,Auto">
 									<TextBlock Classes="medium"
-											   Text="{Binding FullName}"
-											   VerticalAlignment="Center"
-											   TextTrimming="CharacterEllipsis"/>
+												Text="{Binding FullName}"
+												VerticalAlignment="Center"
+												TextTrimming="CharacterEllipsis"/>
 
 									<TextBlock Classes="info tiny"
-											   Grid.Column="1"
-											   VerticalAlignment="Center"
-											   IsVisible="{Binding OnlineId, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
-											   Text="{Binding OnlineId, StringFormat='#{0}'}"/>
+												Grid.Column="1"
+												VerticalAlignment="Center"
+												IsVisible="{Binding OnlineId, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+												Text="{Binding OnlineId, StringFormat='#{0}'}"/>
 								</Grid>
 
 								<TextBlock Classes="info"
-										   FontStyle="Italic"
-										   Margin="0,5"
-										   Text="{Binding Club}"/>
+											FontStyle="Italic"
+											Margin="0,5"
+											Text="{Binding Club}"/>
 								<ItemsControl ItemsSource="{Binding Ratings}">
 									<ItemsControl.ItemsPanel>
 										<ItemsPanelTemplate>
 											<WrapPanel Orientation="Horizontal"
-													   ItemSpacing="5"
-													   LineSpacing="5"/>
+														ItemSpacing="5"
+														LineSpacing="5"/>
 										</ItemsPanelTemplate>
 									</ItemsControl.ItemsPanel>
 									<ItemsControl.ItemTemplate>
 										<DataTemplate DataType="vm:WeaponRatingViewModel">
 											<WrapPanel Orientation="Horizontal"
-													   Width="60"
-													   ItemSpacing="5">
+														Width="60"
+														ItemSpacing="5">
 												<TextBlock Classes="info"
-														   Text="{Binding Class}"/>
+															Text="{Binding Class}"/>
 												<TextBlock Classes=""
-														   Text="{Binding Rank}"/>
+															Text="{Binding Rank}"/>
 											</WrapPanel>
 										</DataTemplate>
 									</ItemsControl.ItemTemplate>

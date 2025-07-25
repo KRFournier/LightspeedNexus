@@ -49,19 +49,34 @@
 				<c:LightspeedBorder Classes="fullcolor">				
 					<ContentControl Content="{Binding Dialog}"/>
 				</c:LightspeedBorder>
-				<StackPanel Orientation="Horizontal"
-							HorizontalAlignment="Right"
-							Spacing="10">
-					<Button Classes="red"
-							Width="75"
-							HorizontalContentAlignment="Center"
-							Content="Cancel"
-							Command="{Binding CancelDialogCommand}"/>
-					<Button Width="75"
-							HorizontalContentAlignment="Center"
-							Content="OK"
-							Command="{Binding AcceptDialogCommand}"/>
+				<Grid ColumnDefinitions="*,10,Auto">
+					<StackPanel Orientation="Horizontal"
+								Spacing="10">
+						<Button Classes="red"
+								IsVisible="{Binding UsingDeleteButton}"
+								Command="{Binding DeleteDialogCommand}">
+							<StackPanel Orientation="Horizontal"
+										Spacing="5">
+								<PathIcon Data="{StaticResource delete_regular}"/>
+								<TextBlock>Delete</TextBlock>
+							</StackPanel>
+						</Button>					
 				</StackPanel>
+					<StackPanel Grid.Column="2"
+								Orientation="Horizontal"
+								HorizontalAlignment="Right"
+								Spacing="10">
+						<Button Classes="gray"
+								Width="75"
+								HorizontalContentAlignment="Center"
+								Content="Cancel"
+								Command="{Binding CancelDialogCommand}"/>
+						<Button Width="75"
+								HorizontalContentAlignment="Center"
+								Content="OK"
+								Command="{Binding AcceptDialogCommand}"/>
+					</StackPanel>
+				</Grid>
 			</StackPanel>
 		</Border>
 
@@ -163,7 +178,7 @@
 						HorizontalAlignment="Center"
 						HorizontalContentAlignment="Center"
 						Content="OK"
-						Command="{Binding AcceptDialogCommand}"/>
+						Command="{Binding AccepMessageCommand}"/>
 			</StackPanel>
 		</Border>
 		
