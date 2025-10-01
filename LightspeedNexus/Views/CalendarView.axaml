@@ -2,22 +2,174 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="LightspeedNexus.Views.CalendarView">
+    xmlns:vm="clr-namespace:LightspeedNexus.ViewModels"
+    xmlns:c="clr-namespace:LightspeedNexus.Controls"
+    xmlns:s="clr-namespace:System"
+             mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="600"
+             x:Class="LightspeedNexus.Views.CalendarView"
+    x:DataType="vm:CalendarViewModel"
+    ClipToBounds="False">
 
-	<Grid ColumnDefinitions="Auto,10,*">
+	<Design.DataContext>
+		<vm:CalendarViewModel Name="Lightspeed Returns"
+         Start="03-15-2026"
+         Days="3">
+		</vm:CalendarViewModel>
+	</Design.DataContext>
+	
+	<Grid ColumnDefinitions="2.5*,10,7.5*"
+    RowDefinitions="Auto,10,*"
+    ClipToBounds="False">
+
+		<!--Top Bar-->
+		<Grid Grid.ColumnSpan="3"
+     ColumnDefinitions="Auto,10,*,10,Auto,10,Auto">
+			<Button Classes="clear"
+					Command="{Binding GoHomeCommand}">
+				<PathIcon Data="{StaticResource arrow_left_regular}"/>
+			</Button>
+			<StackPanel Orientation="Horizontal"
+						VerticalAlignment="Center"
+						Spacing="10"
+						Grid.Column="2">
+				<TextBlock Classes="large"
+         Text="{Binding Name}"/>
+				<StackPanel Orientation="Horizontal"
+							VerticalAlignment="Center"
+							IsVisible="{Binding Competition.Venue, Converter={x:Static ObjectConverters.IsNotNull}}"
+						Spacing="10">
+					<TextBlock Classes="large">at</TextBlock>
+					<TextBlock Classes="large"
+          Text="{Binding Competition.Venue.Name}"/>
+					<TextBlock Classes="large">(</TextBlock>
+					<TextBlock Classes="large"
+          Text="{Binding Competition.Venue.Rings.Count, StringFormat='{}{0} Rings'}"/>
+					<TextBlock Classes="large">)</TextBlock>
+				</StackPanel>
+			</StackPanel>
+			<TextBlock Classes="large"
+        Grid.Column="4"
+        Text="{Binding DisplayDates}"/>
+			<Button Classes="clear"
+					Grid.Column="6"
+					Command="{Binding EditCompetitionCommand}">
+				<PathIcon Data="{StaticResource edit_regular}"/>
+			</Button>
+		</Grid>	
 		
-		<Calendar HorizontalAlignment="Stretch"
-				  VerticalAlignment="Center"/>
+		<!--Sidebar-->
+		<ScrollViewer Grid.Row="2"
+       Margin="10,0"
+       ClipToBounds="False">
+			<StackPanel Spacing="10"
+						ClipToBounds="False">
+				<c:LightspeedBorder Classes="eventitem"
+									Height="60"
+									BorderBrush="{StaticResource Teal}"
+									PointerPressed="NewEvent_PointerPressed">
+					<c:LightspeedBorder.Background>
+						<SolidColorBrush Color="{StaticResource Teal}" Opacity="0.5"/>
+					</c:LightspeedBorder.Background>
+					<TextBlock Text="Check-in"
+							   HorizontalAlignment="Center"
+							   VerticalAlignment="Center"
+							   IsHitTestVisible="False"/>
+				</c:LightspeedBorder>
+			</StackPanel>
+		</ScrollViewer>
 
-		<StackPanel Grid.Column="2"
-					Orientation="Vertical"
-					Spacing="10">
+		<!--Calendar-->
+		<Grid Grid.Column="2"
+			  Grid.Row="2"
+			  ClipToBounds="False"
+			  RowDefinitions="Auto,*"
+			  DragDrop.AllowDrop="True"
+			  ColumnDefinitions="Auto,*">
 
-			<Button>Click Me!</Button>
-			<TextBox>Hello, World!</TextBox>
+			<!--Displays the times-->
+			<c:TimeBar Grid.Row="1"
+					   Margin="8,0"
+					   IsHitTestVisible="False"
+					   Start="{Binding MinTime}"
+					   End="{Binding MaxTime}"/>
+
+			<!--Displays the days-->
+			<c:DateBar Grid.Column="1"
+					   Margin="0,8"
+					   IsHitTestVisible="False"
+					   Date="{Binding Start}"
+					   Days="{Binding Days}"/>
+
+			<!--Background Grid-->
+			<c:ScheduleGrid x:Name="Schedule"
+							Grid.Column="1"
+							Grid.Row="1"
+							Foreground="#7fffffff"
+							DragDrop.AllowDrop="True"
+							Date="{Binding Start}"
+							Days="{Binding Days}"
+							Start="{Binding MinTime}"
+							End="{Binding MaxTime}"/>
 			
-		</StackPanel>
+			<!--Actual items-->
+			<ItemsControl x:Name="ScheduleItems"
+						  Grid.Column="1"
+						  Grid.Row="1"
+						  ItemsSource="{Binding Events}">
+				<ItemsControl.ItemsPanel>
+					<ItemsPanelTemplate>
+						<c:SchedulePanel Date="{Binding Start}"
+										 Days="{Binding Days}"
+										 TimeStart="{Binding MinTime}"
+										 TimeEnd="{Binding MaxTime}"/>
+					</ItemsPanelTemplate>
+				</ItemsControl.ItemsPanel>
+				<ItemsControl.ItemTemplate>
+					<DataTemplate DataType="vm:EventViewModel">
+						<c:LightspeedBorder Classes="eventitem"
+											BorderBrush="{StaticResource Teal}"
+											PointerPressed="NewEvent_PointerPressed"
+											c:SchedulePanel.Day="{Binding Day}"
+											c:SchedulePanel.Time="{Binding Start}"
+											c:SchedulePanel.Duration="{Binding Duration}">
+							<c:LightspeedBorder.Background>
+								<SolidColorBrush Color="{StaticResource Teal}" Opacity="0.5"/>
+							</c:LightspeedBorder.Background>
+							<StackPanel Spacing="2"
+										VerticalAlignment="Center">
+								<TextBlock Text="{Binding Name}"
+										   HorizontalAlignment="Center"
+										   IsHitTestVisible="False"/>
+								<TextBlock HorizontalAlignment="Center"
+										   IsHitTestVisible="False">
+									<Run Text="{Binding Start}"/>
+									<Run Text="-"/>
+									<Run Text="{Binding End}"/>
+								</TextBlock>
+							</StackPanel>
+						</c:LightspeedBorder>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+			
+			<!--Overlay Panel to Display Drag Items-->
+			<c:SchedulePanel x:Name="SchedulePanel"
+							 Grid.Column="1"
+							 Grid.Row="1"
+							 IsHitTestVisible="False"
+							 Date="{Binding Start}"
+							 Days="{Binding Days}"
+							 TimeStart="{Binding MinTime}"
+							 TimeEnd="{Binding MaxTime}"/>
+		</Grid>
+		
+		<!--Drag Canvas-->
+		<Canvas x:Name="DragCanvas"
+				Grid.ColumnSpan="3"
+				Grid.Row="2"
+				IsHitTestVisible="False"
+				DragDrop.AllowDrop="True"
+				Background="Transparent"/>
 		
 	</Grid>
 	

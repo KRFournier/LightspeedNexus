@@ -11,6 +11,15 @@
 		</Border>
 	</Design.PreviewWith>
 
+	<Style Selector="TextBox">
+		<Style Selector="^.medium">
+			<Setter Property="FontSize" Value="22"/>
+		</Style>
+		<Style Selector="^.large">
+			<Setter Property="FontSize" Value="32"/>
+		</Style>
+	</Style>
+	
 	<Style Selector="TextBox.green">
 		<Setter Property="BorderBrush" Value="#194f11"/>
 		<Style Selector="^:pointerover /template/ c|LightspeedBorder#PART_BorderElement">

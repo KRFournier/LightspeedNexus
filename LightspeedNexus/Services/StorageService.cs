@@ -53,51 +53,56 @@ public static class StorageService
     /// <summary>
     /// Writes a document to the database in the specified collection
     /// </summary>
-    public static void WriteDocument(BsonDocument document, string collectionName)
+    public static void WriteSettings(BsonDocument document)
     {
         using var db = GetDatabase();
-        var collection = db.GetCollection(collectionName);
+        var collection = db.GetCollection("settings");
         collection.Upsert(document);
     }
 
     /// <summary>
     /// Gets the document with the given id
     /// </summary>
-    public static BsonDocument? ReadDocument(BsonValue id, string collectionName)
+    public static BsonDocument? ReadSettings(BsonValue id)
     {
         using var db = GetDatabase();
-        var collection = db.GetCollection(collectionName);
+        var collection = db.GetCollection("settings");
         return collection.FindById(id);
     }
 
     /// <summary>
+    /// Builds the collection name from the type name
+    /// </summary>
+    private static string GetCollectionName<T>() => typeof(T).Name.ToLowerInvariant() + "s";
+
+    /// <summary>
     /// Saves a fighter
     /// </summary>
-    public static void WriteFighter(Fighter fighter)
+    public static void Write<T>(T item) where T : CollectionObject
     {
         using var db = GetDatabase();
-        var fightersCollection = db.GetCollection<Fighter>("fighters");
-        fightersCollection.Upsert(fighter);
+        var fightersCollection = db.GetCollection<T>(GetCollectionName<T>());
+        fightersCollection.Upsert(item);
     }
 
     /// <summary>
     /// Gets all fighters in the database
     /// </summary>
-    public static Fighter[] ReadAllFighters()
+    public static T[] ReadAll<T>() where T : CollectionObject
     {
 
         using var db = GetDatabase();
-        var fightersCollection = db.GetCollection<Fighter>("fighters");
+        var fightersCollection = db.GetCollection<T>(GetCollectionName<T>());
         return [.. fightersCollection.FindAll()];
     }
 
     /// <summary>
     /// Deletes the given fighter
     /// </summary>
-    public static void DeleteFighter(Fighter fighter)
+    public static void Delete<T>(T item) where T : CollectionObject
     {
         using var db = GetDatabase();
-        var fightersCollection = db.GetCollection<Fighter>("fighters");
-        fightersCollection.Delete(fighter.Id);
+        var fightersCollection = db.GetCollection<T>(GetCollectionName<T>());
+        fightersCollection.Delete(item.Id);
     }
 }

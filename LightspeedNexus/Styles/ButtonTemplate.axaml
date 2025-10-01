@@ -59,7 +59,7 @@
 		</Setter>
 
 		<Style Selector="^:pointerover">
-			<Setter Property="RenderTransform" Value="scale(1.05)" />
+			<Setter Property="RenderTransform" Value="scale(1.1)" />
 		</Style>
 
 		<Style Selector="^:pressed">

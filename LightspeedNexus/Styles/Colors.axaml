@@ -1,0 +1,44 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	
+	<Design.PreviewWith>
+		<Border Padding="20"
+				Background="{StaticResource BlueRed}"
+				BorderBrush="{StaticResource BlueRed}">
+		</Border>
+	</Design.PreviewWith>
+
+	<Style>
+		<Style.Resources>
+			<Color x:Key="Red">#b52d25</Color>
+			<Color x:Key="Orange">#b56d24</Color>
+			<Color x:Key="Yellow">#b5b524</Color>
+			<Color x:Key="Lime">#6db524</Color>
+			<Color x:Key="Green">#218d21</Color>
+			<Color x:Key="Teal">#24b5b5</Color>
+			<Color x:Key="Blue">#21458d</Color>
+			<Color x:Key="Purple">#44208c</Color>
+			<Color x:Key="Violet">#8c208c</Color>
+			<Color x:Key="Magenta">#8c2044</Color>
+			<Color x:Key="Gray">#4c4c4c</Color>
+			<Color x:Key="White">#dfdfdf</Color>
+			<SolidColorBrush x:Key="RedBrush" Color="{StaticResource Red}"/>
+			<SolidColorBrush x:Key="OrangeBrush" Color="{StaticResource Orange}"/>
+			<SolidColorBrush x:Key="YellowBrush" Color="{StaticResource Yellow}"/>
+			<SolidColorBrush x:Key="LimeBrush" Color="{StaticResource Lime}"/>
+			<SolidColorBrush x:Key="GreenBrush" Color="{StaticResource Green}"/>
+			<SolidColorBrush x:Key="TealBrush" Color="{StaticResource Teal}"/>
+			<SolidColorBrush x:Key="BlueBrush" Color="{StaticResource Blue}"/>
+			<SolidColorBrush x:Key="PurpleBrush" Color="{StaticResource Purple}"/>
+			<SolidColorBrush x:Key="VioletBrush" Color="{StaticResource Violet}"/>
+			<SolidColorBrush x:Key="MagentaBrush" Color="{StaticResource Magenta}"/>
+			<SolidColorBrush x:Key="GrayBrush" Color="{StaticResource Gray}"/>
+			<SolidColorBrush x:Key="WhiteBrush" Color="{StaticResource White}"/>
+			<LinearGradientBrush x:Key="BlueRed">
+				<GradientStop Color="{StaticResource Blue}" Offset="0.0"/>
+				<GradientStop Color="{StaticResource Red}" Offset="1.0"/>
+			</LinearGradientBrush>
+		</Style.Resources>
+	</Style>
+	
+</Styles>

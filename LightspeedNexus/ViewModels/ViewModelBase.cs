@@ -11,13 +11,13 @@ public class ViewModelBase : ObservableObject
     /// <summary>
     /// The result of a call to DialogBox
     /// </summary>
-    protected class DialogResult<T> where T : ViewModelBase
+    protected class DialogBoxResult<T> where T : ViewModelBase
     {
         public bool IsOk { get; set; } = false;
         public bool IsCancelled { get; set; } = false;
         public bool IsDeleted { get; set; } = false;
         public T Item { get; set; }
-        public DialogResult(OpenDialogMessage.DialogResponse response, T item)
+        public DialogBoxResult(OpenDialogMessage.DialogResponse response, T item)
         {
             switch (response)
             {
@@ -41,14 +41,14 @@ public class ViewModelBase : ObservableObject
     /// <summary>
     /// Opens a dialog with the given initial viewmodel and returns the result when the dialog is closed.
     /// </summary>
-    protected static Task<DialogResult<T>> DialogBox<T>(T initial, params DialogButton[] additionalButtons)
+    protected static Task<DialogBoxResult<T>> DialogBox<T>(T initial, string title, params DialogButton[] additionalButtons)
         where T : ViewModelBase
     {
-        var cs = new TaskCompletionSource<DialogResult<T>>();
-        OpenDialogMessage message = new(initial, additionalButtons, (vm, response) =>
+        var cs = new TaskCompletionSource<DialogBoxResult<T>>();
+        OpenDialogMessage message = new(initial, title, additionalButtons, (vm, response) =>
         {
             if (vm is T item)
-                cs.SetResult(new DialogResult<T>(response, item));
+                cs.SetResult(new DialogBoxResult<T>(response, item));
             else
                 throw new InvalidCastException($"Expected ViewModel of type {typeof(T).Name}, but got {vm.GetType().Name}.");
         });

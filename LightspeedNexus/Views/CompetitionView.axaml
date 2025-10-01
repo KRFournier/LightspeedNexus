@@ -1,0 +1,162 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:vm="clr-namespace:LightspeedNexus.ViewModels"
+			 xmlns:m="clr-namespace:LightspeedNexus.Models"
+			 xmlns:v="clr-namespace:LightspeedNexus.Views"
+			 xmlns:c="clr-namespace:LightspeedNexus.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="LightspeedNexus.Views.CompetitionView"
+			 x:DataType="vm:CompetitionViewModel">
+
+	<Design.DataContext>
+		<vm:CompetitionViewModel Name="Lightspeed Attacks!">
+			<vm:CompetitionViewModel.Roster>
+				<m:Fighter FirstName="John" LastName="Doe" Club="Super"/>
+			</vm:CompetitionViewModel.Roster>
+		</vm:CompetitionViewModel>
+	</Design.DataContext>
+
+	<UserControl.KeyBindings>
+		<KeyBinding Gesture="Enter"
+					Command="{Binding AddFighterCommand}"/>
+	</UserControl.KeyBindings>
+
+	<Grid ColumnDefinitions="Auto,10,*"
+		  RowDefinitions="Auto,10,*">
+
+		<!-- Competition Info -->
+		<Grid ColumnDefinitions="Auto,10,Auto,10,*" 
+			  RowDefinitions="Auto,10,Auto"
+			  Grid.ColumnSpan="3"
+			  Grid.IsSharedSizeScope="True">
+			<Button Classes="clear"
+					Command="{Binding GoHomeCommand}">
+				<PathIcon Data="{StaticResource arrow_left_regular}"/>
+			</Button>
+			<TextBlock Grid.Column="2"
+					   Grid.Row="0"
+					   VerticalAlignment="Center"
+					   Text="Name"/>
+			<TextBox x:Name="FirstField"
+					 Classes="large"
+					 Grid.Column="4"
+					 Grid.Row="0"
+					 Text="{Binding Name}"/>
+			<TextBlock VerticalAlignment="Center"
+					   Grid.Column="2"
+					   Grid.Row="2"
+					   Text="When?"/>
+			<Grid ColumnDefinitions="Auto,10,Auto,10,100,10,Auto,10,*,10,Auto"
+				  Grid.Column="4"
+				  Grid.Row="2">
+				<CalendarDatePicker SelectedDate="{Binding Start}"
+									VerticalAlignment="Stretch"/>
+				<TextBlock Grid.Column="2"
+						   VerticalAlignment="Center"
+						   Text="How Many Days?"/>
+				<TextBox Grid.Column="4"
+						 Padding="0"
+						 HorizontalAlignment="Left"
+						 HorizontalContentAlignment="Center"
+						 VerticalContentAlignment="Center"
+						 IsReadOnly="True"
+						 Text="{Binding Days}">
+					<TextBox.InnerLeftContent>
+						<Button Classes="clear"
+								IsTabStop="False"
+								Command="{Binding DecrementDaysCommand}">
+							<PathIcon Data="{StaticResource chevron_left_regular}"/>
+						</Button>
+					</TextBox.InnerLeftContent>
+					<TextBox.InnerRightContent>
+						<Button Classes="clear"
+								IsTabStop="False"
+								Command="{Binding IncrementDaysCommand}">
+							<PathIcon Data="{StaticResource chevron_right_regular}"/>
+						</Button>
+					</TextBox.InnerRightContent>
+				</TextBox>
+				<TextBlock Grid.Column="6"
+						   VerticalAlignment="Center"
+						   Text="Where?"/>
+				<ComboBox Grid.Column="8"
+						  HorizontalAlignment="Stretch"
+						  ItemsSource="{Binding Venues}"
+						  SelectedItem="{Binding SelectedVenue}"/>
+				<Button VerticalAlignment="Stretch"
+						Grid.Column="10"
+						Command="{Binding NewVenueCommand}">
+					<StackPanel Orientation="Horizontal"
+								VerticalAlignment="Center"
+								Spacing="5">
+						<PathIcon Data="{StaticResource add_regular}"/>
+						<TextBlock Text="New Venue"/>
+					</StackPanel>	
+				</Button>
+			</Grid>
+		</Grid>
+
+		<Grid Grid.Row="2"
+			  RowDefinitions="Auto,10,Auto,10,*">
+				
+			<TextBlock Classes="large"
+					   HorizontalAlignment="Center"
+					   Text="Roster"/>
+
+			<!--Search Box-->
+			<Grid Grid.Row="2"
+				  ColumnDefinitions="*,10,Auto">
+				<AutoCompleteBox x:Name="RosterSearch"
+								 FilterMode="Contains"
+								 ItemsSource="{Binding Fighters}"
+								 SelectedItem="{Binding SelectedFighter}"
+								 IsTextCompletionEnabled="True">
+					<AutoCompleteBox.ItemTemplate>
+						<DataTemplate DataType="m:Fighter">
+							<TextBlock Text="{Binding FullName}"/>
+						</DataTemplate>
+					</AutoCompleteBox.ItemTemplate>
+				</AutoCompleteBox>
+				<Button Grid.Column="2"
+						Command="{Binding AddFighterCommand}">
+					<StackPanel Orientation="Horizontal"
+								VerticalAlignment="Center"
+								Spacing="5">
+						<PathIcon Data="{StaticResource add_regular}"/>
+						<TextBlock Text="New Fighter"/>
+					</StackPanel>
+				</Button>
+			</Grid>
+
+			<!--Roster-->
+			<ScrollViewer Grid.Row="4"
+						  HorizontalAlignment="Stretch"
+						  VerticalAlignment="Stretch">
+				<DataGrid ItemsSource="{Binding Roster}"
+						  BorderThickness="1"
+						  BorderBrush="{StaticResource Gray}"
+						  IsReadOnly="True"
+						  CanUserReorderColumns="True"
+						  CanUserResizeColumns="True"
+						  CanUserSortColumns="True">
+					<DataGrid.Background>
+						<SolidColorBrush Color="Black" Opacity="0.5"/>
+					</DataGrid.Background>
+					<DataGrid.Columns>
+						<DataGridTextColumn Header="First Name" Binding="{Binding FirstName}" FontFamily="{StaticResource Electrolize}"/>
+						<DataGridTextColumn Header="Last Name" Binding="{Binding LastName}" FontFamily="{StaticResource Electrolize}"/>
+						<DataGridTextColumn Header="Club" Binding="{Binding Club}" FontFamily="{StaticResource Electrolize}"/>
+						<DataGridTextColumn Header="Rey" Binding="{Binding Rey.Rank}" FontFamily="{StaticResource Electrolize}"/>
+						<DataGridTextColumn Header="Ren" Binding="{Binding Ren.Rank}" FontFamily="{StaticResource Electrolize}"/>
+						<DataGridTextColumn Header="Tano" Binding="{Binding Tano.Rank}" FontFamily="{StaticResource Electrolize}"/>
+					</DataGrid.Columns>
+				</DataGrid>
+			</ScrollViewer>
+				
+		</Grid>
+		
+	</Grid>
+
+</UserControl>

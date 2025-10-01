@@ -59,7 +59,7 @@ public partial class FightersViewModel : ViewModelBase, IComparer
 
         try
         {
-            Fighters = [.. StorageService.ReadAllFighters().Select(f => new FighterViewModel() { Fighter = f })];
+            Fighters = [.. StorageService.ReadAll<Fighter>().Select(f => new FighterViewModel() { Model = f })];
         }
         catch (Exception e)
         {
@@ -73,7 +73,7 @@ public partial class FightersViewModel : ViewModelBase, IComparer
     [RelayCommand]
     private static void GoHome()
     {
-        WeakReferenceMessenger.Default.Send(new NavigatePageMessage(new HomeViewModel()));
+        WeakReferenceMessenger.Default.Send<NavigateHomeMessage>();
     }
 
     [RelayCommand]
@@ -81,11 +81,11 @@ public partial class FightersViewModel : ViewModelBase, IComparer
     {
         try
         {
-            var result = await DialogBox(new FighterViewModel());
+            var result = await DialogBox(new FighterViewModel(), "New Fighter");
             if (result.IsOk)
             {
                 Fighters.Add(result.Item);
-                StorageService.WriteFighter(result.Item.Fighter);
+                StorageService.Write(result.Item.Model);
             }
         }
         catch (Exception e)
@@ -99,21 +99,21 @@ public partial class FightersViewModel : ViewModelBase, IComparer
     {
         try
         {
-            var result = await DialogBox(new FighterViewModel() { Fighter = new(item.Fighter) }, DialogButton.Delete);
+            var result = await DialogBox(new FighterViewModel() { Model = new(item.Model) }, "Edit Figther", DialogButton.Delete);
             if (result.IsOk)
             {
-                item.Fighter = result.Item.Fighter;
-                StorageService.WriteFighter(result.Item.Fighter);
+                item.Model = result.Item.Model;
+                StorageService.Write(result.Item.Model);
             }
             else if (result.IsDeleted)
             {
                 Fighters.Remove(item);
-                StorageService.DeleteFighter(result.Item.Fighter);
+                StorageService.Delete(result.Item.Model);
             }
         }
         catch (Exception e)
         {
-            Debug.WriteLine($"Unexpected error creating and saving a new fighter: {e}");
+            Debug.WriteLine($"Unexpected error editing a fighter: {e}");
         }
     }
 
@@ -128,22 +128,22 @@ public partial class FightersViewModel : ViewModelBase, IComparer
             // look up fighter and update, or add if doesn't exist
             foreach(var fighter in fighters)
             {
-                var existing = Fighters.FirstOrDefault(f => f.Fighter.OnlineId == fighter.OnlineId ||
-                    (string.Compare(f.Fighter.FirstName, fighter.FirstName, true) == 0 &&
-                     string.Compare(f.Fighter.LastName, fighter.LastName, true) == 0)
+                var existing = Fighters.FirstOrDefault(f => f.Model.OnlineId == fighter.OnlineId ||
+                    (string.Compare(f.Model.FirstName, fighter.FirstName, true) == 0 &&
+                     string.Compare(f.Model.LastName, fighter.LastName, true) == 0)
                     );
                 if (existing is not null)
-                    existing.Fighter.UpdateFrom(fighter);
+                    existing.Model.UpdateFrom(fighter);
                 else
                 {
-                    StorageService.WriteFighter(fighter);
+                    StorageService.Write(fighter);
                     fightersToAdd.Add(fighter);
                 }
             }
 
             // we add new fighters at the end so the above loop doesn't have to search new additions
             foreach(var fighter in fightersToAdd)
-                Fighters.Add(new FighterViewModel() { Fighter = fighter });
+                Fighters.Add(new FighterViewModel() { Model = fighter });
         }
         else
             MessageBox(message);

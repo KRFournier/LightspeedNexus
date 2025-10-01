@@ -3,25 +3,17 @@
 		xmlns:c="clr-namespace:LightspeedNexus.Controls">
   
     <Design.PreviewWith>
-		<Border Padding="20">
+		<Border Padding="20" Background="#1f1f1f">
 			<StackPanel Spacing="20">
-				<c:LightspeedBorder Classes="item">
+				<c:LightspeedBorder Classes="small">
 					<TextBlock>Hello, World!</TextBlock>
 				</c:LightspeedBorder>
-				<c:LightspeedBorder Classes="coloritem">
+				<c:LightspeedBorder Classes="colorcorners darkback">
 					<TextBlock>Hello, World!</TextBlock>
 				</c:LightspeedBorder>
 			</StackPanel>
 		</Border>
     </Design.PreviewWith>
-
-	<Styles.Resources>
-		<Color x:Key="Blue">#21458d</Color>
-		<Color x:Key="Red">#b52d25</Color>
-		<Color x:Key="Green">#218d21</Color>
-		<Color x:Key="Gray">#4c4c4c</Color>
-		<Color x:Key="Orange">#8d6b21</Color>
-	</Styles.Resources>
 
 	<Style Selector="c|LightspeedBorder">
 		<Setter Property="Background">
@@ -54,6 +46,17 @@
 			<Setter Property="TopLeftBackground" Value="{StaticResource Blue}"/>
 			<Setter Property="BottomRightBorderBrush" Value="{StaticResource Red}"/>
 			<Setter Property="BottomRightBackground" Value="{StaticResource Red}"/>
+		</Style>
+		<Style Selector="^.colorcorners">
+			<Setter Property="TopLeftBorderBrush" Value="{StaticResource Blue}"/>
+			<Setter Property="TopLeftBackground" Value="{StaticResource Blue}"/>
+			<Setter Property="BottomRightBorderBrush" Value="{StaticResource Red}"/>
+			<Setter Property="BottomRightBackground" Value="{StaticResource Red}"/>
+		</Style>
+		<Style Selector="^.darkback">
+			<Setter Property="Background">
+				<SolidColorBrush Color="Black" Opacity="0.8"/>
+			</Setter>
 		</Style>
 	</Style>
 
@@ -109,6 +112,21 @@
 			<Setter Property="BottomRightBorderBrush" Value="{StaticResource Red}"/>
 			<Setter Property="BottomRightBackground" Value="{StaticResource Red}"/>
 		</Style>
+	</Style>
+
+	<Style Selector="c|LightspeedBorder.eventitem">
+		<Setter Property="TopLeftBackground" Value="{x:Null}"/>
+		<Setter Property="TopLeftBorderBrush" Value="{x:Null}"/>
+		<Setter Property="BottomRightBackground" Value="{x:Null}"/>
+		<Setter Property="BottomRightBorderBrush" Value="{x:Null}"/>
+		<Setter Property="CornerThickness" Value="6,6,4,8"/>
+		<Setter Property="CornerGap" Value="0"/>
+		<Setter Property="Padding" Value="5"/>
+	</Style>
+
+	<Style Selector="c|LightspeedBorder.small">
+		<Setter Property="CornerThickness" Value="6,6,6,10"/>
+		<Setter Property="CornerGap" Value="3,3,3,6"/>
 	</Style>
 	
 </Styles>

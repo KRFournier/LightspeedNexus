@@ -10,5 +10,7 @@
         Title="LightspeedNexus"
 	    WindowStartupLocation="CenterScreen"
 		WindowState="Maximized">
+	
         <views:MainView/>
+	
 </Window>

@@ -58,4 +58,6 @@ public partial class WeaponRatingViewModel : ViewModelBase
         Rating.Rank--;
         OnPropertyChanged(nameof(Rank));
     }
+
+    public override string ToString() => Rank;
 }

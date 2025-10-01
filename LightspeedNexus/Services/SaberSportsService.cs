@@ -35,12 +35,12 @@ public static class SaberSportsService
             ["email"] = LastEmail,
             ["password"] = AesStringEncryption.EncryptString(LastPassword)
         };
-        StorageService.WriteDocument(lastUsed, "admin");
+        StorageService.WriteSettings(lastUsed);
     }
 
     public static void LoadLastUsed()
     {
-        var lastUsed = StorageService.ReadDocument(748, "admin");
+        var lastUsed = StorageService.ReadSettings(748);
         if (lastUsed != null)
         {
             LastEmail = lastUsed["email"].AsString;

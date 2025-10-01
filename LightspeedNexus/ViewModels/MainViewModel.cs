@@ -28,30 +28,32 @@ public partial class MainViewModel : ViewModelBase
 
     public MainViewModel()
     {
-        WeakReferenceMessenger.Default.Register<NavigatePageMessage>(this, (_, m) =>
-        {
-            CurrentPage = m.Value;
-        });
+        WeakReferenceMessenger.Default.Register<NavigatePageMessage>(this, (_, msg) => CurrentPage = msg.Page);
 
-        WeakReferenceMessenger.Default.Register<OpenDialogMessage>(this, (_, m) =>
-        {
-            _dialogMessage = m;
-            Dialog = m.Item;
-            UsingDeleteButton = m.AdditionalButtons.Contains(DialogButton.Delete);
-        });
+        WeakReferenceMessenger.Default.Register<NavigateHomeMessage>(this, (_, _) => CurrentPage = new HomeViewModel());
 
-        WeakReferenceMessenger.Default.Register<CloseDialogMessage>(this, (_, _) =>
-        {
-            Dialog = null;
-        });
+        //WeakReferenceMessenger.Default.Register<OpenDialogMessage>(this, (_, m) =>
+        //{
+        //    _dialogMessage = m;
+        //    Dialog = m.Item;
+        //    UsingDeleteButton = m.AdditionalButtons.Contains(DialogButton.Delete);
+        //});
 
-        WeakReferenceMessenger.Default.Register<MessageBoxMessage>(this, (_, m) =>
-        {
-            Message = m.Value;
-        });
+        //WeakReferenceMessenger.Default.Register<CloseDialogMessage>(this, (_, _) =>
+        //{
+        //    Dialog = null;
+        //});
+
+        //WeakReferenceMessenger.Default.Register<MessageBoxMessage>(this, (_, m) =>
+        //{
+        //    Message = m.Value;
+        //});
     }
 
     #region Dialog Box
+
+    [ObservableProperty]
+    private bool _hasDialog = false;
 
     [ObservableProperty]
     private ViewModelBase? _dialog = null;

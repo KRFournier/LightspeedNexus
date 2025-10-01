@@ -6,13 +6,10 @@ namespace LightspeedNexus.ViewModels;
 
 public partial class FighterViewModel : ViewModelBase
 {
-    public FighterViewModel()
-    {
-        Fighter = new Fighter();
-    }
+    #region Model
 
     private Fighter _fighter = null!;
-    public Fighter Fighter
+    public Fighter Model
     {
         get => _fighter;
         set
@@ -32,14 +29,14 @@ public partial class FighterViewModel : ViewModelBase
 
     public string? OnlineId
     {
-        get => Fighter?.OnlineId.ToString();
+        get => Model?.OnlineId.ToString();
         set
         {
             if (int.TryParse(value, out var intValue))
             {
-                if (Fighter.OnlineId != intValue)
+                if (Model.OnlineId != intValue)
                 {
-                    Fighter.OnlineId = intValue;
+                    Model.OnlineId = intValue;
                     OnPropertyChanged(nameof(OnlineId));
                 }
             }
@@ -48,12 +45,12 @@ public partial class FighterViewModel : ViewModelBase
 
     public string FirstName
     {
-        get => Fighter.FirstName;
+        get => Model.FirstName;
         set
         {
-            if (Fighter.FirstName != value)
+            if (Model.FirstName != value)
             {
-                Fighter.FirstName = value;
+                Model.FirstName = value;
                 OnPropertyChanged(nameof(FirstName));
                 OnPropertyChanged(nameof(FullName));
             }
@@ -62,32 +59,39 @@ public partial class FighterViewModel : ViewModelBase
 
     public string LastName
     {
-        get => Fighter.LastName;
+        get => Model.LastName;
         set
         {
-            if (Fighter.LastName != value)
+            if (Model.LastName != value)
             {
-                Fighter.LastName = value;
+                Model.LastName = value;
                 OnPropertyChanged(nameof(LastName));
                 OnPropertyChanged(nameof(FullName));
             }
         }
     }
 
-    public string FullName => $"{LastName}, {FirstName}";
-
     public string? Club
     {
-        get => Fighter.Club;
+        get => Model.Club;
         set
         {
-            if (Fighter.Club != value)
+            if (Model.Club != value)
             {
-                Fighter.Club = value;
+                Model.Club = value;
                 OnPropertyChanged(nameof(Club));
             }
         }
     }
+
+    #endregion
+
+    public FighterViewModel()
+    {
+        Model = new Fighter();
+    }
+
+    public string FullName => $"{LastName}, {FirstName}";
 
     public ObservableCollection<WeaponRatingViewModel> Ratings { get; set; } = [];
 }

@@ -1,0 +1,142 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:LightspeedNexus.ViewModels"
+			 xmlns:m="clr-namespace:LightspeedNexus.Models"
+             xmlns:c="clr-namespace:LightspeedNexus.Controls"
+             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="80"
+             x:Class="LightspeedNexus.Views.MatchSettingsView"
+			 x:DataType="vm:MatchSettingsViewModel">
+	
+	<Design.DataContext>
+		<vm:MatchSettingsViewModel/>
+	</Design.DataContext>
+
+	<UserControl.Styles>
+		<Style Selector="Button.left /template/ c|LightspeedBorder#PART_Border">
+			<Setter Property="CornerThickness" Value="23,23,0,0"/>
+			<Setter Property="RenderTransform" Value="{x:Null}"/>
+			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="Background">
+				<SolidColorBrush Color="{StaticResource Blue}" Opacity="0.3"/>
+			</Setter>
+			<Style Selector="^:pointerover">
+				<Setter Property="Background">
+					<SolidColorBrush Color="{StaticResource Blue}" Opacity="0.5"/>
+				</Setter>				
+			</Style>
+		</Style>
+		<Style Selector="Button.squareblue /template/ c|LightspeedBorder#PART_Border">
+			<Setter Property="CornerThickness" Value="0"/>
+			<Setter Property="RenderTransform" Value="{x:Null}"/>
+			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="Background">
+				<SolidColorBrush Color="{StaticResource Blue}" Opacity="0.3"/>
+			</Setter>
+			<Style Selector="^:pointerover">
+				<Setter Property="Background">
+					<SolidColorBrush Color="{StaticResource Blue}" Opacity="0.5"/>
+				</Setter>
+			</Style>
+		</Style>
+		<Style Selector="Button.squarered /template/ c|LightspeedBorder#PART_Border">
+			<Setter Property="CornerThickness" Value="0"/>
+			<Setter Property="RenderTransform" Value="{x:Null}"/>
+			<Setter Property="BorderBrush" Value="{StaticResource Red}"/>
+			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="Background">
+				<SolidColorBrush Color="{StaticResource Red}" Opacity="0.3"/>
+			</Setter>
+			<Style Selector="^:pointerover">
+				<Setter Property="Background">
+					<SolidColorBrush Color="{StaticResource Red}" Opacity="0.5"/>
+				</Setter>
+			</Style>
+		</Style>
+		<Style Selector="Button.right /template/ c|LightspeedBorder#PART_Border">
+			<Setter Property="CornerThickness" Value="0,0,23,35"/>
+			<Setter Property="RenderTransform" Value="{x:Null}"/>
+			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="Background">
+				<SolidColorBrush Color="{StaticResource Red}" Opacity="0.3"/>
+			</Setter>
+			<Style Selector="^:pointerover">
+				<Setter Property="Background">
+					<SolidColorBrush Color="{StaticResource Red}" Opacity="0.5"/>
+				</Setter>
+			</Style>
+		</Style>
+	</UserControl.Styles>
+
+	<c:LightspeedBorder Padding="0"
+						BorderBrush="{StaticResource BlueRed}"
+						TopLeftBackground="{StaticResource Blue}"
+						TopLeftBorderBrush="{StaticResource Blue}"
+						BottomRightBackground="{StaticResource Red}"
+						BottomRightBorderBrush="{StaticResource Red}">
+		<Grid ColumnDefinitions="*,*,80,*,*"
+			  RowDefinitions="*,*">
+			<Button Grid.Column="0"
+					Grid.RowSpan="2"
+					Classes="noscale left"
+					VerticalAlignment="Stretch"
+					HorizontalAlignment="Stretch"
+					CornerRadius="0"
+					Command="{Binding DecreaseCommand}">
+				<PathIcon Width="24" Height="24" Data="{StaticResource arrow_previous_regular}"/>
+			</Button>
+			<Button Grid.Column="1"
+					Grid.Row="0"
+					Classes="noscale squareblue"
+					VerticalAlignment="Stretch"
+					HorizontalAlignment="Stretch"
+					Command="{Binding DecreaseScoreCommand}">
+				<PathIcon Width="12" Height="12" Data="{StaticResource remove_regular}"/>
+			</Button>
+			<TextBlock Grid.Column="2"
+					   Grid.Row="0"
+					   Margin="0"
+					   Text="{Binding WinningScore, StringFormat='{}{0}pts'}"
+					   VerticalAlignment="Center"
+					   HorizontalAlignment="Center"/>
+			<Button Grid.Column="3"
+					Grid.Row="0"
+					Classes="noscale squarered"
+					VerticalAlignment="Stretch"
+					HorizontalAlignment="Stretch"
+					Command="{Binding IncreaseScoreCommand}">
+				<PathIcon Width="12" Height="12" Data="{StaticResource add_regular}"/>
+			</Button>
+			<Button Grid.Column="1"
+					Grid.Row="1"
+					Classes="noscale squareblue"
+					VerticalAlignment="Stretch"
+					HorizontalAlignment="Stretch"
+					Command="{Binding DecreaseTimeCommand}">
+				<PathIcon Width="12" Height="12" Data="{StaticResource remove_regular}"/>
+			</Button>
+			<TextBlock Grid.Column="2"
+					   Grid.Row="1"
+					   Text="{Binding TimeLimit, StringFormat='m\\:ss'}"
+					   VerticalAlignment="Center"
+					   HorizontalAlignment="Center"/>
+			<Button Grid.Column="3"
+					Grid.Row="1"
+					Classes="noscale squarered"
+					VerticalAlignment="Stretch"
+					HorizontalAlignment="Stretch"
+					Command="{Binding IncreaseTimeCommand}">
+				<PathIcon Width="12" Height="12" Data="{StaticResource add_regular}"/>
+			</Button>
+			<Button Grid.Column="4"
+					Grid.RowSpan="2"
+					Classes="noscale right red"
+					VerticalAlignment="Stretch"
+					HorizontalAlignment="Stretch"
+					Command="{Binding IncreaseCommand}">
+				<PathIcon Width="24" Height="24" Data="{StaticResource arrow_next_regular}"/>
+			</Button>
+		</Grid>
+	</c:LightspeedBorder>
+</UserControl>

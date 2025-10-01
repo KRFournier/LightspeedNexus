@@ -8,17 +8,10 @@
 				<Button Classes="clear" Content="Click Me!" />
 				<Button Classes="gray" Content="Click Me!" />
 				<Button Classes="red" Content="Click Me!" />
-				<Button Classes="green" Content="Click Me!" />
+				<Button Classes="noscale" Content="Click Me!" />
 			</StackPanel>
 		</Border>
     </Design.PreviewWith>
-
-	<Styles.Resources>
-		<Color x:Key="Blue">#21458d</Color>
-		<Color x:Key="Red">#b52d25</Color>
-		<Color x:Key="Green">#218d21</Color>
-		<Color x:Key="Gray">#4c4c4c</Color>
-	</Styles.Resources>
 
 	<Style Selector="Button">
 		<Style Selector="^.gray">
@@ -39,9 +32,19 @@
 				<SolidColorBrush Color="{StaticResource Green}" Opacity="0.4"/>
 			</Setter>
 		</Style>
+		<Style Selector="^.outlined">
+			<Setter Property="Background" Value="Transparent"/>
+			<Setter Property="BorderBrush" Value="{StaticResource White}"/>
+		</Style>
 		<Style Selector="^.clear">
 			<Setter Property="Background" Value="Transparent"/>
 			<Setter Property="BorderBrush" Value="Transparent"/>
+		</Style>
+		<Style Selector="^.noscale:pointerover">
+			<Setter Property="RenderTransform" Value="scale(1.0)" />
+		</Style>
+		<Style Selector="^.noscale:pressed">
+			<Setter Property="RenderTransform" Value="scale(0.9)" />
 		</Style>
 	</Style>
 	

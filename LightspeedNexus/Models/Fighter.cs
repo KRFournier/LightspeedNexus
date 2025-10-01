@@ -44,9 +44,8 @@ public class WeaponRating
 /// <summary>
 /// A fighter is a Lightspeed competitor who has or will participate in events
 /// </summary>
-public class Fighter
+public class Fighter : CollectionObject
 {
-    public Guid Id { get; set; } = Guid.Empty;
     public int? OnlineId { get; set; } = null;
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
@@ -55,11 +54,10 @@ public class Fighter
     public WeaponRating Ren { get; set; } = new() { Class = WeaponClass.Ren, Rank = Rank.U };
     public WeaponRating Tano { get; set; } = new() { Class = WeaponClass.Tano, Rank = Rank.U };
 
-    public Fighter() { }
+    public Fighter() : base() { }
 
-    public Fighter(Fighter other)
+    public Fighter(Fighter other) : base(other)
     {
-        Id = other.Id;
         OnlineId = other.OnlineId;
         FirstName = other.FirstName;
         LastName = other.LastName;
@@ -133,4 +131,8 @@ public class Fighter
         Ren.UpdateFrom(other.Ren);
         Tano.UpdateFrom(other.Tano);
     }
+
+    public override string ToString() => FullName;
+
+    public string FullName => $"{FirstName} {LastName}";
 }

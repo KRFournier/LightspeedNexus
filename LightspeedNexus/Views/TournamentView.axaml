@@ -1,0 +1,26 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:LightspeedNexus.ViewModels"
+			 xmlns:v="clr-namespace:LightspeedNexus.Views"
+			 xmlns:c="clr-namespace:LightspeedNexus.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="LightspeedNexus.Views.TournamentView"
+			 x:DataType="vm:TournamentViewModel">
+	<Panel>
+		<TabControl x:Name="TabPanel"
+					TabStripPlacement="Left"
+					Padding="0">
+			<TabItem>
+				<TabItem.Header>
+					<Grid ColumnDefinitions="Auto,*">
+						<PathIcon Data="{StaticResource settings_regular}" Margin="0 0 8 0"/>
+						<TextBlock Grid.Column="1" Text="Settings" VerticalAlignment="Center"/>
+					</Grid>
+				</TabItem.Header>
+				<v:SettingsView/>
+			</TabItem>
+		</TabControl>
+	</Panel>
+</UserControl>

@@ -1,6 +1,7 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:local="clr-namespace:LightspeedNexus"
+			 xmlns:conv="clr-namespace:LightspeedNexus.Converters"             
              x:Class="LightspeedNexus.App"
              RequestedThemeVariant="Dark">
 	
@@ -8,19 +9,30 @@
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
 				<MergeResourceInclude Source="avares://LightspeedNexus/Styles/ButtonTemplate.axaml"/>
+				<MergeResourceInclude Source="avares://LightspeedNexus/Styles/ToggleButtonTemplate.axaml"/>
+				<MergeResourceInclude Source="avares://LightspeedNexus/Styles/CheckBoxTemplate.axaml"/>
+				<MergeResourceInclude Source="avares://LightspeedNexus/Styles/RadioButtonTemplate.axaml"/>
 				<MergeResourceInclude Source="avares://LightspeedNexus/Styles/TextBoxTemplate.axaml"/>
+				<MergeResourceInclude Source="avares://LightspeedNexus/Styles/ComboBoxTemplate.axaml" />
+				<MergeResourceInclude Source="avares://LightspeedNexus/Styles/CalendarDatePickerTemplate.axaml"/>
+				<MergeResourceInclude Source="avares://LightspeedNexus/Styles/AutoCompleteBoxTemplate.axaml"/>
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 		<FontFamily x:Key="Prototype">avares://LightspeedNexus/Assets/Fonts#Prototype</FontFamily>
 		<FontFamily x:Key="Electrolize">avares://LightspeedNexus/Assets/Fonts#Electrolize</FontFamily>
+		<conv:VenueToStringConverter x:Key="VenueToString"/>
+		<conv:RadioButtonValueConverter x:Key="RadioValue"/>
 	</Application.Resources>
 
 	<Application.Styles>
 		<FluentTheme />
+		<StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
+		<StyleInclude Source="avares://LightspeedNexus/Styles/Colors.axaml" />
 		<StyleInclude Source="avares://LightspeedNexus/Styles/Icons.axaml" />
 		<StyleInclude Source="avares://LightspeedNexus/Styles/Graphics.axaml" />
 		<StyleInclude Source="avares://LightspeedNexus/Styles/Animations.axaml" />
 		<StyleInclude Source="avares://LightspeedNexus/Styles/ButtonStyles.axaml" />
+		<StyleInclude Source="avares://LightspeedNexus/Styles/TabItemStyles.axaml" />
 		<StyleInclude Source="avares://LightspeedNexus/Styles/TextBlockStyles.axaml" />
 		<StyleInclude Source="avares://LightspeedNexus/Styles/TextBoxStyles.axaml" />
 		<StyleInclude Source="avares://LightspeedNexus/Styles/LightspeedBorderStyles.axaml" />

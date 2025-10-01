@@ -38,30 +38,32 @@
 			   Grid.Row="1"
 			   HorizontalAlignment="Stretch">
 			<Viewbox ClipToBounds="False">
-				<Grid RowDefinitions="100,20,100,20,75"
+				<Grid RowDefinitions="100,20,60,20,75"
 					  HorizontalAlignment="Center"
 					  VerticalAlignment="Center">
-					<Button Grid.Row="0"
+					<!--<Button Grid.Row="0"
 							HorizontalAlignment="Stretch"
 							VerticalAlignment="Stretch"
 							HorizontalContentAlignment="Center"
-							VerticalContentAlignment="Center">
+							VerticalContentAlignment="Center"
+							Command="{Binding GotoNewCompetitionCommand}">
 						<StackPanel Spacing="8">
 							<TextBlock Classes="large" HorizontalAlignment="Center">New Competition</TextBlock>
 							<TextBlock Classes="info" HorizontalAlignment="Center">Plan a single or multi-event competition</TextBlock>
 						</StackPanel>
-					</Button>
-					<Button Grid.Row="2"
+					</Button>-->
+					<Button Grid.Row="0"
 							HorizontalAlignment="Stretch"
 							VerticalAlignment="Stretch"
 							HorizontalContentAlignment="Center"
-							VerticalContentAlignment="Center">
+							VerticalContentAlignment="Center"
+							Command="{Binding GotoTournamentCommand}">
 						<StackPanel Spacing="8">
-							<TextBlock Classes="large" HorizontalAlignment="Center">Quick Tournament</TextBlock>
-							<TextBlock Classes="info" HorizontalAlignment="Center">Jump straight into a tournament</TextBlock>
+							<TextBlock Classes="large" HorizontalAlignment="Center">New Tournament</TextBlock>
+							<!--<TextBlock Classes="info" HorizontalAlignment="Center">Jump into a tournament</TextBlock>-->
 						</StackPanel>
 					</Button>
-					<Button Grid.Row="4"
+					<Button Grid.Row="2"
 							HorizontalAlignment="Stretch"
 							VerticalAlignment="Stretch"
 							HorizontalContentAlignment="Center"

@@ -15,16 +15,27 @@ public enum DialogButton
 /// <summary>
 /// Notifies the main view that the current page should be set to the given viewmodel
 /// </summary>
-public class NavigatePageMessage(ViewModelBase viewModel) : ValueChangedMessage<ViewModelBase>(viewModel)
+public class NavigatePageMessage(ViewModelBase viewModel)
+{
+    public ViewModelBase Page = viewModel;
+}
+
+/// <summary>
+/// Notifies the main view that the current page should be set to the home viewmodel
+/// </summary>
+public class NavigateHomeMessage()
 {
 }
 
 /// <summary>
 /// Notifies the main view that the given viewmodel should be opened as a dialog
 /// </summary>
-public class OpenDialogMessage(ViewModelBase item,
+public class OpenDialogMessage(
+    ViewModelBase item,
+    string title,
     DialogButton[] additionalButtons,
-    Action<ViewModelBase, OpenDialogMessage.DialogResponse> handler)
+    Action<ViewModelBase, OpenDialogMessage.DialogResponse> handler
+    )
 {
     /// <summary>
     /// Possible responses from the dialog
@@ -41,6 +52,11 @@ public class OpenDialogMessage(ViewModelBase item,
     /// The initial content for the dialog
     /// </summary>
     public readonly ViewModelBase Item = item;
+
+    /// <summary>
+    /// The dialog box title
+    /// </summary>
+    public readonly string Title = title;
 
     /// <summary>
     /// Whether the dialog should show a delete button
