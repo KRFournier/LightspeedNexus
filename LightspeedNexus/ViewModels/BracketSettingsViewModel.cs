@@ -1,72 +1,50 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using LightspeedNexus.Models;
-using System;
 
 namespace LightspeedNexus.ViewModels;
 
 /// <summary>
 /// All the settings for the bracket
 /// </summary>
-public partial class BracketSettingsViewModel : ViewModelBase
+public partial class BracketSettingsViewModel : MatchSettingsViewModel
 {
-    #region Model
-
-    /// <summary>
-    /// The model
-    /// </summary>
-    private BracketSettings _model = new();
-    public BracketSettings Model
-    {
-        get => _model;
-        set
-        {
-            if (_model != value)
-            {
-                _model = value;
-                MatchSettings = new MatchSettingsViewModel() { Model = value.MatchSettings };
-                OnPropertyChanged(nameof(HasThirdPlaceMatch));
-                OnPropertyChanged(nameof(IsFullAdvancement));
-            }
-        }
-    }
-
-    /// <summary>
-    /// The global settings for bracket matches
-    /// </summary>
-    [ObservableProperty]
-    private MatchSettingsViewModel _matchSettings = new();
+    #region Properties
 
     /// <summary>
     /// Determines if the brackets will have a third place match
     /// </summary>
-    public bool HasThirdPlaceMatch
-    {
-        get => Model.HasThirdPlaceMatch;
-        set
-        {
-            if (value != Model.HasThirdPlaceMatch)
-            {
-                Model.HasThirdPlaceMatch = value;
-                OnPropertyChanged(nameof(HasThirdPlaceMatch));
-            }
-        }
-    }
+    [ObservableProperty]
+    public partial bool HasThirdPlaceMatch { get; set; }
 
     /// <summary>
     /// Determines if all players advance to the brackets, or just the top X players
     /// </summary>
-    public bool IsFullAdvancement
-    {
-        get => Model.IsFullAdvancement;
-        set
-        {
-            if (value != Model.IsFullAdvancement)
-            {
-                Model.IsFullAdvancement = value;
-                OnPropertyChanged(nameof(IsFullAdvancement));
-            }
-        }
-    }
+    [ObservableProperty]
+    public partial bool IsFullAdvancement { get; set; }
 
     #endregion
+
+    /// <summary>
+    /// Creates brand new bracket settings
+    /// </summary>
+    public BracketSettingsViewModel() { }
+
+    /// <summary>
+    /// Loads bracket settings from a model
+    /// </summary>
+    public BracketSettingsViewModel(BracketSettings model) : base(model)
+    {
+        HasThirdPlaceMatch = model.HasThirdPlaceMatch;
+        IsFullAdvancement = model.IsFullAdvancement;
+    }
+
+    /// <summary>
+    /// The model
+    /// </summary>
+    public new BracketSettings ToModel() => new(WinningScore, TimeLimit, HasThirdPlaceMatch, IsFullAdvancement);
+
+    /// <summary>
+    /// The match settingn model
+    /// </summary>
+    public MatchSettings ToMatchSettings() => base.ToModel();
 }

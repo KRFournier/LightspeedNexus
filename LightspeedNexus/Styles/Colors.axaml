@@ -3,7 +3,7 @@
 	
 	<Design.PreviewWith>
 		<Border Padding="20"
-				Background="{StaticResource BlueRed}"
+				Background="{StaticResource LimeBackground}"
 				BorderBrush="{StaticResource BlueRed}">
 		</Border>
 	</Design.PreviewWith>
@@ -34,6 +34,19 @@
 			<SolidColorBrush x:Key="MagentaBrush" Color="{StaticResource Magenta}"/>
 			<SolidColorBrush x:Key="GrayBrush" Color="{StaticResource Gray}"/>
 			<SolidColorBrush x:Key="WhiteBrush" Color="{StaticResource White}"/>
+			<SolidColorBrush x:Key="RedBackground" Color="{StaticResource Red}" Opacity="0.4"/>
+			<SolidColorBrush x:Key="OrangeBackground" Color="{StaticResource Orange}" Opacity="0.4"/>
+			<SolidColorBrush x:Key="YellowBackground" Color="{StaticResource Yellow}" Opacity="0.4"/>
+			<SolidColorBrush x:Key="LimeBackground" Color="{StaticResource Lime}" Opacity="0.4"/>
+			<SolidColorBrush x:Key="GreenBackground" Color="{StaticResource Green}" Opacity="0.4"/>
+			<SolidColorBrush x:Key="TealBackground" Color="{StaticResource Teal}" Opacity="0.4"/>
+			<SolidColorBrush x:Key="BlueBackground" Color="{StaticResource Blue}" Opacity="0.4"/>
+			<SolidColorBrush x:Key="PurpleBackground" Color="{StaticResource Purple}" Opacity="0.4"/>
+			<SolidColorBrush x:Key="VioletBackground" Color="{StaticResource Violet}" Opacity="0.4"/>
+			<SolidColorBrush x:Key="MagentaBackground" Color="{StaticResource Magenta}" Opacity="0.4"/>
+			<SolidColorBrush x:Key="GrayBackground" Color="{StaticResource Gray}" Opacity="0.4"/>
+			<SolidColorBrush x:Key="WhiteBackground" Color="{StaticResource White}" Opacity="0.4"/>
+			<SolidColorBrush x:Key="BlackBackground" Color="Black" Opacity="0.5"/>
 			<LinearGradientBrush x:Key="BlueRed">
 				<GradientStop Color="{StaticResource Blue}" Offset="0.0"/>
 				<GradientStop Color="{StaticResource Red}" Offset="1.0"/>

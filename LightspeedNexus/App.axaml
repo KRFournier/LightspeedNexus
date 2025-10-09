@@ -20,8 +20,10 @@
 		</ResourceDictionary>
 		<FontFamily x:Key="Prototype">avares://LightspeedNexus/Assets/Fonts#Prototype</FontFamily>
 		<FontFamily x:Key="Electrolize">avares://LightspeedNexus/Assets/Fonts#Electrolize</FontFamily>
-		<conv:VenueToStringConverter x:Key="VenueToString"/>
+		<!--<conv:VenueToStringConverter x:Key="VenueToString"/>-->
 		<conv:RadioButtonValueConverter x:Key="RadioValue"/>
+		<conv:TrueToFadedConverter x:Key="TrueToFaded"/>
+		<conv:TrueToInvisibleConverter x:Key="TrueToInvis"/>
 	</Application.Resources>
 
 	<Application.Styles>

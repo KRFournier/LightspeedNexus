@@ -1,11 +1,12 @@
 <Styles xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:c="clr-namespace:LightspeedNexus.Controls">
   
     <Design.PreviewWith>
 		<Border Padding="20">
 			<StackPanel Spacing="20">
 				<Button Content="Click Me!" />
-				<Button Classes="clear" Content="Click Me!" />
+				<Button Classes="toolbar" Content="Click Me!" />
 				<Button Classes="gray" Content="Click Me!" />
 				<Button Classes="red" Content="Click Me!" />
 				<Button Classes="noscale" Content="Click Me!" />
@@ -16,21 +17,15 @@
 	<Style Selector="Button">
 		<Style Selector="^.gray">
 			<Setter Property="BorderBrush" Value="{StaticResource Gray}"/>
-			<Setter Property="Background">
-				<SolidColorBrush Color="{StaticResource Gray}" Opacity="0.4"/>
-			</Setter>
+			<Setter Property="Background" Value="{StaticResource GrayBackground}"/>
 		</Style>
 		<Style Selector="^.red">
 			<Setter Property="BorderBrush" Value="{StaticResource Red}"/>
-			<Setter Property="Background">
-				<SolidColorBrush Color="{StaticResource Red}" Opacity="0.4"/>
-			</Setter>
+			<Setter Property="Background" Value="{StaticResource RedBackground}"/>
 		</Style>
 		<Style Selector="^.green">
 			<Setter Property="BorderBrush" Value="{StaticResource Green}"/>
-			<Setter Property="Background">
-				<SolidColorBrush Color="{StaticResource Green}" Opacity="0.4"/>
-			</Setter>
+			<Setter Property="Background" Value="{StaticResource GreenBackground}"/>
 		</Style>
 		<Style Selector="^.outlined">
 			<Setter Property="Background" Value="Transparent"/>
@@ -46,6 +41,26 @@
 		<Style Selector="^.noscale:pressed">
 			<Setter Property="RenderTransform" Value="scale(0.9)" />
 		</Style>
+		<Style Selector="^.toolbar">
+			<Setter Property="Background" Value="#0021458d"/>
+			<Setter Property="BorderBrush" Value="#0021458d"/>
+			<Setter Property="Transitions">
+				<Transitions>
+					<TransformOperationsTransition Property="RenderTransform" Duration="0:0:.075" />
+					<BrushTransition Property="BorderBrush" Duration="0:0:.075" />
+					<BrushTransition Property="Background" Duration="0:0:.075" />
+				</Transitions>
+			</Setter>
+			<Style Selector="^:pointerover">
+				<Setter Property="BorderBrush" Value="{StaticResource Blue}"/>
+				<Setter Property="Background" Value="{StaticResource BlueBackground}"/>
+				<Setter Property="RenderTransform" Value="scale(1.0)" />
+			</Style>
+			<Style Selector="^:pressed">
+				<Setter Property="RenderTransform" Value="scale(0.9)" />
+			</Style>
+		</Style>
+		
 	</Style>
 	
 </Styles>

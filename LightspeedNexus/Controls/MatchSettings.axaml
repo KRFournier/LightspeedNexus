@@ -6,25 +6,20 @@
 			 xmlns:m="clr-namespace:LightspeedNexus.Models"
              xmlns:c="clr-namespace:LightspeedNexus.Controls"
              mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="80"
-             x:Class="LightspeedNexus.Views.MatchSettingsView"
-			 x:DataType="vm:MatchSettingsViewModel">
+             x:Class="LightspeedNexus.Controls.MatchSettings">
 	
-	<Design.DataContext>
-		<vm:MatchSettingsViewModel/>
-	</Design.DataContext>
-
 	<UserControl.Styles>
 		<Style Selector="Button.left /template/ c|LightspeedBorder#PART_Border">
 			<Setter Property="CornerThickness" Value="23,23,0,0"/>
 			<Setter Property="RenderTransform" Value="{x:Null}"/>
 			<Setter Property="BorderThickness" Value="0"/>
 			<Setter Property="Background">
-				<SolidColorBrush Color="{StaticResource Blue}" Opacity="0.3"/>
+				<SolidColorBrush Color="{StaticResource Blue}" Opacity="0.35"/>
 			</Setter>
 			<Style Selector="^:pointerover">
 				<Setter Property="Background">
-					<SolidColorBrush Color="{StaticResource Blue}" Opacity="0.5"/>
-				</Setter>				
+					<SolidColorBrush Color="{StaticResource Blue}" Opacity="0.55"/>
+				</Setter>
 			</Style>
 		</Style>
 		<Style Selector="Button.squareblue /template/ c|LightspeedBorder#PART_Border">
@@ -59,11 +54,11 @@
 			<Setter Property="RenderTransform" Value="{x:Null}"/>
 			<Setter Property="BorderThickness" Value="0"/>
 			<Setter Property="Background">
-				<SolidColorBrush Color="{StaticResource Red}" Opacity="0.3"/>
+				<SolidColorBrush Color="{StaticResource Red}" Opacity="0.35"/>
 			</Setter>
 			<Style Selector="^:pointerover">
 				<Setter Property="Background">
-					<SolidColorBrush Color="{StaticResource Red}" Opacity="0.5"/>
+					<SolidColorBrush Color="{StaticResource Red}" Opacity="0.55"/>
 				</Setter>
 			</Style>
 		</Style>
@@ -83,7 +78,7 @@
 					VerticalAlignment="Stretch"
 					HorizontalAlignment="Stretch"
 					CornerRadius="0"
-					Command="{Binding DecreaseCommand}">
+					Click="Decrease_Click">
 				<PathIcon Width="24" Height="24" Data="{StaticResource arrow_previous_regular}"/>
 			</Button>
 			<Button Grid.Column="1"
@@ -91,13 +86,13 @@
 					Classes="noscale squareblue"
 					VerticalAlignment="Stretch"
 					HorizontalAlignment="Stretch"
-					Command="{Binding DecreaseScoreCommand}">
+					Click="DecreaseScore_Click">
 				<PathIcon Width="12" Height="12" Data="{StaticResource remove_regular}"/>
 			</Button>
-			<TextBlock Grid.Column="2"
+			<TextBlock x:Name="ScoreTextBlock"
+					   Grid.Column="2"
 					   Grid.Row="0"
 					   Margin="0"
-					   Text="{Binding WinningScore, StringFormat='{}{0}pts'}"
 					   VerticalAlignment="Center"
 					   HorizontalAlignment="Center"/>
 			<Button Grid.Column="3"
@@ -105,7 +100,7 @@
 					Classes="noscale squarered"
 					VerticalAlignment="Stretch"
 					HorizontalAlignment="Stretch"
-					Command="{Binding IncreaseScoreCommand}">
+					Click="IncreaseScore_Click">
 				<PathIcon Width="12" Height="12" Data="{StaticResource add_regular}"/>
 			</Button>
 			<Button Grid.Column="1"
@@ -113,12 +108,12 @@
 					Classes="noscale squareblue"
 					VerticalAlignment="Stretch"
 					HorizontalAlignment="Stretch"
-					Command="{Binding DecreaseTimeCommand}">
+					Click="DecreaseTime_Click">
 				<PathIcon Width="12" Height="12" Data="{StaticResource remove_regular}"/>
 			</Button>
-			<TextBlock Grid.Column="2"
+			<TextBlock x:Name="TimeTextBlock"
+					   Grid.Column="2"
 					   Grid.Row="1"
-					   Text="{Binding TimeLimit, StringFormat='m\\:ss'}"
 					   VerticalAlignment="Center"
 					   HorizontalAlignment="Center"/>
 			<Button Grid.Column="3"
@@ -126,7 +121,7 @@
 					Classes="noscale squarered"
 					VerticalAlignment="Stretch"
 					HorizontalAlignment="Stretch"
-					Command="{Binding IncreaseTimeCommand}">
+					Click="IncreaseTime_Click">
 				<PathIcon Width="12" Height="12" Data="{StaticResource add_regular}"/>
 			</Button>
 			<Button Grid.Column="4"
@@ -134,9 +129,10 @@
 					Classes="noscale right red"
 					VerticalAlignment="Stretch"
 					HorizontalAlignment="Stretch"
-					Command="{Binding IncreaseCommand}">
+					Click="Increase_Click">
 				<PathIcon Width="24" Height="24" Data="{StaticResource arrow_next_regular}"/>
 			</Button>
 		</Grid>
 	</c:LightspeedBorder>
+	
 </UserControl>

@@ -76,7 +76,7 @@ public static class StorageService
     private static string GetCollectionName<T>() => typeof(T).Name.ToLowerInvariant() + "s";
 
     /// <summary>
-    /// Saves a fighter
+    /// Saves an item
     /// </summary>
     public static void Write<T>(T item) where T : CollectionObject
     {
@@ -86,7 +86,7 @@ public static class StorageService
     }
 
     /// <summary>
-    /// Gets all fighters in the database
+    /// Gets all items in the collection
     /// </summary>
     public static T[] ReadAll<T>() where T : CollectionObject
     {
@@ -97,7 +97,17 @@ public static class StorageService
     }
 
     /// <summary>
-    /// Deletes the given fighter
+    /// Gets the item with the given id
+    /// </summary>
+    public static T Get<T>(Guid id) where T : CollectionObject
+    {
+        using var db = GetDatabase();
+        var fightersCollection = db.GetCollection<T>(GetCollectionName<T>());
+        return fightersCollection.FindById(id);
+    }
+
+    /// <summary>
+    /// Deletes the given item
     /// </summary>
     public static void Delete<T>(T item) where T : CollectionObject
     {

@@ -23,7 +23,12 @@ public partial class EventViewModel : ViewModelBase
         {
             if (_model != value)
             {
+                OnPropertyChanging(nameof(Model));
+                OnPropertyChanging(nameof(Type));
+                OnPropertyChanging(nameof(Name));
+                OnPropertyChanging(nameof(Start));
                 _model = value;
+                OnPropertyChanged(nameof(Model));
                 OnPropertyChanged(nameof(Type));
                 OnPropertyChanged(nameof(Name));
                 OnPropertyChanged(nameof(Start));
@@ -38,6 +43,7 @@ public partial class EventViewModel : ViewModelBase
         {
             if (Model.Type != value)
             {
+                OnPropertyChanging(nameof(Type));
                 Model.Type = value;
                 OnPropertyChanged(nameof(Type));
             }
@@ -51,6 +57,7 @@ public partial class EventViewModel : ViewModelBase
         {
             if (Model.Name != value)
             {
+                OnPropertyChanging(nameof(Name));
                 Model.Name = value;
                 OnPropertyChanged(nameof(Name));
             }
@@ -64,6 +71,7 @@ public partial class EventViewModel : ViewModelBase
         {
             if (Model.Day != value)
             {
+                OnPropertyChanging(nameof(Day));
                 Model.Day = value;
                 OnPropertyChanged(nameof(Day));
             }
@@ -77,6 +85,8 @@ public partial class EventViewModel : ViewModelBase
         {
             if (Model.Start != value)
             {
+                OnPropertyChanging(nameof(Start));
+                OnPropertyChanging(nameof(End));
                 Model.Start = value;
                 OnPropertyChanged(nameof(Start));
                 OnPropertyChanged(nameof(End));
@@ -87,10 +97,6 @@ public partial class EventViewModel : ViewModelBase
     public TimeSpan Duration => Model.Duration;
 
     #endregion
-
-    public EventViewModel()
-    {
-    }
 
     public TimeOnly End => TimeOnly.FromTimeSpan(Start.ToTimeSpan() + Duration);
 }

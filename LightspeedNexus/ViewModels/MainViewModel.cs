@@ -11,6 +11,10 @@ namespace LightspeedNexus.ViewModels;
 
 public partial class MainViewModel : ViewModelBase
 {
+    //// TESTING!!!!!!!
+    //[ObservableProperty]
+    //private FightersViewModel _fighters = new();
+
     [ObservableProperty]
     private ViewModelBase _currentPage = new HomeViewModel();
 
@@ -29,25 +33,7 @@ public partial class MainViewModel : ViewModelBase
     public MainViewModel()
     {
         WeakReferenceMessenger.Default.Register<NavigatePageMessage>(this, (_, msg) => CurrentPage = msg.Page);
-
         WeakReferenceMessenger.Default.Register<NavigateHomeMessage>(this, (_, _) => CurrentPage = new HomeViewModel());
-
-        //WeakReferenceMessenger.Default.Register<OpenDialogMessage>(this, (_, m) =>
-        //{
-        //    _dialogMessage = m;
-        //    Dialog = m.Item;
-        //    UsingDeleteButton = m.AdditionalButtons.Contains(DialogButton.Delete);
-        //});
-
-        //WeakReferenceMessenger.Default.Register<CloseDialogMessage>(this, (_, _) =>
-        //{
-        //    Dialog = null;
-        //});
-
-        //WeakReferenceMessenger.Default.Register<MessageBoxMessage>(this, (_, m) =>
-        //{
-        //    Message = m.Value;
-        //});
     }
 
     #region Dialog Box

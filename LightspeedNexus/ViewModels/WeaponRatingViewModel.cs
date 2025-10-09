@@ -1,63 +1,32 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using LightspeedNexus.Models;
-using System;
 
 namespace LightspeedNexus.ViewModels;
 
 public partial class WeaponRatingViewModel : ViewModelBase
 {
-    private WeaponRating _rating = new();
-
-    public WeaponRating Rating
+    public WeaponRating Model
     {
-        get => _rating;
+        get => new(Class, Rank);
         set
         {
-            SetProperty(ref _rating, value);
-            OnPropertyChanged(nameof(Class));
-            OnPropertyChanged(nameof(Rank));
+            Class = value.Class;
+            Rank = value.Rank;
         }
     }
 
-    public string Class
-    {
-        get => Rating.Class.ToString();
-        set
-        {
-            if(Enum.TryParse<WeaponClass>(value, out var weaponClass) && Rating.Class != weaponClass)
-            {
-                Rating.Class = weaponClass;
-                OnPropertyChanged(nameof(Class));
-            }
-        }
-    }
+    [ObservableProperty]
+    public partial WeaponClass Class { get; set; }
 
-    public string Rank
-    {
-        get => Rating.Rank.ToString();
-        set
-        {
-            if (Rating.Rank != value)
-            {
-                Rating.Rank = value;
-                OnPropertyChanged(nameof(Rank));
-            }
-        }
-    }
+    [ObservableProperty]
+    public partial Rank Rank { get; set; }
 
     [RelayCommand]
-    private void IncrementRank()
-    {
-        Rating.Rank++;
-        OnPropertyChanged(nameof(Rank));
-    }
+    private void IncrementRank() => Rank++;
 
     [RelayCommand]
-    private void DecrementRank()
-    {
-        Rating.Rank--;
-        OnPropertyChanged(nameof(Rank));
-    }
+    private void DecrementRank() => Rank--;
 
-    public override string ToString() => Rank;
+    public override string ToString() => Rank.ToString();
 }

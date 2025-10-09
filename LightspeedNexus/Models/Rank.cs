@@ -149,6 +149,48 @@ public readonly struct Rank : IComparable<Rank>
     /// </summary>
     public int CompareTo(Rank other) => Value - other.Value;
 
+    /// <summary>
+    /// Combines one's highest rank with another rank, returning a
+    /// somewhat average of the two.
+    /// </summary>
+    public static Rank Combine(Rank highest, Rank weapon)
+    {
+        if (weapon > highest)
+            return weapon;
+
+        switch (highest._rank)
+        {
+            case 'A': return weapon._rank switch
+                {
+                    'A' or 'B' => A,
+                    'C' or 'D' => B,
+                    _ => C
+                };
+            case 'B':
+                return weapon._rank switch
+                {
+                    'B' or 'C' => B,
+                    'D' or 'E' => C,
+                    _ => D
+                };
+            case 'C':
+                return weapon._rank switch
+                {
+                    'C' => C,
+                    'D' or 'E' => D,
+                    _ => E
+                };
+            case 'D':
+                return weapon._rank switch
+                {
+                    'D' => D,
+                    'E' => E,
+                    _ => U
+                };
+            default: return U;
+        }
+    }
+
     public static readonly Rank A = new('A');
     public static readonly Rank B = new('B');
     public static readonly Rank C = new('C');

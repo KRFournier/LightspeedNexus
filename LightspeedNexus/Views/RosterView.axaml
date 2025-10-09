@@ -1,0 +1,278 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:LightspeedNexus.ViewModels"
+			 xmlns:m="clr-namespace:LightspeedNexus.Models"
+			 xmlns:v="clr-namespace:LightspeedNexus.Views"
+			 xmlns:c="clr-namespace:LightspeedNexus.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="LightspeedNexus.Views.RosterView"
+			 x:DataType="vm:RosterViewModel">
+	
+	<Grid x:Name="Root"
+		  ColumnDefinitions="*,10,400"
+		  RowDefinitions="Auto,10,*">
+
+		<!--Search Box-->
+		<AutoCompleteBox x:Name="RosterSearch"
+						 FilterMode="Contains"
+						 ItemsSource="{Binding FighterNames}"
+						 SelectedItem="{Binding SelectedFighter}"
+						 Text="{Binding FighterSearchText}"
+						 Watermark="Search..."
+						 IsTextCompletionEnabled="True">
+			<AutoCompleteBox.KeyBindings>
+				<KeyBinding Gesture="Enter"								
+							Command="{Binding AddFighterCommand}"/>
+			</AutoCompleteBox.KeyBindings>
+			<AutoCompleteBox.InnerRightContent>
+				<Button Classes="clear"
+						Padding="5,0"
+						Command="{Binding NewFighterCommand}">
+					<StackPanel Orientation="Horizontal"
+								VerticalAlignment="Center"
+								Spacing="5">
+						<PathIcon Height="16" Data="{StaticResource add_regular}"/>
+						<TextBlock Text="New Fighter"/>
+					</StackPanel>
+				</Button>
+			</AutoCompleteBox.InnerRightContent>
+		</AutoCompleteBox>
+
+		<!-- Players -->
+		<ScrollViewer Grid.Row="2">
+			<ItemsControl ItemsSource="{Binding SortedPlayers}">
+				<ItemsControl.ItemsPanel>
+					<ItemsPanelTemplate>
+						<StackPanel Spacing="10"/>
+					</ItemsPanelTemplate>
+				</ItemsControl.ItemsPanel>
+				<ItemsControl.ItemTemplate>
+					<DataTemplate DataType="vm:PlayerViewModel">
+						<c:LightspeedBorder Classes="item"
+											DoubleTapped="Player_DoubleTapped">
+							<Grid ColumnDefinitions="*,10,50,10,*,10,Auto">
+								<TextBlock Classes="large"
+										   Text="{Binding FullName}"
+										   VerticalAlignment="Center"/>
+								<TextBlock Grid.Column="2"
+										   Classes="large"
+										   Text="{Binding Rank}"
+										   VerticalAlignment="Center"/>
+								<StackPanel Grid.Column="4"
+											Orientation="Horizontal"
+											Spacing="5"
+											HorizontalAlignment="Center">
+									<RadioButton Padding="2"
+												 Theme="{StaticResource RadioButtonButtons}"
+												 GroupName="{Binding FullName}"
+												 IsChecked="{Binding WeaponOfChoice,
+													 Converter={StaticResource RadioValue},
+													 ConverterParameter={x:Static m:WeaponClass.Rey}}"
+												 Width="50"
+												 ToolTip.Tip="Rey"
+												 HorizontalAlignment="Stretch"
+												 VerticalAlignment="Stretch"
+												 VerticalContentAlignment="Stretch"
+												 IsEnabled="{Binding #Root.((vm:RosterViewModel)DataContext).Settings.ReyAllowed}">
+										<Panel>
+											<Image Source="{StaticResource di_Rey}"/>
+											<TextBlock HorizontalAlignment="Right"
+													   VerticalAlignment="Bottom"
+													   Text="{Binding ReyRank}"/>
+										</Panel>
+									</RadioButton>
+									<RadioButton Padding="2"
+												 Theme="{StaticResource RadioButtonButtons}"
+												 GroupName="{Binding FullName}"
+												 IsChecked="{Binding WeaponOfChoice,
+													 Converter={StaticResource RadioValue},
+													 ConverterParameter={x:Static m:WeaponClass.Ren}}"
+												 Width="50"
+												 ToolTip.Tip="Ren"
+												 HorizontalAlignment="Stretch"
+												 VerticalAlignment="Stretch"
+												 VerticalContentAlignment="Stretch"
+												 IsEnabled="{Binding #Root.((vm:RosterViewModel)DataContext).Settings.RenAllowed}">
+										<Panel>
+											<Image Source="{StaticResource di_Ren}"/>
+											<TextBlock HorizontalAlignment="Right"
+													   VerticalAlignment="Bottom"
+													   Text="{Binding RenRank}"/>
+										</Panel>
+									</RadioButton>
+									<RadioButton Padding="2"
+												 Theme="{StaticResource RadioButtonButtons}"
+												 GroupName="{Binding FullName}"
+												 IsChecked="{Binding WeaponOfChoice,
+													 Converter={StaticResource RadioValue},
+													 ConverterParameter={x:Static m:WeaponClass.Tano}}"
+												 Width="50"
+												 ToolTip.Tip="Tano"
+												 HorizontalAlignment="Stretch"
+												 VerticalAlignment="Stretch"
+												 VerticalContentAlignment="Stretch"
+												 IsEnabled="{Binding #Root.((vm:RosterViewModel)DataContext).Settings.TanoAllowed}">
+										<Panel>
+											<Image Source="{StaticResource di_Tano}"/>
+											<TextBlock HorizontalAlignment="Right"
+													   VerticalAlignment="Bottom"
+													   Text="{Binding TanoRank}"/>
+										</Panel>
+									</RadioButton>
+								</StackPanel>
+								<Button Classes="clear"
+										Grid.Column="6"
+										Command="{Binding #Root.((vm:RosterViewModel)DataContext).RemovePlayerCommand}"
+										CommandParameter="{Binding .}"
+										HorizontalAlignment="Right"
+										VerticalAlignment="Center"
+										IsVisible="{Binding !#Root.((vm:RosterViewModel)DataContext).IsStarted}">
+									<PathIcon Data="{StaticResource delete_regular}"/>
+								</Button>
+							</Grid>
+						</c:LightspeedBorder>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</ScrollViewer>
+
+		<!--Squadron Toolbar-->
+		<Panel Grid.Column="2"
+			   IsVisible="{Binding !IsStarted}">
+			<CheckBox VerticalAlignment="Center"
+					  IsChecked="{Binding IsAuto}"
+					  Content="Auto"/>
+			<Grid ColumnDefinitions="Auto,40,Auto"
+				  HorizontalAlignment="Center">
+				<Button Grid.Column="0"
+						Classes="toolbar"
+						Command="{Binding RemoveSquadronCommand}">
+					<PathIcon Width="12" Height="12" Data="{StaticResource remove_regular}"/>
+				</Button>
+				<TextBlock Grid.Column="1"
+						   Text="{Binding Squadrons.Count}"
+						   VerticalAlignment="Center"
+						   HorizontalAlignment="Center"/>
+				<Button Grid.Column="2"
+						Classes="toolbar"
+						Command="{Binding AddSquadronCommand}">
+					<PathIcon Width="12" Height="12" Data="{StaticResource add_regular}"/>
+				</Button>
+			</Grid>
+			<Button Command="{Binding RefreshCommand}"
+					Classes="toolbar"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Right">
+				<PathIcon Height="16" Data="{StaticResource arrow_clockwise_regular}"/>
+			</Button>
+		</Panel>
+		
+		<!--Squadrons-->
+		<Panel Grid.Column="2"
+			   Grid.Row="2">
+
+			<ScrollViewer x:Name="RosterPanel">
+				<ItemsControl ItemsSource="{Binding Squadrons}">
+					<ItemsControl.ItemTemplate>
+						<DataTemplate DataType="vm:SquadronViewModel">
+							<c:LightspeedBorder BorderBrush="{Binding Color}"
+												TopLeftBackground="{Binding Color}"
+												TopLeftBorderBrush="{Binding Color}"
+												BottomRightBackground="{Binding Color}"
+												BottomRightBorderBrush="{Binding Color}"
+												Padding="5"
+												DragDrop.AllowDrop="True">
+								<StackPanel Spacing="10" DragDrop.AllowDrop="True">
+									<Grid ColumnDefinitions="*,10,Auto"
+										  Margin="18,0,0,0">
+										<TextBlock Text="{Binding Name, StringFormat='{}{0} Squadron'}"
+												   Classes="medium"
+												   Foreground="{Binding Color}"
+												   HorizontalAlignment="Left"
+												   VerticalAlignment="Center"
+												   IsHitTestVisible="False"/>
+										<v:LocalMatchSettingsView DataContext="{Binding Settings}"
+																  Grid.Column="2"
+																  Opacity="0.8"
+																  VerticalAlignment="Center"/>
+									</Grid>
+									<ItemsControl ItemsSource="{Binding Players}"
+												  DragDrop.AllowDrop="True">
+										<ItemsControl.ItemsPanel>
+											<ItemsPanelTemplate>
+												<StackPanel Spacing="4"/>
+											</ItemsPanelTemplate>
+										</ItemsControl.ItemsPanel>
+										<ItemsControl.ItemTemplate>
+											<DataTemplate DataType="vm:PlayerViewModel">
+												<Border Padding="4"
+														CornerRadius="4"
+														Background="#0FFFFFFF"
+														PointerPressed="RosterPlayer_PointerPressed"
+														DragDrop.AllowDrop="True"
+														Opacity="{Binding IsDragging, Converter={StaticResource TrueToInvis}}">
+													<Grid ColumnDefinitions="*,10,16"
+														  IsHitTestVisible="False">
+														<TextBlock Classes="medium"
+																   Text="{Binding FullName}"
+																   IsHitTestVisible="False" />
+														<TextBlock Classes="medium"
+																   Grid.Column="2"
+																   IsHitTestVisible="False"
+																   Text="{Binding Rank}"/>
+													</Grid>
+												</Border>
+											</DataTemplate>
+										</ItemsControl.ItemTemplate>
+									</ItemsControl>
+									<Panel IsHitTestVisible="False"
+										   Opacity="0.8"
+										   Margin="0,0,40,0">
+										<TextBlock Text="{Binding Players.Count, StringFormat='{}{0} players'}"
+												   Classes="info"
+												   HorizontalAlignment="Left"
+												   IsHitTestVisible="False"/>
+										<TextBlock Text="{Binding Weight, StringFormat='{}{0} weight'}"
+												   Classes="info"
+												   ToolTip.Tip="All the ranks added up. All pools should be similar weights."
+												   HorizontalAlignment="Center"
+												   IsHitTestVisible="False"/>
+										<TextBlock Text="{Binding NumMatches, StringFormat='{}{0} matches'}"
+												   Classes="info"
+												   HorizontalAlignment="Right"
+												   IsHitTestVisible="False"/>
+									</Panel>
+								</StackPanel>
+							</c:LightspeedBorder>											
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+			</ScrollViewer>
+			
+		</Panel>
+
+		<Border x:Name="DropPanel"
+				Background="Transparent"
+				IsVisible="False"/>
+
+		<Canvas IsHitTestVisible="False"
+				Background="Transparent"
+				DataContext="{Binding DraggingPlayer}">
+			<Border x:Name="GhostItem"
+					Padding="4"
+					CornerRadius="4"
+					Background="#0FFFFFFF"
+					IsVisible="False"
+					IsHitTestVisible="False">
+				<Grid ColumnDefinitions="*,16">
+					<TextBlock Text="{Binding FullName}" IsHitTestVisible="False"/>
+					<TextBlock Grid.Column="1" Text="{Binding Rank}" IsHitTestVisible="False"/>
+				</Grid>
+			</Border>
+		</Canvas>
+		
+	</Grid>
+	
+</UserControl>

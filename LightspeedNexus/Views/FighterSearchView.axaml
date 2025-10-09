@@ -1,0 +1,63 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:LightspeedNexus.ViewModels"
+			 xmlns:v="clr-namespace:LightspeedNexus.Views"
+			 xmlns:c="clr-namespace:LightspeedNexus.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="LightspeedNexus.Views.FighterSearchView"
+			 x:DataType="vm:FightersViewModel">
+
+	<Design.DataContext>
+		<vm:FightersViewModel>
+			<vm:FightersViewModel.Fighters>
+				<vm:FighterViewModel OnlineId="123"
+									 FirstName="John"
+									 LastName="Doe"
+									 Club="Super Boys"/>
+				<vm:FighterViewModel OnlineId="456"
+									 FirstName="Jane"
+									 LastName="Doe"
+								     Club="Mighty Gals"/>
+				<vm:FighterViewModel OnlineId="789"
+									 FirstName="Nate"
+									 LastName="McCroskey-Izzet"
+								     Club="Basin Saber Academy"/>
+			</vm:FightersViewModel.Fighters>
+		</vm:FightersViewModel>
+	</Design.DataContext>
+
+	<TextBox Grid.Column="2"
+			 VerticalAlignment="Top"
+			 Watermark="Search..."
+			 Text="{Binding SearchText}">
+		<TextBox.InnerRightContent>
+			<Button Classes="clear"
+					IsVisible="{Binding $parent[TextBox].Text, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+					Command="{Binding ClearSearchCommand}">
+				<PathIcon Data="{StaticResource dismiss_regular}"/>
+			</Button>
+		</TextBox.InnerRightContent>
+		<FlyoutBase.AttachedFlyout>
+			<Flyout Placement="BottomEdgeAlignedLeft">
+				<ScrollViewer>
+					<ItemsControl ItemsSource="{Binding SortedFighters}">
+						<ItemsControl.ItemTemplate>
+							<DataTemplate DataType="vm:FighterViewModel">
+								<StackPanel Orientation="Horizontal">
+									<TextBlock Text="{Binding FirstName}"/>
+									<TextBlock Text=" "/>
+									<TextBlock Text="{Binding LastName}"/>
+									<TextBlock Text=" - "/>
+									<TextBlock Text="{Binding Club}"/>
+								</StackPanel>
+							</DataTemplate>
+						</ItemsControl.ItemTemplate>
+					</ItemsControl>
+				</ScrollViewer>
+			</Flyout>
+		</FlyoutBase.AttachedFlyout>
+	</TextBox>
+	
+</UserControl>

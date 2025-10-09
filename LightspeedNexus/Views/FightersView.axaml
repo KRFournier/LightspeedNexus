@@ -85,7 +85,7 @@
 				</ItemsControl.ItemsPanel>
 				<ItemsControl.ItemTemplate>
 					<DataTemplate DataType="vm:FighterViewModel">
-						<c:LightspeedBorder Classes="coloritem"
+						<c:LightspeedBorder Classes="item"
 											Padding="0"
 											Width="300"
 											DoubleTapped="LightspeedBorder_DoubleTapped">
@@ -105,30 +105,33 @@
 								</Grid>
 
 								<TextBlock Classes="info"
-											FontStyle="Italic"
-											Margin="0,5"
-											Text="{Binding Club}"/>
-								<ItemsControl ItemsSource="{Binding Ratings}">
-									<ItemsControl.ItemsPanel>
-										<ItemsPanelTemplate>
-											<WrapPanel Orientation="Horizontal"
-														ItemSpacing="5"
-														LineSpacing="5"/>
-										</ItemsPanelTemplate>
-									</ItemsControl.ItemsPanel>
-									<ItemsControl.ItemTemplate>
-										<DataTemplate DataType="vm:WeaponRatingViewModel">
-											<WrapPanel Orientation="Horizontal"
-														Width="60"
-														ItemSpacing="5">
-												<TextBlock Classes="info"
-															Text="{Binding Class}"/>
-												<TextBlock Classes=""
-															Text="{Binding Rank}"/>
-											</WrapPanel>
-										</DataTemplate>
-									</ItemsControl.ItemTemplate>
-								</ItemsControl>
+										   FontStyle="Italic"
+										   Margin="0,5"
+										   Text="{Binding Club}"/>
+								
+								<WrapPanel Orientation="Horizontal"
+										   ItemSpacing="5"
+										   LineSpacing="5">
+									<WrapPanel Orientation="Horizontal"
+											   Width="60"
+											   ItemSpacing="5">
+										<TextBlock Classes="info" Text="Rey"/>
+										<TextBlock Text="{Binding ReyRank}"/>
+									</WrapPanel>
+									<WrapPanel Orientation="Horizontal"
+											   Width="60"
+											   ItemSpacing="5">
+										<TextBlock Classes="info" Text="Ren"/>
+										<TextBlock Text="{Binding RenRank}"/>
+									</WrapPanel>
+									<WrapPanel Orientation="Horizontal"
+											   Width="60"
+											   ItemSpacing="5">
+										<TextBlock Classes="info" Text="Tano"/>
+										<TextBlock Text="{Binding TanoRank}"/>
+									</WrapPanel>
+								</WrapPanel>
+								
 							</StackPanel>
 						</c:LightspeedBorder>
 					</DataTemplate>

@@ -10,13 +10,10 @@ namespace LightspeedNexus.Models;
 /// <summary>
 /// A fighter is a Lightspeed competitor who has or will participate in events
 /// </summary>
-public class Venue : CollectionObject
+public sealed record Venue(Guid Id,
+    string Name,
+    string[] Rings) : CollectionObject(Id)
 {
-    public string Name { get; set; } = string.Empty;
-    public List<string> Rings { get; set; } = [];
-
-    public Venue() : base() { }
-
     public Venue(Venue other) : base(other)
     {
         Name = other.Name;

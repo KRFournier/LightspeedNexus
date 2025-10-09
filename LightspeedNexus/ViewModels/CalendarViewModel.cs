@@ -21,34 +21,43 @@ public partial class CalendarViewModel() : ViewModelBase
 {
     #region Competition
 
-    private Competition _competition = new();
-    public Competition Competition
+    private Competition _model = new();
+    public Competition Model
     {
-        get => _competition;
+        get => _model;
         set
         {
-            if (_competition != value)
+            if (_model != value)
             {
-                _competition = value;
+                OnPropertyChanging(nameof(Model));
+                OnPropertyChanging(nameof(Name));
+                OnPropertyChanging(nameof(Start));
+                OnPropertyChanging(nameof(Days));
+                OnPropertyChanging(nameof(DisplayDates));
+                OnPropertyChanging(nameof(MinTime));
+                OnPropertyChanging(nameof(MaxTime));
+                _model = value;
+                OnPropertyChanged(nameof(Model));
                 OnPropertyChanged(nameof(Name));
                 OnPropertyChanged(nameof(Start));
                 OnPropertyChanged(nameof(Days));
                 OnPropertyChanged(nameof(DisplayDates));
-                Events = [.._competition.Events.Select(e => new EventViewModel() { Model = e })];
                 OnPropertyChanged(nameof(MinTime));
                 OnPropertyChanged(nameof(MaxTime));
+                Events = [.. _model.Events.Select(e => new EventViewModel() { Model = e })];
             }
         }
     }
 
     public string Name
     {
-        get => Competition.Name;
+        get => Model.Name;
         set
         {
-            if (Competition.Name != value)
+            if (Model.Name != value)
             {
-                Competition.Name = value;
+                OnPropertyChanging(nameof(Name));
+                Model.Name = value;
                 OnPropertyChanged(nameof(Name));
             }
         }
@@ -56,13 +65,17 @@ public partial class CalendarViewModel() : ViewModelBase
 
     public DateTime Start
     {
-        get => Competition.Start.ToDateTime(TimeOnly.MinValue);
+        get => Model.Start.ToDateTime(TimeOnly.MinValue);
         set
         {
             var dateOnlyValue = DateOnly.FromDateTime(value);
-            if (Competition.Start != dateOnlyValue)
+            if (Model.Start != dateOnlyValue)
             {
-                Competition.Start = dateOnlyValue;
+                OnPropertyChanging(nameof(Start));
+                OnPropertyChanging(nameof(DisplayDates));
+                OnPropertyChanging(nameof(MinTime));
+                OnPropertyChanging(nameof(MaxTime));
+                Model.Start = dateOnlyValue;
                 OnPropertyChanged(nameof(Start));
                 OnPropertyChanged(nameof(DisplayDates));
                 OnPropertyChanged(nameof(MinTime));
@@ -73,12 +86,16 @@ public partial class CalendarViewModel() : ViewModelBase
 
     public int Days
     {
-        get => Competition.Days;
+        get => Model.Days;
         set
         {
-            if (Competition.Days != value)
+            if (Model.Days != value)
             {
-                Competition.Days = value;
+                OnPropertyChanging(nameof(Days));
+                OnPropertyChanging(nameof(DisplayDates));
+                OnPropertyChanging(nameof(MinTime));
+                OnPropertyChanging(nameof(MaxTime));
+                Model.Days = value;
                 OnPropertyChanged(nameof(Days));
                 OnPropertyChanged(nameof(DisplayDates));
                 OnPropertyChanged(nameof(MinTime));
@@ -127,6 +144,8 @@ public partial class CalendarViewModel() : ViewModelBase
 
     public void AddEvent(string name, int day, TimeOnly time, TimeSpan duration)
     {
+        OnPropertyChanging(nameof(MinTime));
+        OnPropertyChanging(nameof(MaxTime));
         Events.Add(new()
         {
             Name = name,
@@ -150,10 +169,10 @@ public partial class CalendarViewModel() : ViewModelBase
     {
         try
         {
-            var result = await DialogBox(new CompetitionViewModel() { Model = new(Competition) }, "Edit Competition");
+            var result = await DialogBox(new CompetitionViewModel() { Model = new(Model) }, "Edit Competition");
             if (result.IsOk)
             {
-                Competition = result.Item.Model;
+                Model = result.Item.Model;
                 //StorageService.WriteFighter(result.Item.Model);
             }
         }

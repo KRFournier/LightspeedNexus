@@ -25,6 +25,7 @@
 			   Source="/Assets/LightspeedBackground.png"
 			   Opacity="0.5"/>
 
+		<!--<v:FighterSearchView DataContext="{Binding Fighters}"/>-->
 		<TransitioningContentControl x:Name="ContentControl"
 									 Content="{Binding CurrentPage}"
 									 ClipToBounds="False"
@@ -36,6 +37,7 @@
 						   SlideOutEasing="CircularEaseOut"/>
 			</TransitioningContentControl.PageTransition>
 		</TransitioningContentControl>
+		
 		
 	</Panel>
 	

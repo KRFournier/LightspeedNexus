@@ -10,7 +10,7 @@ public partial class HomeViewModel : ViewModelBase
     [RelayCommand]
     private static void GotoNewCompetition()
     {
-        WeakReferenceMessenger.Default.Send(new NavigatePageMessage(new CompetitionViewModel()));
+       // WeakReferenceMessenger.Default.Send(new NavigatePageMessage(new CompetitionViewModel()));
     }
 
     [RelayCommand]

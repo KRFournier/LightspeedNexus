@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>preview</LangVersion>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
   </PropertyGroup>
 
@@ -11,23 +11,53 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="11.3.2" />
-    <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.3.2" />
+    <AvaloniaXaml Remove="Views\CalendarView.axaml" />
+    <AvaloniaXaml Remove="Views\CompetitionView.axaml" />
+    <AvaloniaXaml Remove="Views\VenueView.axaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Converters\VenueToStringConverter.cs" />
+    <Compile Remove="Models\Competition.cs" />
+    <Compile Remove="Models\Event.cs" />
+    <Compile Remove="Models\EventEstimator.cs" />
+    <Compile Remove="Models\Venue.cs" />
+    <Compile Remove="ViewModels\CalendarViewModel.cs" />
+    <Compile Remove="ViewModels\CompetitionViewModel.cs" />
+    <Compile Remove="ViewModels\EventViewModel.cs" />
+    <Compile Remove="ViewModels\VenueViewModel.cs" />
+    <Compile Remove="Views\CalendarView.axaml.cs" />
+    <Compile Remove="Views\CompetitionView.axaml.cs" />
+    <Compile Remove="Views\VenueView.axaml.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="11.3.6" />
+    <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.3.6" />
     <PackageReference Include="Avalonia.Controls.ItemsRepeater" Version="11.1.5" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.2" />
-    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.2" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.6" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.6" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.3.2" />
+    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.3.6" />
     <PackageReference Include="LiteDB" Version="5.0.21" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.7" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9" />
     <PackageReference Include="RestSharp" Version="112.1.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Controls\MatchSettings.axaml.cs">
+      <DependentUpon>MatchSettings.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\FighterSearchView.axaml.cs">
+      <DependentUpon>FighterSearchView.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\FighterView.axaml.cs">
       <DependentUpon>FighterView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\LocalMatchSettingsView.axaml.cs">
+      <DependentUpon>LocalMatchSettingsView.axaml</DependentUpon>
     </Compile>
   </ItemGroup>
 </Project>

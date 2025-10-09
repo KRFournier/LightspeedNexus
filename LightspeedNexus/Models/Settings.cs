@@ -1,4 +1,6 @@
-﻿using System;
+﻿using LightspeedNexus.Controls;
+using LightspeedNexus.ViewModels;
+using System;
 
 namespace LightspeedNexus.Models;
 
@@ -23,52 +25,37 @@ public enum SkillLevel
 }
 
 /// <summary>
+/// The settings for a set of matches
+/// </summary>
+public record MatchSettings(int WinningScore, TimeSpan TimeLimit)
+{
+    public MatchSettingsViewModel ToViewModel() => new(this);
+}
+
+/// <summary>
+/// The settings for a bracket
+/// </summary>
+public sealed record BracketSettings(int WinningScore, TimeSpan TimeLimit, bool HasThirdPlaceMatch = true, bool IsFullAdvancement = true)
+    : MatchSettings(WinningScore, TimeLimit)
+{
+    public new BracketSettingsViewModel ToViewModel() => new(this);
+    public MatchSettingsViewModel ToMatchSettingsViewModel() => new(this);
+}
+
+/// <summary>
 /// The settings for a tournament
 /// </summary>
-public class Settings
+public sealed record Settings(
+    DateTime? Date,
+    MatchSettings PoolSettings,
+    BracketSettings BracketSettings,
+    Demographic Demographic,
+    SkillLevel SkillLevel,
+    bool ReyAllowed,
+    bool RenAllowed,
+    bool TanoAllowed,
+    string? SubTitle
+)
 {
-    /// <summary>
-    /// When the tournament takes place
-    /// </summary>
-    public DateTime? Date { get; set; }
-
-    /// <summary>
-    /// The match settings used for pools.
-    /// </summary>
-    public MatchSettings PoolSettings { get; set; } = new();
-
-    /// <summary>
-    /// The match settings used for brackets.
-    /// </summary>
-    public BracketSettings BracketSettings { get; set; } = new();
-
-    /// <summary>
-    /// The demographic of the tournament
-    /// </summary>
-    public Demographic Demographic { get; set; } = Demographic.All;
-
-    /// <summary>
-    /// The skill level of the tournament
-    /// </summary>
-    public SkillLevel SkillLevel { get; set; } = SkillLevel.Open;
-
-    /// <summary>
-    /// Determines whether Rey-style weapons are allowed
-    /// </summary>
-    public bool ReyAllowed { get; set; } = true;
-
-    /// <summary>
-    /// Determines whether Ren-style weapons are allowed
-    /// </summary>
-    public bool RenAllowed { get; set; } = false;
-
-    /// <summary>
-    /// Determines whether Tano-style weapons are allowed
-    /// </summary>
-    public bool TanoAllowed { get; set; } = false;
-
-    /// <summary>
-    /// An optional tag to distinguish this tournament from others
-    /// </summary>
-    public string? SubTitle { get; set; } = null;
+    public SettingsViewModel ToViewModel() => new(this);
 }

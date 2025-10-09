@@ -8,19 +8,58 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="LightspeedNexus.Views.TournamentView"
 			 x:DataType="vm:TournamentViewModel">
-	<Panel>
+	
+	<Design.DataContext>
+		<vm:TournamentViewModel/>
+	</Design.DataContext>
+	
+	<StackPanel Spacing="10">
+
+		<!--Name-->
+		<StackPanel Orientation="Horizontal"
+					Spacing="10">
+			<Button Classes="clear"
+					Command="{Binding GoHomeCommand}">
+				<PathIcon Data="{StaticResource arrow_left_regular}"/>
+			</Button>
+			<TextBlock Classes="large"
+				       Text="{Binding Name}"/>
+		</StackPanel>
+
+		<!--Stages-->
 		<TabControl x:Name="TabPanel"
 					TabStripPlacement="Left"
 					Padding="0">
 			<TabItem>
 				<TabItem.Header>
 					<Grid ColumnDefinitions="Auto,*">
-						<PathIcon Data="{StaticResource settings_regular}" Margin="0 0 8 0"/>
-						<TextBlock Grid.Column="1" Text="Settings" VerticalAlignment="Center"/>
+						<PathIcon Data="{StaticResource settings_regular}"
+								  Margin="0 0 8 0"/>
+						<TextBlock Grid.Column="1"
+								   Classes="medium"
+								   Text="Settings"
+								   VerticalAlignment="Center"/>
 					</Grid>
 				</TabItem.Header>
-				<v:SettingsView/>
+				<v:SettingsView DataContext="{Binding Settings}"
+								Margin="0,5"/>
+			</TabItem>
+			<TabItem>
+				<TabItem.Header>
+					<Grid ColumnDefinitions="Auto,*">
+						<PathIcon Data="{StaticResource people_regular}"
+								  Margin="0 0 8 0"/>
+						<TextBlock Grid.Column="1"
+								   Classes="medium"
+								   Text="Roster"
+								   VerticalAlignment="Center"/>
+					</Grid>
+				</TabItem.Header>
+				<v:RosterView DataContext="{Binding Roster}"
+							  Margin="0,5"/>
 			</TabItem>
 		</TabControl>
-	</Panel>
+		
+	</StackPanel>
+	
 </UserControl>

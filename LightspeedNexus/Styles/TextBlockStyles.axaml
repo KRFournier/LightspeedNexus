@@ -9,7 +9,7 @@
 				<TextBlock Classes="medium">Medium</TextBlock>
 				<TextBlock Classes="large">Large</TextBlock>
 				<TextBlock Classes="giant">Giant</TextBlock>
-				<TextBlock Classes="sub">Subtext</TextBlock>
+				<TextBlock Classes="info">Subtext</TextBlock>
 			</StackPanel>
 		</Border>
 	</Design.PreviewWith>

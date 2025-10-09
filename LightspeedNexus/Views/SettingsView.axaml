@@ -10,104 +10,113 @@
              x:Class="LightspeedNexus.Views.SettingsView"
 			 x:DataType="vm:SettingsViewModel">
 
-	<UserControl.DataContext>
+	<Design.DataContext>
 		<vm:SettingsViewModel/>
-	</UserControl.DataContext>
+	</Design.DataContext>
 
-	<Grid RowDefinitions="Auto,10,Auto,10,Auto,10,Auto,10,Auto,10,Auto,10,Auto,10,Auto"
+	<Grid RowDefinitions="Auto,10,Auto,10,Auto,10,Auto,10,Auto,10,Auto,10,Auto"
 		  ColumnDefinitions="Auto,10,*"
 		  Grid.IsSharedSizeScope="True">
 
-		<!--Name-->
-		<TextBlock Grid.ColumnSpan="3"
-				   Classes="large"
-				   VerticalAlignment="Center"
-				   Text="{Binding Name}"/>
-
 		<!--Subtitle-->
 		<TextBlock Grid.Column="0"
-				   Grid.Row="2"
+				   Grid.Row="0"
 				   VerticalAlignment="Center"
 				   Text="Tagline"/>
 		<TextBox Grid.Column="2"
-				 Grid.Row="2"
+				 Grid.Row="0"
 				 HorizontalAlignment="Left"
+				 MinWidth="400"
 				 Watermark="Optional text at the end of the generated title"
 				 Text="{Binding SubTitle}"/>
 		
 		<!--Date-->
 		<TextBlock Grid.Column="0"
-				   Grid.Row="4"
+				   Grid.Row="2"
 				   VerticalAlignment="Center"
 				   Text="Date"/>
 		<CalendarDatePicker Grid.Column="2"
-							Grid.Row="4"
+							Grid.Row="2"
 							SelectedDate="{Binding Date}"/>
 
 		<!--Skill Level-->
 		<TextBlock Grid.Column="0"
-				   Grid.Row="6"
+				   Grid.Row="4"
 				   VerticalAlignment="Center"
 				   Text="Skill Level"/>
-		<Panel Grid.Column="2"
-			   Grid.Row="6">
-			<StackPanel Orientation="Horizontal"
-						Margin="0,5"
-						Spacing="10">
-				<RadioButton GroupName="SkillLevel"
-							 IsChecked="{Binding SkillLevel,
-								Converter={StaticResource RadioValue},
-								ConverterParameter={x:Static m:SkillLevel.Open}}"
-							 Content="Open"/>
-				<RadioButton GroupName="SkillLevel"
-							 IsChecked="{Binding SkillLevel,
-								Converter={StaticResource RadioValue},
-								ConverterParameter={x:Static m:SkillLevel.Advanced}}"
-							 Content="Advanced"/>
-				<RadioButton GroupName="SkillLevel"
-							 IsChecked="{Binding SkillLevel,
-								Converter={StaticResource RadioValue},
-								ConverterParameter={x:Static m:SkillLevel.Novice}}"
-							 Content="Novice"/>
-			</StackPanel>
-		</Panel>
+		<StackPanel Grid.Column="2"
+					Grid.Row="4"
+					Orientation="Horizontal"
+					Spacing="10">
+			<RadioButton GroupName="SkillLevel"
+						 Theme="{StaticResource RadioButtonButtons}"
+						 Width="100"
+						 HorizontalContentAlignment="Center"
+						 IsChecked="{Binding SkillLevel,
+							 Converter={StaticResource RadioValue},
+							 ConverterParameter={x:Static m:SkillLevel.Open}}"
+						 Content="Open"/>
+			<RadioButton GroupName="SkillLevel"
+						 Theme="{StaticResource RadioButtonButtons}"
+						 Padding="5,5.5,5,5"
+						 Width="100"
+						 HorizontalContentAlignment="Center"
+						 IsChecked="{Binding SkillLevel,
+							 Converter={StaticResource RadioValue},
+							 ConverterParameter={x:Static m:SkillLevel.Advanced}}"
+						 Content="Advanced"/>
+			<RadioButton GroupName="SkillLevel"
+						 Theme="{StaticResource RadioButtonButtons}"
+						 Width="100"
+						 HorizontalContentAlignment="Center"
+						 IsChecked="{Binding SkillLevel,
+							 Converter={StaticResource RadioValue},
+							 ConverterParameter={x:Static m:SkillLevel.Novice}}"
+						 Content="Novice"/>
+		</StackPanel>
 		
 		<!--Demographic-->
 		<TextBlock Grid.Column="0"
-				   Grid.Row="8"
+				   Grid.Row="6"
 				   VerticalAlignment="Center"
-				   Margin="0,0,0,5"
 				   Text="Demographic"/>
-		<Panel Grid.Column="2"
-			   Grid.Row="8">
-			<StackPanel Orientation="Horizontal"
-						Margin="0,5"
-						Spacing="10">
-				<RadioButton GroupName="Demographic"
-							 IsChecked="{Binding Demographic,
-								Converter={StaticResource RadioValue},
-								ConverterParameter={x:Static m:Demographic.All}}"
-							 Content="All"/>
-				<RadioButton GroupName="Demographic"
-							 IsChecked="{Binding Demographic,
-								Converter={StaticResource RadioValue},
-								ConverterParameter={x:Static m:Demographic.Women}}"
-							 Content="Women"/>
-				<RadioButton GroupName="Demographic"
-							 IsChecked="{Binding Demographic,
-								Converter={StaticResource RadioValue},
-								ConverterParameter={x:Static m:Demographic.Cadet}}"
-							 Content="Cadet"/>
-			</StackPanel>
-		</Panel>
+		<StackPanel Grid.Column="2"
+					Grid.Row="6"
+					Orientation="Horizontal"
+					Spacing="10">
+			<RadioButton GroupName="Demographic"
+						 Theme="{StaticResource RadioButtonButtons}"
+						 Width="100"
+						 HorizontalContentAlignment="Center"
+						 IsChecked="{Binding Demographic,
+							 Converter={StaticResource RadioValue},
+							 ConverterParameter={x:Static m:Demographic.All}}"
+						 Content="All"/>
+			<RadioButton GroupName="Demographic"
+						 Theme="{StaticResource RadioButtonButtons}"
+						 Width="100"
+						 HorizontalContentAlignment="Center"
+						 IsChecked="{Binding Demographic,
+							 Converter={StaticResource RadioValue},
+							 ConverterParameter={x:Static m:Demographic.Women}}"
+						 Content="Women"/>
+			<RadioButton GroupName="Demographic"
+						 Theme="{StaticResource RadioButtonButtons}"
+						 Width="100"
+						 HorizontalContentAlignment="Center"
+						 IsChecked="{Binding Demographic,
+							 Converter={StaticResource RadioValue},
+							 ConverterParameter={x:Static m:Demographic.Cadet}}"
+						 Content="Cadet"/>
+		</StackPanel>
 
 		<!--Weapons-->
 		<TextBlock Grid.Column="0"
-				   Grid.Row="10"
+				   Grid.Row="8"
 				   VerticalAlignment="Center"
 				   Text="Weapons"/>
 		<StackPanel Grid.Column="2"
-					Grid.Row="10"
+					Grid.Row="8"
 					Orientation="Horizontal"
 					Spacing="10"
 					HorizontalAlignment="Left">
@@ -148,38 +157,38 @@
 
 		<!--Pools-->
 		<TextBlock Grid.Column="0"
-				   Grid.Row="12"
+				   Grid.Row="10"
 				   VerticalAlignment="Center"
 				   Text="Pools"/>
-		<v:MatchSettingsView Grid.Column="2"
-							 Grid.Row="12"
-							 Height="75"
-							 Width="260"
-							 DataContext="{Binding PoolSettings}"
-							 HorizontalAlignment="Left"/>
+		<c:MatchSettings Grid.Column="2"
+						 Grid.Row="10"
+						 Height="75"
+						 Width="260"
+						 Score="{Binding PoolSettings.WinningScore}"
+						 Time="{Binding PoolSettings.TimeLimit}"
+						 HorizontalAlignment="Left"/>
 
 		<!--Bracket-->
 		<TextBlock Grid.Column="0"
-				   Grid.Row="14"
+				   Grid.Row="12"
 				   VerticalAlignment="Center"
 				   Text="Bracket"/>
 		<StackPanel Grid.Column="2"
-					Grid.Row="14"
+					Grid.Row="12"
 					Orientation="Horizontal"
 					Spacing="10">
-			<v:MatchSettingsView Height="75"
-								 Width="260"
-								 DataContext="{Binding BracketSettings.MatchSettings}"
-								 HorizontalAlignment="Left"/>
+			<c:MatchSettings Height="75"
+							 Width="260"							 
+							 Score="{Binding BracketSettings.WinningScore}"
+							 Time="{Binding BracketSettings.TimeLimit}"
+							 HorizontalAlignment="Left"/>
 			<Grid RowDefinitions="*,*">
 				<CheckBox Grid.Row="0"
 						  Content="Third Place Match"
-						  IsChecked="{Binding BracketSettings.HasThirdPlaceMatch}"
-						  IsEnabled="{Binding !BracketSettings.MatchSettings.IsLocked}"/>
+						  IsChecked="{Binding BracketSettings.HasThirdPlaceMatch}"/>
 				<CheckBox Grid.Row="1"
 						  Content="100% Advancement"
-						  IsChecked="{Binding BracketSettings.IsFullAdvancement}"
-						  IsEnabled="{Binding !BracketSettings.MatchSettings.IsLocked}"/>
+						  IsChecked="{Binding BracketSettings.IsFullAdvancement}"/>
 			</Grid>
 		</StackPanel>
 		

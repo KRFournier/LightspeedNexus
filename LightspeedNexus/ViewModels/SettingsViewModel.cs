@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using LightspeedNexus.Models;
-using LightspeedNexus.Services;
 using System;
 
 namespace LightspeedNexus.ViewModels;
@@ -10,141 +9,65 @@ namespace LightspeedNexus.ViewModels;
 /// </summary>
 public partial class SettingsViewModel : ViewModelBase
 {
-    #region Model
-
-    private Settings _model = new();
-    public Settings Model
-    {
-        get => _model;
-        set
-        {
-            if (_model != value)
-            {
-                _model = value;
-                PoolSettings = new MatchSettingsViewModel() { Model = value.PoolSettings };
-                BracketSettings = new BracketSettingsViewModel() { Model = value.BracketSettings };
-                OnPropertyChanged(nameof(Model));
-                OnPropertyChanged(nameof(Date));
-                OnPropertyChanged(nameof(Demographic));
-                OnPropertyChanged(nameof(SkillLevel));
-                OnPropertyChanged(nameof(ReyAllowed));
-                OnPropertyChanged(nameof(RenAllowed));
-                OnPropertyChanged(nameof(TanoAllowed));
-                OnPropertyChanged(nameof(SubTitle));
-                OnPropertyChanged(nameof(Name));
-            }
-        }
-    }
-
-    public DateTime? Date
-    {
-        get => Model.Date;
-        set
-        {
-            if (Model.Date != value)
-            {
-                Model.Date = value;
-                OnPropertyChanged(nameof(Date));
-            }
-        }
-    }
+    #region Properties
 
     [ObservableProperty]
-    private MatchSettingsViewModel _poolSettings = new();
+    public partial DateTime? Date { get; set; } = null;
 
     [ObservableProperty]
-    private BracketSettingsViewModel _BracketSettings = new();
+    public partial MatchSettingsViewModel PoolSettings { get; set; } = new();
 
-    public Demographic Demographic
-    {
-        get => Model.Demographic;
-        set
-        {
-            if (Model.Demographic != value)
-            {
-                Model.Demographic = value;
-                OnPropertyChanged(nameof(Demographic));
-                OnPropertyChanged(nameof(Name));
-            }
-        }
-    }
-    public static string[] Demographics => Enum.GetNames(typeof(Demographic));
+    [ObservableProperty]
+    public partial BracketSettingsViewModel BracketSettings { get; set; } = new();
 
-    public SkillLevel SkillLevel
-    {
-        get => Model.SkillLevel;
-        set
-        {
-            if (Model.SkillLevel != value)
-            {
-                Model.SkillLevel = value;
-                OnPropertyChanged(nameof(SkillLevel));
-                OnPropertyChanged(nameof(Name));
-            }
-        }
-    }
-    public static string[] SkillLevels => Enum.GetNames(typeof(SkillLevel));
+    [ObservableProperty]
+    public partial Demographic Demographic { get; set; } = Demographic.All;
+    public static string[] Demographics => Enum.GetNames<Demographic>();
 
-    public bool ReyAllowed
-    {
-        get => Model.ReyAllowed;
-        set
-        {
-            if (Model.ReyAllowed != value)
-            {
-                Model.ReyAllowed = value;
-                OnPropertyChanged(nameof(ReyAllowed));
-                OnPropertyChanged(nameof(Name));
-            }
-        }
-    }
+    [ObservableProperty]
+    public partial SkillLevel SkillLevel { get; set; } = SkillLevel.Open;
+    public static string[] SkillLevels => Enum.GetNames<SkillLevel>();
 
-    public bool RenAllowed
-    {
-        get => Model.RenAllowed;
-        set
-        {
-            if (Model.RenAllowed != value)
-            {
-                Model.RenAllowed = value;
-                OnPropertyChanged(nameof(RenAllowed));
-                OnPropertyChanged(nameof(Name));
-            }
-        }
-    }
+    [ObservableProperty]
+    public partial bool ReyAllowed { get; set; } = true;
 
-    public bool TanoAllowed
-    {
-        get => Model.TanoAllowed;
-        set
-        {
-            if (Model.TanoAllowed != value)
-            {
-                Model.TanoAllowed = value;
-                OnPropertyChanged(nameof(TanoAllowed));
-                OnPropertyChanged(nameof(Name));
-            }
-        }
-    }
+    [ObservableProperty]
+    public partial bool RenAllowed { get; set; } = false;
 
-    public string SubTitle
-    {
-        get => Model.SubTitle ?? string.Empty;
-        set
-        {
-            if (Model.SubTitle != value)
-            {
-                Model.SubTitle = value;
-                OnPropertyChanged(nameof(SubTitle));
-                OnPropertyChanged(nameof(Name));
-            }
-        }
-    }
+    [ObservableProperty]
+    public partial bool TanoAllowed { get; set; } = false;
+
+    [ObservableProperty]
+    public partial string? SubTitle { get; set; } = null;
 
     #endregion
 
     /// <summary>
-    /// The name of the tournament, e.g., Open Rey
+    /// Creates brand new settings
     /// </summary>
-    public string Name => TournamentServices.BuildName(Demographic, SkillLevel, ReyAllowed, RenAllowed, TanoAllowed, SubTitle);
+    public SettingsViewModel() { }
+
+    /// <summary>
+    /// Loads settings from a model
+    /// </summary>
+    public SettingsViewModel(Settings model)
+    {
+        Date = model.Date;
+        PoolSettings = model.PoolSettings.ToViewModel();
+        BracketSettings = model.BracketSettings.ToViewModel();
+        Demographic = model.Demographic;
+        SkillLevel = model.SkillLevel;
+        ReyAllowed = model.ReyAllowed;
+        RenAllowed = model.RenAllowed;
+        TanoAllowed = model.TanoAllowed;
+        SubTitle = model.SubTitle;
+    }
+
+    /// <summary>
+    /// Converts into a model
+    /// </summary>
+    public Settings ToModel() => new(
+        Date, PoolSettings.ToModel(), BracketSettings.ToModel(), Demographic,
+        SkillLevel, RenAllowed, RenAllowed, TanoAllowed, SubTitle
+        );
 }

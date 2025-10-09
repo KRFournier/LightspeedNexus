@@ -26,7 +26,14 @@ public partial class CompetitionViewModel : ViewModelBase
         {
             if (_model != value)
             {
+                OnPropertyChanging(nameof(Model));
+                OnPropertyChanging(nameof(Id));
+                OnPropertyChanging(nameof(Name));
+                OnPropertyChanging(nameof(Start));
+                OnPropertyChanging(nameof(Days));
+                OnPropertyChanging(nameof(DateRange));
                 _model = value;
+                OnPropertyChanged(nameof(Model));
                 OnPropertyChanged(nameof(Id));
                 OnPropertyChanged(nameof(Name));
                 OnPropertyChanged(nameof(Start));
@@ -46,6 +53,7 @@ public partial class CompetitionViewModel : ViewModelBase
         {
             if (Model.Name != value)
             {
+                OnPropertyChanging(nameof(Name));
                 Model.Name = value;
                 OnPropertyChanged(nameof(Name));
             }
@@ -60,6 +68,7 @@ public partial class CompetitionViewModel : ViewModelBase
             var dateOnlyValue = DateOnly.FromDateTime(value);
             if (Model.Start != dateOnlyValue)
             {
+                OnPropertyChanging(nameof(Start));
                 Model.Start = dateOnlyValue;
                 OnPropertyChanged(nameof(Start));
             }
@@ -73,6 +82,7 @@ public partial class CompetitionViewModel : ViewModelBase
         {
             if (Model.Days != value)
             {
+                OnPropertyChanging(nameof(Days));
                 Model.Days = value;
                 OnPropertyChanged(nameof(Days));
             }
@@ -110,17 +120,13 @@ public partial class CompetitionViewModel : ViewModelBase
     private void IncrementDays()
     {
         Days++;
-        OnPropertyChanged(nameof(Days));
     }
 
     [RelayCommand]
     private void DecrementDays()
     {
         if (Days > 1)
-        {
             Days--;
-            OnPropertyChanged(nameof(Days));
-        }
     }
 
     #region Venues
@@ -128,7 +134,7 @@ public partial class CompetitionViewModel : ViewModelBase
     private readonly Dictionary<string, Venue> _venueLookup = [];
 
     [ObservableProperty]
-    private string? _selectedVenue;
+    public partial string? SelectedVenue { get; set; }
     partial void OnSelectedVenueChanged(string? value)
     {
         if (_venueLookup.TryGetValue(value ?? string.Empty, out var venue))
@@ -194,11 +200,10 @@ public partial class CompetitionViewModel : ViewModelBase
     public ObservableCollection<Fighter> Roster { get; set; } = [];
 
     [ObservableProperty]
-    private string? _fighterSearchText;
+    public partial string? FighterSearchText { get; set; }
 
     [ObservableProperty]
-    private Fighter? _selectedFighter;
-
+    public partial Fighter? SelectedFighter { get; set; }
     public ObservableCollection<Fighter> Fighters { get; set; } = [];
 
     [RelayCommand]

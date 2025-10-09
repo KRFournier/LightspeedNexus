@@ -3,171 +3,75 @@ using CommunityToolkit.Mvvm.Input;
 using LightspeedNexus.Models;
 using System;
 using System.Text.Json.Nodes;
-using System.Xml.Linq;
 
 namespace LightspeedNexus.ViewModels;
 
 /// <summary>
-/// A group of matches sharing similar settings
+/// Settings for a group of matches
 /// </summary>
-public partial class MatchSettingsViewModel : ViewModelBase
+public partial class MatchSettingsViewModel : ViewModelBase, IEquatable<MatchSettingsViewModel>
 {
-    #region Model
-
-    /// <summary>
-    /// The model
-    /// </summary>
-    private MatchSettings _model = new();
-    public MatchSettings Model
-    {
-        get => _model;
-        set
-        {
-            if (_model != value)
-            {
-                _model = value;
-                OnPropertyChanged(nameof(IsLocked));
-                OnPropertyChanged(nameof(WinningScore));
-                OnPropertyChanged(nameof(TimeLimit));
-            }
-        }
-    }
+    #region Properties
 
     /// <summary>
     /// The points needed to win a match in this pool
     /// </summary>
-    public bool IsLocked
-    {
-        get => Model.IsLocked;
-        set
-        {
-            if (value != Model.IsLocked)
-            {
-                Model.IsLocked = value;
-                OnPropertyChanged(nameof(IsLocked));
-            }
-        }
-    }
-
-    /// <summary>
-    /// The points needed to win a match in this pool
-    /// </summary>
-    public int WinningScore
-    {
-        get => Model.WinningScore;
-        set
-        {
-            if (value < 0)
-                value = 0;
-            if (value != Model.WinningScore)
-            {
-                Model.WinningScore = value;
-                OnPropertyChanged(nameof(WinningScore));
-            }
-        }
-    }
+    [ObservableProperty]
+    public partial int WinningScore { get; set; } = 12;
 
     /// <summary>
     /// The time limit for matches in this pool
     /// </summary>
-    public TimeSpan TimeLimit
-    {
-        get => Model.TimeLimit;
-        set
-        {
-            if (value != Model.TimeLimit)
-            {
-                Model.TimeLimit = value;
-                OnPropertyChanged(nameof(TimeLimit));
-            }
-        }
-    }
+    [ObservableProperty]
+    public partial TimeSpan TimeLimit { get; set; } = TimeSpan.FromSeconds(90);
 
     #endregion
 
     /// <summary>
     /// Initializes the settings
     /// </summary>
-    public MatchSettingsViewModel()
+    public MatchSettingsViewModel() { }
+
+    /// <summary>
+    /// Loads settings from a model
+    /// </summary>
+    public MatchSettingsViewModel(MatchSettings model)
     {
+        WinningScore = model.WinningScore;
+        TimeLimit = model.TimeLimit;
     }
 
     /// <summary>
-    /// Initializes from parent settings, and sets these settings to 
-    /// listen to changes to the parent settings
+    /// Creates a copy of the MatchSettingsViewModel
     /// </summary>
-    public MatchSettingsViewModel(MatchSettingsViewModel parent)
+    public MatchSettingsViewModel Clone() => new()
     {
-        Model = new MatchSettings()
-        {
-            WinningScore = parent.Model.WinningScore,
-            TimeLimit = parent.Model.TimeLimit
-        };
-    }
+        WinningScore = WinningScore,
+        TimeLimit = TimeLimit
+    };
 
     /// <summary>
-    /// Increases the winning score by 1 point
+    /// The model
     /// </summary>
-    [RelayCommand]
-    private void IncreaseScore()
-    {
-        WinningScore++;
-    }
+    public MatchSettings ToModel() => new(WinningScore, TimeLimit);
 
-    /// <summary>
-    /// Decreases the winning score by 1 point
-    /// </summary>
-    [RelayCommand]
-    private void DecreaseScore()
-    {
-        if (WinningScore > 0)
-            WinningScore--;
-    }
+    #region Value Equality
 
-    /// <summary>
-    /// Increases the time limit by 15 seconds
-    /// </summary>
-    [RelayCommand]
-    private void IncreaseTime()
-    {
-        TimeLimit += TimeSpan.FromSeconds(15);
-    }
+    public bool Equals(MatchSettingsViewModel? other) =>
+        other is not null &&
+        WinningScore == other.WinningScore &&
+        TimeLimit == other.TimeLimit;
 
-    /// <summary>
-    /// Decreases the time limit by 15 seconds
-    /// </summary>
-    [RelayCommand]
-    private void DecreaseTime()
-    {
-        if (TimeLimit.TotalSeconds > 15)
-            TimeLimit -= TimeSpan.FromSeconds(15);
-    }
+    public override bool Equals(object? obj) => Equals(obj as MatchSettingsViewModel);
 
-    /// <summary>
-    /// Increases the winning score by 4 points and the time by 30 seconds
-    /// </summary>
-    [RelayCommand]
-    private void Increase()
-    {
-        int chunk = WinningScore / 4 + 1;
-        WinningScore = chunk * 4;
-        TimeLimit = TimeSpan.FromSeconds(chunk * 30);
-    }
+    public override int GetHashCode() => HashCode.Combine(WinningScore, TimeLimit);
 
-    /// <summary>
-    /// Decreases the winning score by 4 points and the time by 30 seconds
-    /// </summary>
-    [RelayCommand]
-    private void Decrease()
-    {
-        int chunk = WinningScore / 4;
-        if (chunk-- > 0)
-        {
-            WinningScore = chunk * 4;
-            TimeLimit = TimeSpan.FromSeconds(chunk * 30);
-        }
-    }
+    public static bool operator ==(MatchSettingsViewModel? left, MatchSettingsViewModel? right) =>
+        left is null ? right is null : left.Equals(right);
 
+    public static bool operator !=(MatchSettingsViewModel? left, MatchSettingsViewModel? right) => !(left == right);
+
+    #endregion
 
     #region Saber Sports
 

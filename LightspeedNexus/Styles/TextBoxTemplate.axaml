@@ -129,7 +129,7 @@
 						  BottomRightBackground="{TemplateBinding Background}"
 						  BottomRightBorderBrush="{TemplateBinding BorderBrush}"
 						  Padding="{TemplateBinding Padding}"
-						  CornerGap="3,3,3,4">
+						  CornerGap="2,2,2,4">
 						</c:LightspeedBorder>
 
 						<Border

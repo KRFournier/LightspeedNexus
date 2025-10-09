@@ -9,13 +9,7 @@
              x:Class="LightspeedNexus.Views.FighterView"
 			 x:DataType="vm:FighterViewModel">
 
-	<Design.DataContext>
-		<vm:FighterViewModel FirstName="Kevin"
-							 LastName="Fournier"
-							 Club="LaFollette"/>
-	</Design.DataContext>
-	
-	<Grid RowDefinitions="Auto,10,Auto,10,Auto,10,Auto"
+	<Grid RowDefinitions="Auto,10,Auto,10,Auto,10,Auto,10,Auto,10,Auto"
 		  Grid.IsSharedSizeScope="True">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto" SharedSizeGroup="Labels"/>
@@ -44,51 +38,94 @@
 		<TextBox Grid.Column="2"
 				 Grid.Row="4"
 				 Text="{Binding Club, Mode=TwoWay}"/>
-		<ItemsControl Grid.ColumnSpan="3"
-					  Grid.Row="6"
-					  ItemsSource="{Binding Ratings}">
-			<ItemsControl.ItemsPanel>
-				<ItemsPanelTemplate>
-					<StackPanel Spacing="10"/>
-				</ItemsPanelTemplate>
-			</ItemsControl.ItemsPanel>
-			<ItemsControl.ItemTemplate>
-				<DataTemplate DataType="vm:WeaponRatingViewModel">
-					<Grid>
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto" SharedSizeGroup="Labels"/>
-							<ColumnDefinition Width="10"/>
-							<ColumnDefinition Width="*"/>
-						</Grid.ColumnDefinitions>
-						<TextBlock Grid.Column="0"
-								   VerticalAlignment="Center"
-								   Text="{Binding Class}"/>
-						<TextBox Grid.Column="2"
-								 Width="100"
-								 Padding="0"
-								 HorizontalAlignment="Left"
-								 HorizontalContentAlignment="Center"
-								 VerticalContentAlignment="Center"
-								 Text="{Binding Rank}">
-							<TextBox.InnerLeftContent>
-								<Button Classes="clear"
-										IsTabStop="False"
-										Command="{Binding DecrementRankCommand}">
-									<PathIcon Data="{StaticResource chevron_left_regular}"/>
-								</Button>
-							</TextBox.InnerLeftContent>
-							<TextBox.InnerRightContent>
-								<Button Classes="clear"
-										IsTabStop="False"
-										Command="{Binding IncrementRankCommand}">
-									<PathIcon Data="{StaticResource chevron_right_regular}"/>
-								</Button>
-							</TextBox.InnerRightContent>
-						</TextBox>
-					</Grid>
-				</DataTemplate>
-			</ItemsControl.ItemTemplate>
-		</ItemsControl>
+
+		<!--Rey Rank-->
+		<TextBlock Grid.Column="0"
+				   Grid.Row="6"
+				   VerticalAlignment="Center"
+				   Text="Rey"/>
+		<TextBox Grid.Column="2"
+				 Grid.Row="6"
+				 Width="100"
+				 Padding="0"
+				 HorizontalAlignment="Left"
+				 HorizontalContentAlignment="Center"
+				 VerticalContentAlignment="Center"
+				 Text="{Binding ReyRank}">
+			<TextBox.InnerLeftContent>
+				<Button Classes="clear"
+						IsTabStop="False"
+						Command="{Binding DecrementReyCommand}">
+					<PathIcon Data="{StaticResource chevron_left_regular}"/>
+				</Button>
+			</TextBox.InnerLeftContent>
+			<TextBox.InnerRightContent>
+				<Button Classes="clear"
+						IsTabStop="False"
+						Command="{Binding IncrementReyCommand}">
+					<PathIcon Data="{StaticResource chevron_right_regular}"/>
+				</Button>
+			</TextBox.InnerRightContent>
+		</TextBox>
+
+		<!--Ren Rank-->
+		<TextBlock Grid.Column="0"
+				   Grid.Row="8"
+				   VerticalAlignment="Center"
+				   Text="Ren"/>
+		<TextBox Grid.Column="2"
+				 Grid.Row="8"
+				 Width="100"
+				 Padding="0"
+				 HorizontalAlignment="Left"
+				 HorizontalContentAlignment="Center"
+				 VerticalContentAlignment="Center"
+				 Text="{Binding RenRank}">
+			<TextBox.InnerLeftContent>
+				<Button Classes="clear"
+						IsTabStop="False"
+						Command="{Binding DecrementRenCommand}">
+					<PathIcon Data="{StaticResource chevron_left_regular}"/>
+				</Button>
+			</TextBox.InnerLeftContent>
+			<TextBox.InnerRightContent>
+				<Button Classes="clear"
+						IsTabStop="False"
+						Command="{Binding IncrementRenCommand}">
+					<PathIcon Data="{StaticResource chevron_right_regular}"/>
+				</Button>
+			</TextBox.InnerRightContent>
+		</TextBox>
+
+		<!--Tano Rank-->
+		<TextBlock Grid.Column="0"
+				   Grid.Row="10"
+				   VerticalAlignment="Center"
+				   Text="Tano"/>
+		<TextBox Grid.Column="2"
+				 Grid.Row="10"
+				 Width="100"
+				 Padding="0"
+				 HorizontalAlignment="Left"
+				 HorizontalContentAlignment="Center"
+				 VerticalContentAlignment="Center"
+				 Text="{Binding TanoRank}">
+			<TextBox.InnerLeftContent>
+				<Button Classes="clear"
+						IsTabStop="False"
+						Command="{Binding DecrementTanoCommand}">
+					<PathIcon Data="{StaticResource chevron_left_regular}"/>
+				</Button>
+			</TextBox.InnerLeftContent>
+			<TextBox.InnerRightContent>
+				<Button Classes="clear"
+						IsTabStop="False"
+						Command="{Binding IncrementTanoCommand}">
+					<PathIcon Data="{StaticResource chevron_right_regular}"/>
+				</Button>
+			</TextBox.InnerRightContent>
+		</TextBox>
+		
 	</Grid>
 	
 </UserControl>
