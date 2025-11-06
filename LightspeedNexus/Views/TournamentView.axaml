@@ -6,6 +6,7 @@
 			 xmlns:v="clr-namespace:LightspeedNexus.Views"
 			 xmlns:c="clr-namespace:LightspeedNexus.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 ClipToBounds="False"
              x:Class="LightspeedNexus.Views.TournamentView"
 			 x:DataType="vm:TournamentViewModel">
 	
@@ -16,7 +17,8 @@
 	<TabControl x:Name="TabPanel"
 				TabStripPlacement="Left"
 				ItemsSource="{Binding Stages}"
-				Padding="0">
+				Padding="0"
+				ClipToBounds="False">
 		<TabControl.ItemsPanel>
 			<ItemsPanelTemplate>
 				<StackPanel Orientation="Vertical"
@@ -30,7 +32,8 @@
 		</TabControl.ItemTemplate>
 		<TabControl.ContentTemplate>
 			<DataTemplate DataType="vm:StageViewModel">
-				<TransitioningContentControl Content="{Binding .}"
+				<TransitioningContentControl Content="{Binding .}"											 
+								ClipToBounds="False"
 								Margin="10,0,0,0"/>
 			</DataTemplate>
 		</TabControl.ContentTemplate>

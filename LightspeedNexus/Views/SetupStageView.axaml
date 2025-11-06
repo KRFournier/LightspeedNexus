@@ -7,6 +7,7 @@
 			 xmlns:v="clr-namespace:LightspeedNexus.Views"
 			 xmlns:c="clr-namespace:LightspeedNexus.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 ClipToBounds="False"
              x:Class="LightspeedNexus.Views.SetupStageView"
 			 x:DataType="vm:SetupStageViewModel">
 
@@ -41,7 +42,8 @@
 			<StackPanel Spacing="10">
 				
 				<Viewbox StretchDirection="DownOnly"
-						 HorizontalAlignment="Left">
+						 HorizontalAlignment="Left"
+						 ClipToBounds="False">
 					<Grid ColumnDefinitions="Auto,50,Auto,50,Auto">
 			
 						<!--Skill Level-->
@@ -226,7 +228,7 @@
 						</ItemsPanelTemplate>
 					</ItemsControl.ItemsPanel>
 					<ItemsControl.ItemTemplate>
-						<DataTemplate DataType="vm:PlayerViewModel">
+						<DataTemplate DataType="vm:RegistreeViewModel">
 							<c:LightspeedBorder Classes="item"
 												DoubleTapped="Player_DoubleTapped">
 								<Grid ColumnDefinitions="*,10,50,10,*,10,Auto">

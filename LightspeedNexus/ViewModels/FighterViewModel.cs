@@ -84,6 +84,22 @@ public partial class FighterViewModel : ViewModelBase, IComparable<FighterViewMo
     }
 
     /// <summary>
+    /// Creates a fighter from the given fields
+    /// </summary>
+    public FighterViewModel(Guid id, int? onlineId, string firstName, string lastName, string? club,
+        Rank reyRank, Rank renRank, Rank tanoRank)
+    {
+        Guid = id;
+        OnlineId = onlineId;
+        FirstName = firstName;
+        LastName = lastName;
+        Club = club;
+        ReyRank = reyRank;
+        RenRank = renRank;
+        TanoRank = tanoRank;
+    }
+
+    /// <summary>
     /// Converts to a <see cref="Fighter"/>
     /// </summary>
     public Fighter ToModel() => new(Guid, OnlineId, FirstName, LastName, Club, ReyRank, RenRank, TanoRank);
@@ -92,30 +108,6 @@ public partial class FighterViewModel : ViewModelBase, IComparable<FighterViewMo
     /// Creates a copy.
     /// </summary>
     public FighterViewModel Clone() => new(ToModel());
-
-    /// <summary>
-    /// Returns the <see cref="WeaponRating"/> with the highest rank among all available weapon classes.
-    /// </summary>
-    public WeaponRating GetBestWeapon() =>
-        new WeaponRating[] {
-            new(WeaponClass.Rey, ReyRank),
-            new(WeaponClass.Ren, RenRank),
-            new(WeaponClass.Tano, TanoRank)
-        }.OrderByDescending(w => w.Rank).First();
-
-    /// <summary>
-    /// Gets the rank associated with the specified weapon class.
-    /// </summary>
-    /// <param name="weaponClass">The weapon class for which to retrieve the rank.</param>
-    /// <returns>The rank corresponding to the specified weapon class. Returns <see cref="Rank.U"/> if the weapon class is not
-    /// recognized.</returns>
-    public Rank GetWeaponRank(WeaponClass weaponClass) => weaponClass switch
-    {
-        WeaponClass.Rey => ReyRank,
-        WeaponClass.Ren => RenRank,
-        WeaponClass.Tano => TanoRank,
-        _ => Rank.U
-    };
 
     /// <summary>
     /// Compares the current Fighter to another Fighter.

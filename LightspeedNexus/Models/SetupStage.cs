@@ -1,6 +1,7 @@
 ﻿using LightspeedNexus.Controls;
 using LightspeedNexus.ViewModels;
 using System;
+using System.Collections.Generic;
 
 namespace LightspeedNexus.Models;
 
@@ -65,11 +66,12 @@ public sealed class SetupStage : Stage
     public bool RenAllowed { get; set; } = false;
     public bool TanoAllowed { get; set; } = false;
     public string? SubTitle { get; set; }
-    
+    public Registree[] Registrees { get; set; } = [];
+
     public SetupStage() { }
 
     public SetupStage(string name, DateTime? date, GameMode gameMode, Demographic demographic, SkillLevel skillLevel,
-        bool reyAllowed, bool renAllowed, bool tanoAllowed, string? subTitle) : base(name)
+        bool reyAllowed, bool renAllowed, bool tanoAllowed, string? subTitle, IEnumerable<Registree> registrees) : base(name)
     {
         Date = date;
         GameMode = gameMode;
@@ -79,6 +81,7 @@ public sealed class SetupStage : Stage
         RenAllowed = renAllowed;
         TanoAllowed = tanoAllowed;
         SubTitle = subTitle;
+        Registrees = [.. registrees];
     }
 
     public override SetupStageViewModel ToViewModel() => new(this);

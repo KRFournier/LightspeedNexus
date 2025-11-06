@@ -1,6 +1,5 @@
 ﻿using Avalonia.Collections;
 using Avalonia.Controls;
-using Avalonia.Styling;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -30,7 +29,7 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
     public partial DateTime? Date { get; set; } = null;
 
     [ObservableProperty]
-    public partial GameMode GameMode{ get; set; } = GameMode.Standard;
+    public partial GameMode GameMode { get; set; } = GameMode.Standard;
     public static string[] GameModes => Enum.GetNames<GameMode>();
 
     [ObservableProperty]
@@ -59,7 +58,7 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
     [NotifyPropertyChangedFor(nameof(Title))]
     public partial string? SubTitle { get; set; } = null;
 
-    public ObservableCollection<PlayerViewModel> Players { get; set; } = [];
+    public ObservableCollection<RegistreeViewModel> Registrees { get; set; } = [];
 
     #endregion
 
@@ -69,7 +68,7 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
     public SetupStageViewModel()
     {
         LoadFighters();
-        SortedPlayers = new(Players);
+        SortedPlayers = new(Registrees);
         SortedPlayers.SortDescriptions.Add(new DataGridComparerSortDescription(this, ListSortDirection.Ascending));
     }
 
@@ -85,10 +84,10 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
         ReyAllowed = model.ReyAllowed;
         RenAllowed = model.RenAllowed;
         TanoAllowed = model.TanoAllowed;
-        SubTitle = model.SubTitle; 
-        
+        SubTitle = model.SubTitle;
+
         LoadFighters();
-        SortedPlayers = new(Players);
+        SortedPlayers = new(Registrees);
         SortedPlayers.SortDescriptions.Add(new DataGridComparerSortDescription(this, ListSortDirection.Ascending));
     }
 
@@ -96,8 +95,8 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
     /// Converts into a model
     /// </summary>
     public override SetupStage ToModel() => new(
-        Name, Date, GameMode, Demographic,
-        SkillLevel, RenAllowed, RenAllowed, TanoAllowed, SubTitle
+        Name, Date, GameMode, Demographic, SkillLevel, RenAllowed, RenAllowed,
+        TanoAllowed, SubTitle, Registrees.Select(r => r.ToModel())
         );
 
     /// <summary>
@@ -185,11 +184,11 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
     /// </summary>
     public int Compare(object? x, object? y)
     {
-        if (x is PlayerViewModel pvm1 && y is PlayerViewModel pvm2)
+        if (x is RegistreeViewModel pvm1 && y is RegistreeViewModel pvm2)
             return pvm1.CompareTo(pvm2);
         else
         {
-            throw new ArgumentException("Both parameters must be of type PlayerViewModel.");
+            throw new ArgumentException("Both parameters must be of type RegistreeViewModel.");
         }
     }
 
@@ -223,7 +222,7 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
     {
         if (SelectedFighter is not null && FighterLookup.TryGetValue(SelectedFighter, out Fighter? fighter) && fighter is not null)
         {
-            if (Players.FirstOrDefault(p => p.Guid == fighter.Id) is null)
+            if (Registrees.FirstOrDefault(p => p.Guid == fighter.Id) is null)
             {
                 CreateAndAddPlayer(fighter);
                 SelectedFighter = string.Empty;
@@ -257,14 +256,14 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
     }
 
     [RelayCommand]
-    private static async Task EditPlayer(PlayerViewModel player)
+    private static async Task EditPlayer(RegistreeViewModel registree)
     {
         try
         {
-            var result = await DialogBox(player.Clone(), "Edit Fighter");
+            var result = await DialogBox(registree.ToFighterViewModel(), "Edit Fighter");
             if (result.IsOk)
             {
-                player.Update(result.Item);
+                registree.Update(result.Item);
                 StorageService.Write(result.Item.ToModel());
             }
         }
@@ -278,9 +277,9 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
     /// Removes a player
     /// </summary>
     [RelayCommand]
-    private void RemovePlayer(PlayerViewModel item)
+    private void RemovePlayer(RegistreeViewModel item)
     {
-        Players.Remove(item);
+        Registrees.Remove(item);
         OnPropertyChanged(nameof(SortedPlayers));
     }
 
@@ -288,12 +287,12 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
     /// Creates a new player view model for the specified fighter, adds it to the collection of players, and updates
     /// squadron assignments as needed.
     /// </summary>
-    /// <remarks>The returned PlayerViewModel is added to the Players collection. Squadron assignments are
+    /// <remarks>The returned RegistreeViewModel is added to the Players collection. Squadron assignments are
     /// updated immediately and whenever the player's rank changes, if automatic updates are enabled.</remarks>
-    protected PlayerViewModel CreateAndAddPlayer(Fighter fighter)
+    protected RegistreeViewModel CreateAndAddPlayer(Fighter fighter)
     {
-        var player = new PlayerViewModel(fighter);
-        Players.Add(player);
+        var player = new RegistreeViewModel(new Registree(fighter, UseEffectiveRank));
+        Registrees.Add(player);
         return player;
     }
 
@@ -305,7 +304,7 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
     public partial bool UseEffectiveRank { get; set; } = false;
     partial void OnUseEffectiveRankChanged(bool value)
     {
-        foreach(var p in Players)
+        foreach (var p in Registrees)
             p.UseEffectiveRank = value;
     }
 
