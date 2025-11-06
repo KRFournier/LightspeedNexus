@@ -1,0 +1,98 @@
+<ResourceDictionary
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:c="clr-namespace:LightspeedNexus.Controls;assembly=LightspeedNexus">
+	
+	<Design.PreviewWith>
+		<Border Padding="20">
+			<TabControl TabStripPlacement="Left">
+				<TabControl.ItemsPanel>
+					<ItemsPanelTemplate>
+						<StackPanel Orientation="Vertical"
+									Spacing="-40"/>
+					</ItemsPanelTemplate>
+				</TabControl.ItemsPanel>
+				<TabItem Header="Header 1"/>
+				<TabItem Header="Header 2"/>
+				<TabItem Header="Header 3"/>
+				<TabItem Header="Header 4" IsEnabled="False"/>
+			</TabControl>
+		</Border>
+	</Design.PreviewWith>
+
+	<ControlTheme x:Key="{x:Type TabItem}" TargetType="TabItem">
+		<Setter Property="FontSize" Value="{DynamicResource TabItemHeaderFontSize}" />
+		<Setter Property="FontWeight" Value="{DynamicResource TabItemHeaderThemeFontWeight}" />
+		<Setter Property="Background" Value="{StaticResource BlackBackground}" />
+		<Setter Property="BorderBrush" Value="{StaticResource Gray}" />
+		<Setter Property="BorderThickness" Value="1" />
+		<Setter Property="Foreground" Value="{StaticResource White}" />
+		<Setter Property="Padding" Value="10,20"/>
+		<Setter Property="Margin" Value="0,10"/>
+		<Setter Property="VerticalContentAlignment" Value="Center" />
+		<Setter Property="HorizontalContentAlignment" Value="Center" />
+		<Setter Property="ClipToBounds" Value="False"/>
+		<Setter Property="Opacity" Value="0.8"/>
+		<Setter Property="Transitions">
+			<Transitions>
+				<TransformOperationsTransition Property="RenderTransform" Duration="0:0:.075" />
+				<DoubleTransition Property="Opacity" Duration="0:0:.275" />
+			</Transitions>
+		</Setter>
+		<Setter Property="Template">
+			<ControlTemplate>
+				<c:ChevronBorder
+					Name="PART_LayoutRoot"
+					Background="{TemplateBinding Background}"
+					BorderBrush="{TemplateBinding BorderBrush}"
+					BorderThickness="{TemplateBinding BorderThickness}"
+					Padding="{TemplateBinding Padding}"
+					ClipToBounds="False">
+					<Panel>
+						<ContentPresenter
+							Name="PART_ContentPresenter"
+							HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+							VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+							Content="{TemplateBinding Header}"
+							ContentTemplate="{TemplateBinding HeaderTemplate}"
+							RecognizesAccessKey="True"/>
+					</Panel>
+				</c:ChevronBorder>
+			</ControlTemplate>
+		</Setter>
+
+		<!--  Selected state  -->
+		<!--  We don't use selector to PART_LayoutRoot, so developer can override selected item background with TabStripItem.Background  -->
+		<Style Selector="^:selected">
+			<Setter Property="Opacity" Value="0.9"/>
+		</Style>
+		<Style Selector="^:selected /template/ c|ChevronBorder#PART_LayoutRoot">
+			<Setter Property="Background" Value="{StaticResource BlueBackground}" />
+			<Setter Property="BorderBrush" Value="{StaticResource Blue}" />
+		</Style>
+
+		<!--  PointerOver state  -->
+		<Style Selector="^:pointerover">
+			<Setter Property="Opacity" Value="1.0"/>
+		</Style>
+
+		<!--  Pressed state  -->
+		<Style Selector="^:pressed">
+			<Setter Property="RenderTransform" Value="scale(0.95)" />
+		</Style>
+
+		<!--  Disabled state  -->
+		<Style Selector="^:disabled">
+			<Setter Property="Opacity" Value="0.5"/>
+		</Style>
+
+		<!--  TabStripPlacement States Group  -->
+		<Style Selector="^[TabStripPlacement=Top] /template/ c|ChevronBorder#PART_LayoutRoot">
+			<Setter Property="Orientation" Value="Horizontal" />
+		</Style>
+		<Style Selector="^[TabStripPlacement=Bottom] /template/ c|ChevronBorder#PART_LayoutRoot">
+			<Setter Property="Orientation" Value="Horizontal" />
+		</Style>
+		
+	</ControlTheme>
+</ResourceDictionary>

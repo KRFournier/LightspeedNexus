@@ -38,7 +38,6 @@
 		<Style Selector="Button.squarered /template/ c|LightspeedBorder#PART_Border">
 			<Setter Property="CornerThickness" Value="0"/>
 			<Setter Property="RenderTransform" Value="{x:Null}"/>
-			<Setter Property="BorderBrush" Value="{StaticResource Red}"/>
 			<Setter Property="BorderThickness" Value="0"/>
 			<Setter Property="Background">
 				<SolidColorBrush Color="{StaticResource Red}" Opacity="0.3"/>
@@ -65,11 +64,11 @@
 	</UserControl.Styles>
 
 	<c:LightspeedBorder Padding="0"
-						BorderBrush="{StaticResource BlueRed}"
-						TopLeftBackground="{StaticResource Blue}"
-						TopLeftBorderBrush="{StaticResource Blue}"
-						BottomRightBackground="{StaticResource Red}"
-						BottomRightBorderBrush="{StaticResource Red}">
+						TopLeftBackground="{StaticResource BlueBrush}"
+						TopLeftBorderBrush="{StaticResource BlueBrush}"
+						BottomRightBackground="{StaticResource RedBrush}"
+						BottomRightBorderBrush="{StaticResource RedBrush}"
+						BorderBrush="{StaticResource BlueRed}">
 		<Grid ColumnDefinitions="*,*,80,*,*"
 			  RowDefinitions="*,*">
 			<Button Grid.Column="0"

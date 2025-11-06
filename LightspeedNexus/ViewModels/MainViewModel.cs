@@ -42,7 +42,7 @@ public partial class MainViewModel : ViewModelBase
     private bool _hasDialog = false;
 
     [ObservableProperty]
-    private ViewModelBase? _dialog = null;
+    private MainViewModel? _dialog = null;
 
     private OpenDialogMessage? _dialogMessage = null;
 

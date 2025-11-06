@@ -1,0 +1,85 @@
+﻿using LightspeedNexus.Controls;
+using LightspeedNexus.ViewModels;
+using System;
+
+namespace LightspeedNexus.Models;
+
+/// <summary>
+/// The tournament's game mode
+/// </summary>
+public enum GameMode
+{
+    Standard,
+    Duo,
+    Annihilation
+}
+
+/// <summary>
+/// The tournament's division based on demographics
+/// </summary>
+public enum Demographic
+{
+    All,
+    Women,
+    Cadet
+}
+
+/// <summary>
+/// The tournament's division based on skill level
+/// </summary>
+public enum SkillLevel
+{
+    Open,
+    Advanced,
+    Novice
+}
+
+///// <summary>
+///// The settings for a bracket
+///// </summary>
+//public sealed class BracketSettings : MatchSettings
+//{
+//    public bool HasThirdPlaceMatch { get; set; } = true;
+//    public bool IsFullAdvancement { get; set; } = true;
+//    public new BracketSettingsViewModel ToViewModel() => new(this);
+//    public MatchSettingsViewModel ToMatchSettingsViewModel() => new(this);
+//    public BracketSettings() { }
+//    public BracketSettings(int winningScore, TimeSpan timeLimit, bool hasThirdPlaceMatch, bool isFullAdvancement)
+//        : base(winningScore, timeLimit)
+//    {
+//        HasThirdPlaceMatch = hasThirdPlaceMatch;
+//        IsFullAdvancement = isFullAdvancement;
+//    }
+//}
+
+/// <summary>
+/// The settings for a tournament
+/// </summary>
+public sealed class SetupStage : Stage
+{
+    public DateTime? Date { get; set; }
+    public GameMode GameMode { get; set; } = GameMode.Standard;
+    public Demographic Demographic { get; set; } = Demographic.All;
+    public SkillLevel SkillLevel { get; set; } = SkillLevel.Open;
+    public bool ReyAllowed { get; set; } = true;
+    public bool RenAllowed { get; set; } = false;
+    public bool TanoAllowed { get; set; } = false;
+    public string? SubTitle { get; set; }
+    
+    public SetupStage() { }
+
+    public SetupStage(string name, DateTime? date, GameMode gameMode, Demographic demographic, SkillLevel skillLevel,
+        bool reyAllowed, bool renAllowed, bool tanoAllowed, string? subTitle) : base(name)
+    {
+        Date = date;
+        GameMode = gameMode;
+        Demographic = demographic;
+        SkillLevel = skillLevel;
+        ReyAllowed = reyAllowed;
+        RenAllowed = renAllowed;
+        TanoAllowed = tanoAllowed;
+        SubTitle = subTitle;
+    }
+
+    public override SetupStageViewModel ToViewModel() => new(this);
+}

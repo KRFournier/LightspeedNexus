@@ -118,16 +118,12 @@
 					<Panel>
 						<c:LightspeedBorder
 						  Name="PART_BorderElement"
+						  Classes="small Focus"
 						  Background="{TemplateBinding Background}"
-						  BorderBrush="{TemplateBinding BorderBrush}"
 						  BorderThickness="{TemplateBinding BorderThickness}"
 						  MinWidth="{TemplateBinding MinWidth}"
 						  MinHeight="{TemplateBinding MinHeight}"
 						  CornerThickness="6,6,6,10"
-						  TopLeftBackground="{TemplateBinding Background}"
-						  TopLeftBorderBrush="{TemplateBinding BorderBrush}"
-						  BottomRightBackground="{TemplateBinding Background}"
-						  BottomRightBorderBrush="{TemplateBinding BorderBrush}"
 						  Padding="{TemplateBinding Padding}"
 						  CornerGap="2,2,2,4">
 						</c:LightspeedBorder>
@@ -211,10 +207,10 @@
 			<Setter Property="Foreground" Value="{DynamicResource TextControlForegroundPointerOver}" />
 
 			<Style Selector="^ /template/ c|LightspeedBorder#PART_BorderElement">
-				<Setter Property="TopLeftBackground" Value="{StaticResource Gray}"/>
-				<Setter Property="TopLeftBorderBrush" Value="{StaticResource Gray}"/>
-				<Setter Property="BottomRightBackground" Value="{StaticResource Gray}"/>
-				<Setter Property="BottomRightBorderBrush" Value="{StaticResource Gray}"/>
+				<Setter Property="TopLeftBackground" Value="{StaticResource GrayBrush}"/>
+				<Setter Property="TopLeftBorderBrush" Value="{StaticResource GrayBrush}"/>
+				<Setter Property="BottomRightBackground" Value="{StaticResource GrayBrush}"/>
+				<Setter Property="BottomRightBorderBrush" Value="{StaticResource GrayBrush}"/>
 			</Style>
 
 			<Style Selector="^ /template/ TextBlock#PART_Watermark">
@@ -232,10 +228,10 @@
 
 			<Style Selector="^ /template/ c|LightspeedBorder#PART_BorderElement">
 				<Setter Property="Background" Value="#0f0f0f"/>
-				<Setter Property="TopLeftBackground" Value="{StaticResource Blue}"/>
-				<Setter Property="TopLeftBorderBrush" Value="{StaticResource Blue}"/>
-				<Setter Property="BottomRightBackground" Value="{StaticResource Red}"/>
-				<Setter Property="BottomRightBorderBrush" Value="{StaticResource Red}"/>
+				<Setter Property="TopLeftBackground" Value="{StaticResource BlueBrush}"/>
+				<Setter Property="TopLeftBorderBrush" Value="{StaticResource BlueBrush}"/>
+				<Setter Property="BottomRightBackground" Value="{StaticResource RedBrush}"/>
+				<Setter Property="BottomRightBorderBrush" Value="{StaticResource RedBrush}"/>
 			</Style>
 		</Style>
 

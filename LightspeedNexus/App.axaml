@@ -16,11 +16,11 @@
 				<MergeResourceInclude Source="avares://LightspeedNexus/Styles/ComboBoxTemplate.axaml" />
 				<MergeResourceInclude Source="avares://LightspeedNexus/Styles/CalendarDatePickerTemplate.axaml"/>
 				<MergeResourceInclude Source="avares://LightspeedNexus/Styles/AutoCompleteBoxTemplate.axaml"/>
+				<MergeResourceInclude Source="avares://LightspeedNexus/Styles/TabItemTemplate.axaml"/>
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 		<FontFamily x:Key="Prototype">avares://LightspeedNexus/Assets/Fonts#Prototype</FontFamily>
 		<FontFamily x:Key="Electrolize">avares://LightspeedNexus/Assets/Fonts#Electrolize</FontFamily>
-		<!--<conv:VenueToStringConverter x:Key="VenueToString"/>-->
 		<conv:RadioButtonValueConverter x:Key="RadioValue"/>
 		<conv:TrueToFadedConverter x:Key="TrueToFaded"/>
 		<conv:TrueToInvisibleConverter x:Key="TrueToInvis"/>
@@ -33,11 +33,11 @@
 		<StyleInclude Source="avares://LightspeedNexus/Styles/Icons.axaml" />
 		<StyleInclude Source="avares://LightspeedNexus/Styles/Graphics.axaml" />
 		<StyleInclude Source="avares://LightspeedNexus/Styles/Animations.axaml" />
+		<StyleInclude Source="avares://LightspeedNexus/Styles/LightspeedBorderStyles.axaml" />
+		<StyleInclude Source="avares://LightspeedNexus/Styles/ChevronBorderStyles.axaml" />
 		<StyleInclude Source="avares://LightspeedNexus/Styles/ButtonStyles.axaml" />
-		<StyleInclude Source="avares://LightspeedNexus/Styles/TabItemStyles.axaml" />
 		<StyleInclude Source="avares://LightspeedNexus/Styles/TextBlockStyles.axaml" />
 		<StyleInclude Source="avares://LightspeedNexus/Styles/TextBoxStyles.axaml" />
-		<StyleInclude Source="avares://LightspeedNexus/Styles/LightspeedBorderStyles.axaml" />
 	</Application.Styles>
 
 	<Application.DataTemplates>

@@ -1,0 +1,320 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:LightspeedNexus.ViewModels"
+			 xmlns:m="clr-namespace:LightspeedNexus.Models"
+			 xmlns:v="clr-namespace:LightspeedNexus.Views"
+			 xmlns:c="clr-namespace:LightspeedNexus.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="LightspeedNexus.Views.SetupStageView"
+			 x:DataType="vm:SetupStageViewModel">
+
+	<Design.DataContext>
+		<vm:SetupStageViewModel/>
+	</Design.DataContext>
+
+	<Grid x:Name="Root" RowDefinitions="Auto,10,Auto,10,*">
+
+		<!--Header-->
+		<Grid ColumnDefinitions="*,10,200">
+			<TextBlock Classes="giant"
+					   Text="{Binding Title}"/>
+			<Button Grid.Column="2"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					HorizontalContentAlignment="Center"
+					VerticalContentAlignment="Center">
+				<StackPanel Orientation="Horizontal"
+							 Spacing="10">
+					<TextBlock Classes="large"
+							   Text="Begin"/>
+					<PathIcon Data="{StaticResource arrow_right_regular}"/>
+				</StackPanel>
+			</Button>
+		</Grid>
+
+		<!--Options-->
+		<c:LightspeedBorder Classes="small nocorners"
+							Grid.Row="2">
+			
+			<StackPanel Spacing="10">
+				
+				<Viewbox StretchDirection="DownOnly"
+						 HorizontalAlignment="Left">
+					<Grid ColumnDefinitions="Auto,50,Auto,50,Auto">
+			
+						<!--Skill Level-->
+						<StackPanel Grid.Column="0"
+									Orientation="Horizontal"
+									Spacing="10">
+							<RadioButton GroupName="SkillLevel"
+											Theme="{StaticResource RadioButtonButtons}"
+											Width="100"
+											HorizontalContentAlignment="Center"
+											IsChecked="{Binding SkillLevel,
+												Converter={StaticResource RadioValue},
+												ConverterParameter={x:Static m:SkillLevel.Open}}"
+											Content="Open"/>
+							<RadioButton GroupName="SkillLevel"
+											Theme="{StaticResource RadioButtonButtons}"
+											Padding="5,5.5,5,5"
+											Width="100"
+											HorizontalContentAlignment="Center"
+											IsChecked="{Binding SkillLevel,
+												Converter={StaticResource RadioValue},
+												ConverterParameter={x:Static m:SkillLevel.Advanced}}"
+											Content="Advanced"/>
+							<RadioButton GroupName="SkillLevel"
+											Theme="{StaticResource RadioButtonButtons}"
+											Width="100"
+											HorizontalContentAlignment="Center"
+											IsChecked="{Binding SkillLevel,
+												Converter={StaticResource RadioValue},
+												ConverterParameter={x:Static m:SkillLevel.Novice}}"
+											Content="Novice"/>
+						</StackPanel>
+		
+						<!--Demographic-->
+						<StackPanel Grid.Column="2"
+									Orientation="Horizontal"
+									Spacing="10">
+							<RadioButton GroupName="Demographic"
+											Theme="{StaticResource RadioButtonButtons}"
+											Width="100"
+											HorizontalContentAlignment="Center"
+											IsChecked="{Binding Demographic,
+												Converter={StaticResource RadioValue},
+												ConverterParameter={x:Static m:Demographic.All}}"
+											Content="All"/>
+							<RadioButton GroupName="Demographic"
+											Theme="{StaticResource RadioButtonButtons}"
+											Width="100"
+											HorizontalContentAlignment="Center"
+											IsChecked="{Binding Demographic,
+												Converter={StaticResource RadioValue},
+												ConverterParameter={x:Static m:Demographic.Women}}"
+											Content="Women"/>
+							<RadioButton GroupName="Demographic"
+											Theme="{StaticResource RadioButtonButtons}"
+											Width="100"
+											HorizontalContentAlignment="Center"
+											IsChecked="{Binding Demographic,
+												Converter={StaticResource RadioValue},
+												ConverterParameter={x:Static m:Demographic.Cadet}}"
+											Content="Cadet"/>
+						</StackPanel>
+
+						<!--Weapons-->
+						<StackPanel Grid.Column="4"
+									Orientation="Horizontal"
+									Spacing="10"
+									HorizontalAlignment="Left">
+							<ToggleButton IsChecked="{Binding ReyAllowed}"
+											Width="100"
+											ToolTip.Tip="Allow Rey"
+											VerticalAlignment="Stretch"
+											HorizontalContentAlignment="Center">
+								<StackPanel Orientation="Horizontal"
+											Spacing="2">
+									<Image Height="30" Source="{StaticResource di_Rey}"/>
+									<TextBlock VerticalAlignment="Center">Rey</TextBlock>
+								</StackPanel>
+							</ToggleButton>
+							<ToggleButton IsChecked="{Binding RenAllowed}"
+											Width="100"
+											ToolTip.Tip="Allow Ren"
+											VerticalAlignment="Stretch"
+											HorizontalContentAlignment="Center">
+								<StackPanel Orientation="Horizontal"
+											Spacing="2">
+									<Image Height="30" Source="{StaticResource di_Ren}"/>
+									<TextBlock VerticalAlignment="Center">Ren</TextBlock>
+								</StackPanel>
+							</ToggleButton>
+							<ToggleButton IsChecked="{Binding TanoAllowed}"
+											Width="100"
+											ToolTip.Tip="Allow Tano"
+											VerticalAlignment="Stretch"
+											HorizontalContentAlignment="Center">
+								<StackPanel Orientation="Horizontal"
+											Spacing="2">
+									<Image Height="30" Source="{StaticResource di_Tano}"/>
+									<TextBlock VerticalAlignment="Center">Tano</TextBlock>
+								</StackPanel>
+							</ToggleButton>
+						</StackPanel>
+
+					</Grid>
+				</Viewbox>
+			
+				<!--Additional Info-->
+				<Grid ColumnDefinitions="Auto,10,*,10,Auto,10,Auto">
+			
+					<!--Subtitle-->
+					<TextBlock Grid.Column="0"
+							   Grid.Row="0"
+							   VerticalAlignment="Center"
+							   Text="Tagline"/>
+					<TextBox Grid.Column="2"
+							 Grid.Row="0"
+							 VerticalContentAlignment="Center"
+							 Watermark="Optional text at the end of the generated title"
+							 Text="{Binding SubTitle}"/>
+
+					<!--Date-->
+					<TextBlock Grid.Column="4"
+							   Grid.Row="2"
+							   VerticalAlignment="Center"
+							   Text="Date"/>
+					<CalendarDatePicker Grid.Column="6"
+										Grid.Row="2"
+										SelectedDate="{Binding Date}"/>
+				</Grid>
+		
+			</StackPanel>
+			
+		</c:LightspeedBorder>
+		
+		<!--Roster-->
+		<Grid Grid.Row="4" RowDefinitions="Auto,10,*">
+
+			<Grid ColumnDefinitions="Auto,10,*,10,Auto,10,Auto">
+				
+				<TextBlock Classes="large"
+						   VerticalAlignment="Center"
+						   Text="Roster"/>
+			
+				<!--Search Box-->
+				<AutoCompleteBox x:Name="RosterSearch"
+								 Grid.Column="2"
+								 VerticalAlignment="Center"
+								 FilterMode="Contains"
+								 ItemsSource="{Binding FighterNames}"
+								 SelectedItem="{Binding SelectedFighter}"
+								 Text="{Binding FighterSearchText}"
+								 Watermark="Search existing fighters..."
+								 IsTextCompletionEnabled="True">
+					<AutoCompleteBox.KeyBindings>
+						<KeyBinding Gesture="Enter"
+									Command="{Binding AddFighterCommand}"/>
+					</AutoCompleteBox.KeyBindings>
+				</AutoCompleteBox>
+
+				<Button Grid.Column="4"
+						Command="{Binding NewFighterCommand}">
+					<StackPanel Orientation="Horizontal"
+								VerticalAlignment="Center"
+								Spacing="5">
+						<PathIcon Height="16" Data="{StaticResource add_regular}"/>
+						<TextBlock Text="New Fighter"/>
+					</StackPanel>
+				</Button>
+
+				<CheckBox Grid.Column="6"
+						  VerticalAlignment="Center"
+						  IsChecked="{Binding UseEffectiveRank}"
+						  Content="Use Effective Ranks"/>
+			</Grid>
+			
+			<!-- Players -->
+			<ScrollViewer Grid.Row="4">
+				<ItemsControl ItemsSource="{Binding SortedPlayers}">
+					<ItemsControl.ItemsPanel>
+						<ItemsPanelTemplate>
+							<StackPanel Spacing="10"/>
+						</ItemsPanelTemplate>
+					</ItemsControl.ItemsPanel>
+					<ItemsControl.ItemTemplate>
+						<DataTemplate DataType="vm:PlayerViewModel">
+							<c:LightspeedBorder Classes="item"
+												DoubleTapped="Player_DoubleTapped">
+								<Grid ColumnDefinitions="*,10,50,10,*,10,Auto">
+									<TextBlock Classes="large"
+											   Text="{Binding FullName}"
+											   VerticalAlignment="Center"/>
+									<TextBlock Grid.Column="2"
+											   Classes="large"
+											   Text="{Binding Rank}"
+											   VerticalAlignment="Center"/>
+									<StackPanel Grid.Column="4"
+												Orientation="Horizontal"
+												Spacing="5"
+												HorizontalAlignment="Center">
+										<RadioButton Padding="2"
+													 Theme="{StaticResource RadioButtonButtons}"
+													 GroupName="{Binding FullName}"
+													 IsChecked="{Binding WeaponOfChoice,
+														 Converter={StaticResource RadioValue},
+														 ConverterParameter={x:Static m:WeaponClass.Rey}}"
+													 Width="50"
+													 ToolTip.Tip="Rey"
+													 HorizontalAlignment="Stretch"
+													 VerticalAlignment="Stretch"
+													 VerticalContentAlignment="Stretch"
+													 IsEnabled="{Binding #Root.((vm:SetupStageViewModel)DataContext).ReyAllowed}">
+											<Panel>
+												<Image Source="{StaticResource di_Rey}"/>
+												<TextBlock HorizontalAlignment="Right"
+														   VerticalAlignment="Bottom"
+														   Text="{Binding ReyRank}"/>
+											</Panel>
+										</RadioButton>
+										<RadioButton Padding="2"
+													 Theme="{StaticResource RadioButtonButtons}"
+													 GroupName="{Binding FullName}"
+													 IsChecked="{Binding WeaponOfChoice,
+														 Converter={StaticResource RadioValue},
+														 ConverterParameter={x:Static m:WeaponClass.Ren}}"
+													 Width="50"
+													 ToolTip.Tip="Ren"
+													 HorizontalAlignment="Stretch"
+													 VerticalAlignment="Stretch"
+													 VerticalContentAlignment="Stretch"
+													 IsEnabled="{Binding #Root.((vm:SetupStageViewModel)DataContext).RenAllowed}">
+											<Panel>
+												<Image Source="{StaticResource di_Ren}"/>
+												<TextBlock HorizontalAlignment="Right"
+														   VerticalAlignment="Bottom"
+														   Text="{Binding RenRank}"/>
+											</Panel>
+										</RadioButton>
+										<RadioButton Padding="2"
+													 Theme="{StaticResource RadioButtonButtons}"
+													 GroupName="{Binding FullName}"
+													 IsChecked="{Binding WeaponOfChoice,
+														 Converter={StaticResource RadioValue},
+														 ConverterParameter={x:Static m:WeaponClass.Tano}}"
+													 Width="50"
+													 ToolTip.Tip="Tano"
+													 HorizontalAlignment="Stretch"
+													 VerticalAlignment="Stretch"
+													 VerticalContentAlignment="Stretch"
+													 IsEnabled="{Binding #Root.((vm:SetupStageViewModel)DataContext).TanoAllowed}">
+											<Panel>
+												<Image Source="{StaticResource di_Tano}"/>
+												<TextBlock HorizontalAlignment="Right"
+														   VerticalAlignment="Bottom"
+														   Text="{Binding TanoRank}"/>
+											</Panel>
+										</RadioButton>
+									</StackPanel>
+									<Button Classes="clear"
+											Grid.Column="6"
+											Command="{Binding #Root.((vm:SetupStageViewModel)DataContext).RemovePlayerCommand}"
+											CommandParameter="{Binding .}"
+											HorizontalAlignment="Right"
+											VerticalAlignment="Center">
+										<PathIcon Data="{StaticResource delete_regular}"/>
+									</Button>
+								</Grid>
+							</c:LightspeedBorder>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+			</ScrollViewer>
+
+		</Grid>
+		
+	</Grid>
+</UserControl>

@@ -26,7 +26,7 @@ public partial class RosterView : UserControl
     {
         if (e.Source is Border item && DataContext is RosterViewModel rosterViewModel && !rosterViewModel.IsStarted)
         {
-            var viewModel = item.DataContext as PlayerViewModel;
+            var viewModel = item.DataContext as ContestantViewModel;
 
             GhostItem.Width = item.Bounds.Width;
             GhostItem.Height = item.Bounds.Height;
@@ -49,7 +49,7 @@ public partial class RosterView : UserControl
         GhostItem.RenderTransform = new TranslateTransform(mousePos.X - _offset.X, mousePos.Y - _offset.Y);
         if (e.Source is Border item && DataContext is RosterViewModel rosterViewModel)
         {
-            if (item.DataContext is PlayerViewModel target)
+            if (item.DataContext is ContestantViewModel target)
                 rosterViewModel.DropOnPlayer(target);
         }
     }
@@ -62,7 +62,7 @@ public partial class RosterView : UserControl
 
     public void Player_DoubleTapped(object? sender, RoutedEventArgs e)
     {
-        if (sender is LightspeedBorder border && border.DataContext is PlayerViewModel player)
+        if (sender is LightspeedBorder border && border.DataContext is ContestantViewModel player)
         {
             if (this.DataContext is RosterViewModel vm && vm.EditPlayerCommand.CanExecute(player))
                 vm.EditPlayerCommand.Execute(player);

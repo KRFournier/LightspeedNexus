@@ -13,7 +13,7 @@ public partial class SquadronViewModel : ViewModelBase, IDisposable
 {
     #region Properties
 
-    public ObservableCollection<PlayerViewModel> Players { get; set; } = [];
+    public ObservableCollection<ContestantViewModel> Players { get; set; } = [];
 
     [ObservableProperty]
     public partial int Weight { get; set; } = 0;
@@ -43,7 +43,7 @@ public partial class SquadronViewModel : ViewModelBase, IDisposable
     /// <summary>
     /// Loads an existing squadron
     /// </summary>
-    public SquadronViewModel(Squadron squadron, MatchSettingsViewModel globalSettings, IReadOnlyList<PlayerViewModel> fullRoster)
+    public SquadronViewModel(Squadron squadron, MatchSettingsViewModel globalSettings, IReadOnlyList<ContestantViewModel> fullRoster)
     {
         Settings = new LocalMatchSettingsViewModel(globalSettings);
         Players = [.. squadron.Players.Select(i => fullRoster[i])];
@@ -68,7 +68,7 @@ public partial class SquadronViewModel : ViewModelBase, IDisposable
     /// <summary>
     /// Converts to a <see cref="Squadron"/>
     /// </summary>
-    public Squadron ToModel(IList<PlayerViewModel> players) => new([.. Players.Select(p => players.IndexOf(p))], Weight);
+    public Squadron ToModel(IList<ContestantViewModel> players) => new([.. Players.Select(p => players.IndexOf(p))], Weight);
 
     /// <summary>
     /// Clears players and resets weight

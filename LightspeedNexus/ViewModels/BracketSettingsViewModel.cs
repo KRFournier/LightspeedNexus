@@ -41,7 +41,13 @@ public partial class BracketSettingsViewModel : MatchSettingsViewModel
     /// <summary>
     /// The model
     /// </summary>
-    public new BracketSettings ToModel() => new(WinningScore, TimeLimit, HasThirdPlaceMatch, IsFullAdvancement);
+    public new BracketSettings ToModel() => new()
+    {
+        WinningScore = WinningScore,
+        TimeLimit = TimeLimit,
+        HasThirdPlaceMatch = HasThirdPlaceMatch,
+        IsFullAdvancement = IsFullAdvancement
+    };
 
     /// <summary>
     /// The match settingn model

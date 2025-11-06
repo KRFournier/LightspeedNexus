@@ -12,10 +12,8 @@
 	</Design.PreviewWith>
 
 	<ControlTheme x:Key="{x:Type Button}" TargetType="Button">
-		<Setter Property="Background">
-			<SolidColorBrush Color="{StaticResource Blue}" Opacity="0.4"/>
-		</Setter>
-		<Setter Property="Foreground" Value="{DynamicResource ButtonForeground}" />
+		<Setter Property="Background" Value="{StaticResource BlueBackground}" />
+		<Setter Property="Foreground" Value="{StaticResource White}" />
 		<Setter Property="BorderBrush" Value="{StaticResource Blue}"/>
 		<Setter Property="BorderThickness" Value="{DynamicResource ButtonBorderThemeThickness}" />
 		<Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
@@ -33,13 +31,10 @@
 		<Setter Property="Template">
 			<ControlTemplate>
 				<c:LightspeedBorder x:Name="PART_Border"
+									Classes="small nocorners"
 					                Background="{TemplateBinding Background}"
 									BorderBrush="{TemplateBinding BorderBrush}"
 								    BorderThickness="{TemplateBinding BorderThickness}"
-									TopLeftBackground="{x:Null}"
-									TopLeftBorderBrush="{x:Null}"
-									BottomRightBackground="{x:Null}"
-									BottomRightBorderBrush="{x:Null}"
 								    Padding="{TemplateBinding Padding}"
 									CornerThickness="6,6,4,8"
 									CornerGap="0">

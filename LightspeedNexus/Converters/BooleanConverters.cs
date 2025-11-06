@@ -36,3 +36,17 @@ public class TrueToInvisibleConverter : IValueConverter
         return value is double d && d >= 1.0;
     }
 }
+
+public class TrueToBrushConverter : IValueConverter
+{
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (value is bool b && b)
+            return parameter;
+        return null;
+    }
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}

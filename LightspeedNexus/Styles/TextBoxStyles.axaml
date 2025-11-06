@@ -21,19 +21,19 @@
 	</Style>
 	
 	<Style Selector="TextBox.green">
-		<Setter Property="BorderBrush" Value="#194f11"/>
+		<Setter Property="BorderBrush" Value="{StaticResource SaberSportGreen}"/>
 		<Style Selector="^:pointerover /template/ c|LightspeedBorder#PART_BorderElement">
-			<Setter Property="TopLeftBackground" Value="#194f11"/>
-			<Setter Property="TopLeftBorderBrush" Value="#194f11"/>
-			<Setter Property="BottomRightBackground" Value="#194f11"/>
-			<Setter Property="BottomRightBorderBrush" Value="#194f11"/>
+			<Setter Property="TopLeftBackground" Value="{StaticResource SaberSportGreen}"/>
+			<Setter Property="TopLeftBorderBrush" Value="{StaticResource SaberSportGreen}"/>
+			<Setter Property="BottomRightBackground" Value="{StaticResource SaberSportGreen}"/>
+			<Setter Property="BottomRightBorderBrush" Value="{StaticResource SaberSportGreen}"/>
 		</Style>
 		<Style Selector="^:focus /template/ c|LightspeedBorder#PART_BorderElement">
 			<Setter Property="Background" Value="#051403"/>
-			<Setter Property="TopLeftBackground" Value="#194f11"/>
-			<Setter Property="TopLeftBorderBrush" Value="#194f11"/>
-			<Setter Property="BottomRightBackground" Value="#194f11"/>
-			<Setter Property="BottomRightBorderBrush" Value="#194f11"/>
+			<Setter Property="TopLeftBackground" Value="{StaticResource SaberSportGreen}"/>
+			<Setter Property="TopLeftBorderBrush" Value="{StaticResource SaberSportGreen}"/>
+			<Setter Property="BottomRightBackground" Value="{StaticResource SaberSportGreen}"/>
+			<Setter Property="BottomRightBorderBrush" Value="{StaticResource SaberSportGreen}"/>
 		</Style>
 	</Style>
 	

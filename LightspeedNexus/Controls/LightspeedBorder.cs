@@ -1,8 +1,8 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Utilities;
-using Avalonia;
 
 namespace LightspeedNexus.Controls;
 
@@ -14,8 +14,8 @@ public class LightspeedBorder : Decorator
     /// <summary>
     /// Defines the <see cref="Background"/> property.
     /// </summary>
-    public static readonly StyledProperty<IBrush?> BackgroundProperty =
-        AvaloniaProperty.Register<Border, IBrush?>(nameof(Background));
+    public static readonly StyledProperty<IBrush> BackgroundProperty =
+        AvaloniaProperty.Register<Border, IBrush>(nameof(Background), Brushes.Black);
 
     /// <summary>
     /// Defines the <see cref="BorderBrush"/> property.
@@ -27,7 +27,7 @@ public class LightspeedBorder : Decorator
     /// Defines the <see cref="BorderThickness"/> property.
     /// </summary>
     public static readonly StyledProperty<Thickness> BorderThicknessProperty =
-        AvaloniaProperty.Register<Border, Thickness>(nameof(BorderThickness));
+        AvaloniaProperty.Register<Border, Thickness>(nameof(BorderThickness), new Thickness(1.0));
 
     /// <summary>
     /// Defines the <see cref="CornerThickness"/> property.
@@ -54,6 +54,12 @@ public class LightspeedBorder : Decorator
         AvaloniaProperty.Register<Border, IBrush?>(nameof(TopLeftBackground), null);
 
     /// <summary>
+    /// Defines the <see cref="TopLeftOpacity"/> property.
+    /// </summary>
+    public static readonly StyledProperty<double> TopLeftOpacityProperty =
+        AvaloniaProperty.Register<Border, double>(nameof(TopLeftOpacity), 1.0);
+
+    /// <summary>
     /// Defines the <see cref="BottomRightBorderBrush"/> property.
     /// </summary>
     public static readonly StyledProperty<IBrush?> BottomRightBorderBrushProperty =
@@ -64,6 +70,12 @@ public class LightspeedBorder : Decorator
     /// </summary>
     public static readonly StyledProperty<IBrush?> BottomRightBackgroundProperty =
         AvaloniaProperty.Register<Border, IBrush?>(nameof(BottomRightBackground), null);
+
+    /// <summary>
+    /// Defines the <see cref="BottomRightOpacity"/> property.
+    /// </summary>
+    public static readonly StyledProperty<double> BottomRightOpacityProperty =
+        AvaloniaProperty.Register<Border, double>(nameof(BottomRightOpacity), 1.0);
 
     private Thickness? _layoutThickness;
     private double _scale;
@@ -81,8 +93,11 @@ public class LightspeedBorder : Decorator
             CornerGapProperty,
             TopLeftBorderBrushProperty,
             TopLeftBackgroundProperty,
+            TopLeftOpacityProperty,
             BottomRightBorderBrushProperty,
-            BottomRightBackgroundProperty);
+            BottomRightBackgroundProperty,
+            BottomRightOpacityProperty
+            );
         AffectsMeasure<LightspeedBorder>(
             CornerThicknessProperty,
             CornerGapProperty,
@@ -106,9 +121,9 @@ public class LightspeedBorder : Decorator
     }
 
     /// <summary>
-    /// Gets or sets a brush with which to paint the background.
+    /// Gets or sets a color with which to paint the background.
     /// </summary>
-    public IBrush? Background
+    public IBrush Background
     {
         get => GetValue(BackgroundProperty);
         set => SetValue(BackgroundProperty, value);
@@ -150,28 +165,58 @@ public class LightspeedBorder : Decorator
         set => SetValue(CornerGapProperty, value);
     }
 
+    /// <summary>
+    /// Gets or sets the brush with which to paint the top left corner.
+    /// </summary>
     public IBrush? TopLeftBorderBrush
     {
         get => GetValue(TopLeftBorderBrushProperty);
         set => SetValue(TopLeftBorderBrushProperty, value);
     }
 
+    /// <summary>
+    /// Gets or sets the color of the top left corner.
+    /// </summary>
     public IBrush? TopLeftBackground
     {
         get => GetValue(TopLeftBackgroundProperty);
         set => SetValue(TopLeftBackgroundProperty, value);
     }
 
+    /// <summary>
+    /// Gets or sets the opacity level of the top left corner.
+    /// </summary>
+    public double TopLeftOpacity
+    {
+        get => GetValue(TopLeftOpacityProperty);
+        set => SetValue(TopLeftOpacityProperty, value);
+    }
+
+    /// <summary>
+    /// Gets or sets the brush with which to paint the top left corner. 
+    /// </summary>
     public IBrush? BottomRightBorderBrush
     {
         get => GetValue(BottomRightBorderBrushProperty);
         set => SetValue(BottomRightBorderBrushProperty, value);
     }
 
+    /// <summary>
+    /// Gets or sets the color of the top left corner.
+    /// </summary>
     public IBrush? BottomRightBackground
     {
         get => GetValue(BottomRightBackgroundProperty);
         set => SetValue(BottomRightBackgroundProperty, value);
+    }
+
+    /// <summary>
+    /// Gets or sets the opacity level of the top left corner.
+    /// </summary>
+    public double BottomRightOpacity
+    {
+        get => GetValue(BottomRightOpacityProperty);
+        set => SetValue(BottomRightOpacityProperty, value);
     }
 
     protected Thickness LayoutThickness
@@ -229,29 +274,29 @@ public class LightspeedBorder : Decorator
         }
         context.DrawGeometry(Background, new Pen(BorderBrush, thickness), g);
 
-        if (TopLeftBorderBrush is not null || TopLeftBackground is not null)
+        PathGeometry gTopLeft = new();
+        using (var ctx = gTopLeft.Open())
         {
-            PathGeometry gTopLeft = new();
-            using (var ctx = gTopLeft.Open())
-            {
-                ctx.BeginFigure(new Point(rect.Left, rect.Top), true);
-                ctx.LineTo(new Point(rect.Left + CornerThickness.Top, rect.Top));
-                ctx.LineTo(new Point(rect.Left, rect.Top + CornerThickness.Left));
-                ctx.EndFigure(true);
-            }
+            ctx.BeginFigure(new Point(rect.Left, rect.Top), true);
+            ctx.LineTo(new Point(rect.Left + CornerThickness.Top, rect.Top));
+            ctx.LineTo(new Point(rect.Left, rect.Top + CornerThickness.Left));
+            ctx.EndFigure(true);
+        }
+        using (var state = context.PushOpacity(BottomRightOpacity))
+        {
             context.DrawGeometry(TopLeftBackground, new Pen(TopLeftBorderBrush, thickness), gTopLeft);
         }
 
-        if (BottomRightBorderBrush is not null || BottomRightBackground is not null)
+        PathGeometry gBottomRight = new();
+        using (var ctx = gBottomRight.Open())
         {
-            PathGeometry gBottomRight = new();
-            using (var ctx = gBottomRight.Open())
-            {
-                ctx.BeginFigure(new Point(rect.Right, rect.Bottom), true);
-                ctx.LineTo(new Point(rect.Right - CornerThickness.Bottom, rect.Bottom));
-                ctx.LineTo(new Point(rect.Right, rect.Bottom - CornerThickness.Right));
-                ctx.EndFigure(true);
-            }
+            ctx.BeginFigure(new Point(rect.Right, rect.Bottom), true);
+            ctx.LineTo(new Point(rect.Right - CornerThickness.Bottom, rect.Bottom));
+            ctx.LineTo(new Point(rect.Right, rect.Bottom - CornerThickness.Right));
+            ctx.EndFigure(true);
+        }
+        using (var state = context.PushOpacity(BottomRightOpacity))
+        {
             context.DrawGeometry(BottomRightBackground, new Pen(BottomRightBorderBrush, thickness), gBottomRight);
         }
     }
@@ -261,18 +306,12 @@ public class LightspeedBorder : Decorator
     /// </summary>
     /// <param name="availableSize">The available size.</param>
     /// <returns>The desired size of the control.</returns>
-    protected override Size MeasureOverride(Size availableSize)
-    {
-        return LayoutHelper.MeasureChild(Child, availableSize, Padding, BorderThickness);
-    }
+    protected override Size MeasureOverride(Size availableSize) => LayoutHelper.MeasureChild(Child, availableSize, Padding, BorderThickness);
 
     /// <summary>
     /// Arranges the control's child.
     /// </summary>
     /// <param name="finalSize">The size allocated to the control.</param>
     /// <returns>The space taken.</returns>
-    protected override Size ArrangeOverride(Size finalSize)
-    {
-        return LayoutHelper.ArrangeChild(Child, finalSize, Padding, BorderThickness);
-    }
+    protected override Size ArrangeOverride(Size finalSize) => LayoutHelper.ArrangeChild(Child, finalSize, Padding, BorderThickness);
 }

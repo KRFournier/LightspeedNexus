@@ -22,7 +22,7 @@ public partial class RosterViewModel : ViewModelBase, IComparer
 {
     #region Properties
 
-    public ObservableCollection<PlayerViewModel> Players { get; set; } = [];
+    public ObservableCollection<ContestantViewModel> Players { get; set; } = [];
 
     public ObservableCollection<SquadronViewModel> Squadrons { get; set; } = [];
 
@@ -132,8 +132,8 @@ public partial class RosterViewModel : ViewModelBase, IComparer
         {
             foreach (var f in StorageService.ReadAll<Fighter>())
             {
-                FighterNames.Add(f.FullName);
-                FighterLookup[f.FullName] = f;
+                FighterNames.Add(f.Name);
+                FighterLookup[f.Name] = f;
             }
             FighterNames = [.. FighterNames.Order()];
         }
@@ -148,7 +148,7 @@ public partial class RosterViewModel : ViewModelBase, IComparer
     /// </summary>
     public int Compare(object? x, object? y)
     {
-        if (x is PlayerViewModel pvm1 && y is PlayerViewModel pvm2)
+        if (x is ContestantViewModel pvm1 && y is ContestantViewModel pvm2)
             return pvm1.CompareTo(pvm2);
         else
         {
@@ -220,7 +220,7 @@ public partial class RosterViewModel : ViewModelBase, IComparer
     }
 
     [RelayCommand]
-    private static async Task EditPlayer(PlayerViewModel player)
+    private static async Task EditPlayer(ContestantViewModel player)
     {
         try
         {
@@ -241,7 +241,7 @@ public partial class RosterViewModel : ViewModelBase, IComparer
     /// Removes a player
     /// </summary>
     [RelayCommand]
-    private void RemovePlayer(PlayerViewModel item)
+    private void RemovePlayer(ContestantViewModel item)
     {
         Players.Remove(item);
         OnPropertyChanged(nameof(SortedPlayers));
@@ -252,8 +252,8 @@ public partial class RosterViewModel : ViewModelBase, IComparer
     /// The player that is being dragged
     /// </summary>
     [ObservableProperty]
-    public partial PlayerViewModel? DraggingPlayer { get; set; }
-    partial void OnDraggingPlayerChanged(PlayerViewModel? oldValue, PlayerViewModel? newValue)
+    public partial ContestantViewModel? DraggingPlayer { get; set; }
+    partial void OnDraggingPlayerChanged(ContestantViewModel? oldValue, ContestantViewModel? newValue)
     {
         if (oldValue is not null) oldValue.IsDragging = false;
         if (newValue is not null) newValue.IsDragging = true;
@@ -262,7 +262,7 @@ public partial class RosterViewModel : ViewModelBase, IComparer
     /// <summary>
     /// As the player drags, we drop the dragging player ont the current one
     /// </summary>
-    public void DropOnPlayer(PlayerViewModel target)
+    public void DropOnPlayer(ContestantViewModel target)
     {
         if (DraggingPlayer is null || DraggingPlayer == target)
             return;
@@ -310,12 +310,12 @@ public partial class RosterViewModel : ViewModelBase, IComparer
     /// </summary>
     /// <remarks>The returned PlayerViewModel is added to the Players collection. Squadron assignments are
     /// updated immediately and whenever the player's rank changes, if automatic updates are enabled.</remarks>
-    protected PlayerViewModel CreateAndAddPlayer(Fighter fighter)
+    protected ContestantViewModel CreateAndAddPlayer(Fighter fighter)
     {
-        var player = new PlayerViewModel(fighter);
+        var player = new ContestantViewModel(fighter);
         player.PropertyChanged += (_, e) =>
         {
-            if (e.PropertyName == nameof(PlayerViewModel.Rank) && IsAuto)
+            if (e.PropertyName == nameof(ContestantViewModel.Rank) && IsAuto)
                 UpdateSquadrons();
         };
         Players.Add(player);
@@ -428,7 +428,7 @@ public partial class RosterViewModel : ViewModelBase, IComparer
     /// Assigns given players to the smallest squadron. If multiple squadrons
     /// tie for the smallest, then the player is assigned randomly.
     /// </summary>
-    private void RandomlyAssign(IList<PlayerViewModel> players)
+    private void RandomlyAssign(IList<ContestantViewModel> players)
     {
         Random r = new();
 

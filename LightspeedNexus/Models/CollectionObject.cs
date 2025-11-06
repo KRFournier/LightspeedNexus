@@ -5,7 +5,14 @@ namespace LightspeedNexus.Models;
 /// <summary>
 /// Base class for objects stored in collections.
 /// </summary>
-public record CollectionObject(Guid Id)
+public class CollectionObject
 {
-    public CollectionObject() : this(Guid.NewGuid()) { }
+    public Guid Id { get; set; } = Guid.NewGuid();
+
+    public CollectionObject() { }
+
+    public CollectionObject(Guid id)
+    {
+        Id = id;
+    }
 }

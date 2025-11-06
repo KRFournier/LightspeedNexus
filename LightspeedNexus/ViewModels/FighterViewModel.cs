@@ -12,7 +12,7 @@ public partial class FighterViewModel : ViewModelBase, IComparable<FighterViewMo
     #region Properties
 
     [ObservableProperty]
-    public partial Guid Guid { get; protected set; }
+    public partial Guid Guid { get; protected set; } = Guid.NewGuid();
 
     [ObservableProperty]
     public partial int? OnlineId { get; set; }

@@ -22,6 +22,7 @@
 			<Color x:Key="Magenta">#8c2044</Color>
 			<Color x:Key="Gray">#4c4c4c</Color>
 			<Color x:Key="White">#dfdfdf</Color>
+			
 			<SolidColorBrush x:Key="RedBrush" Color="{StaticResource Red}"/>
 			<SolidColorBrush x:Key="OrangeBrush" Color="{StaticResource Orange}"/>
 			<SolidColorBrush x:Key="YellowBrush" Color="{StaticResource Yellow}"/>
@@ -34,6 +35,7 @@
 			<SolidColorBrush x:Key="MagentaBrush" Color="{StaticResource Magenta}"/>
 			<SolidColorBrush x:Key="GrayBrush" Color="{StaticResource Gray}"/>
 			<SolidColorBrush x:Key="WhiteBrush" Color="{StaticResource White}"/>
+			
 			<SolidColorBrush x:Key="RedBackground" Color="{StaticResource Red}" Opacity="0.4"/>
 			<SolidColorBrush x:Key="OrangeBackground" Color="{StaticResource Orange}" Opacity="0.4"/>
 			<SolidColorBrush x:Key="YellowBackground" Color="{StaticResource Yellow}" Opacity="0.4"/>
@@ -46,11 +48,28 @@
 			<SolidColorBrush x:Key="MagentaBackground" Color="{StaticResource Magenta}" Opacity="0.4"/>
 			<SolidColorBrush x:Key="GrayBackground" Color="{StaticResource Gray}" Opacity="0.4"/>
 			<SolidColorBrush x:Key="WhiteBackground" Color="{StaticResource White}" Opacity="0.4"/>
-			<SolidColorBrush x:Key="BlackBackground" Color="Black" Opacity="0.5"/>
+			<SolidColorBrush x:Key="BlackBackground" Color="Black" Opacity="0.4"/>
+
+			<SolidColorBrush x:Key="RedClear" Color="{StaticResource Red}" Opacity="0"/>
+			<SolidColorBrush x:Key="OrangeClear" Color="{StaticResource Orange}" Opacity="0"/>
+			<SolidColorBrush x:Key="YellowClear" Color="{StaticResource Yellow}" Opacity="0"/>
+			<SolidColorBrush x:Key="LimeClear" Color="{StaticResource Lime}" Opacity="0"/>
+			<SolidColorBrush x:Key="GreenClear" Color="{StaticResource Green}" Opacity="0"/>
+			<SolidColorBrush x:Key="TealClear" Color="{StaticResource Teal}" Opacity="0"/>
+			<SolidColorBrush x:Key="BlueClear" Color="{StaticResource Blue}" Opacity="0"/>
+			<SolidColorBrush x:Key="PurpleClear" Color="{StaticResource Purple}" Opacity="0"/>
+			<SolidColorBrush x:Key="VioletClear" Color="{StaticResource Violet}" Opacity="0"/>
+			<SolidColorBrush x:Key="MagentaClear" Color="{StaticResource Magenta}" Opacity="0"/>
+			<SolidColorBrush x:Key="GrayClear" Color="{StaticResource Gray}" Opacity="0"/>
+			<SolidColorBrush x:Key="WhiteClear" Color="{StaticResource White}" Opacity="0"/>
+			
 			<LinearGradientBrush x:Key="BlueRed">
 				<GradientStop Color="{StaticResource Blue}" Offset="0.0"/>
 				<GradientStop Color="{StaticResource Red}" Offset="1.0"/>
 			</LinearGradientBrush>
+
+			<Color x:Key="SaberSportGreen">#194f11</Color>			
+			
 		</Style.Resources>
 	</Style>
 	

@@ -4,7 +4,9 @@ using CommunityToolkit.Mvvm.Messaging;
 using LightspeedNexus.Messages;
 using LightspeedNexus.Models;
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -16,12 +18,7 @@ public partial class TournamentViewModel : ViewModelBase
 
     public Guid Guid { get; protected set; }
 
-    public SettingsViewModel Settings { get; protected set; }
-
-    public RosterViewModel Roster { get; protected set; }
-
-    [ObservableProperty]
-    public partial bool IsStarted { get; set; } = false;
+    public ObservableCollection<StageViewModel> Stages { get; set; } = [new SetupStageViewModel()];
 
     #endregion
 
@@ -38,9 +35,8 @@ public partial class TournamentViewModel : ViewModelBase
     public TournamentViewModel()
     {
         Guid = Guid.NewGuid();
-        Settings = new SettingsViewModel();
-        Roster = new RosterViewModel(Settings);
-        Settings.PropertyChanged += SettingsChanged;
+        Stages = [new SetupStageViewModel()];
+        Stages[0].PropertyChanged += SettingsChanged;
     }
 
     /// <summary>
@@ -49,10 +45,8 @@ public partial class TournamentViewModel : ViewModelBase
     public TournamentViewModel(Tournament model)
     {
         Guid = model.Id;
-        IsStarted = model.IsStarted;
-        Settings = model.Settings.ToViewModel();
-        Roster = model.Roster.ToViewModel(Settings);
-        Settings.PropertyChanged += SettingsChanged;
+        Stages = [.. model.Stages.Select(s => s.ToViewModel())];
+        Stages.FirstOrDefault(s => s is SetupStageViewModel)?.PropertyChanged += SettingsChanged;
     }
 
     /// <summary>
@@ -62,48 +56,56 @@ public partial class TournamentViewModel : ViewModelBase
     {
         get
         {
-            StringBuilder sb = new();
+            if (Stages.Count > 0 && Stages[0] is SetupStageViewModel Settings)
+            {
+                StringBuilder sb = new();
 
-            if (Settings is null)
+                if (Settings.Demographic != Demographic.All)
+                {
+                    sb.Append(Settings.Demographic.ToString());
+                    sb.Append("'s ");
+                }
+
+                sb.Append(Settings.SkillLevel.ToString());
+
+                if (Settings.GameMode != GameMode.Standard)
+                {
+                    sb.Append(' ');
+                    sb.Append(Settings.GameMode.ToString());
+                }
+
+                if (Settings.ReyAllowed && Settings.RenAllowed && Settings.TanoAllowed)
+                    sb.Append(" Mixed Weapons");
+                else if (Settings.ReyAllowed && Settings.RenAllowed)
+                    sb.Append(" Rey/Ren");
+                else if (Settings.ReyAllowed && Settings.TanoAllowed)
+                    sb.Append(" Rey/Tano");
+                else if (Settings.RenAllowed && Settings.TanoAllowed)
+                    sb.Append(" Ren/Tano");
+                else if (Settings.ReyAllowed)
+                    sb.Append(" Rey");
+                else if (Settings.RenAllowed)
+                    sb.Append(" Ren");
+                else if (Settings.TanoAllowed)
+                    sb.Append(" Tano");
+
+                if (!string.IsNullOrEmpty(Settings.SubTitle))
+                {
+                    sb.Append($" - ");
+                    sb.Append(Settings.SubTitle);
+                }
+
+                return sb.ToString();
+            }
+            else
                 return "New Tournament";
-
-            if (Settings.Demographic != Demographic.All)
-            {
-                sb.Append(Settings.Demographic.ToString());
-                sb.Append("'s ");
-            }
-
-            sb.Append(Settings.SkillLevel.ToString());
-
-            if (Settings.ReyAllowed && Settings.RenAllowed && Settings.TanoAllowed)
-                sb.Append(" Mixed Weapons");
-            else if (Settings.ReyAllowed && Settings.RenAllowed)
-                sb.Append(" Rey/Ren");
-            else if (Settings.ReyAllowed && Settings.TanoAllowed)
-                sb.Append(" Rey/Tano");
-            else if (Settings.RenAllowed && Settings.TanoAllowed)
-                sb.Append(" Ren/Tano");
-            else if (Settings.ReyAllowed)
-                sb.Append(" Rey");
-            else if (Settings.RenAllowed)
-                sb.Append(" Ren");
-            else if (Settings.TanoAllowed)
-                sb.Append(" Tano");
-
-            if (!string.IsNullOrEmpty(Settings.SubTitle))
-            {
-                sb.Append($" - ");
-                sb.Append(Settings.SubTitle);
-            }
-
-            return sb.ToString();
         }
     }
 
     /// <summary>
     /// Converts to a <see cref="Tournament"/>
     /// </summary>
-    public Tournament ToModel() => new(Guid, IsStarted, Settings.ToModel(), Roster.ToModel());
+    public Tournament ToModel() => new(Guid, [.. Stages.Select(s => s.ToModel())]);
 
     /// <summary>
     /// Listens for changes in settings to update the name

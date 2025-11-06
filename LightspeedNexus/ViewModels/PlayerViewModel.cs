@@ -2,7 +2,6 @@
 using LightspeedNexus.Models;
 using System;
 using System.ComponentModel;
-using System.Numerics;
 
 namespace LightspeedNexus.ViewModels;
 
@@ -11,6 +10,7 @@ public partial class PlayerViewModel : FighterViewModel
     #region Properties
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsDisqualified))]
     public partial Card Card { get; set; } = Card.None;
 
     [ObservableProperty]
@@ -20,6 +20,7 @@ public partial class PlayerViewModel : FighterViewModel
     public partial int ForceCalls { get; set; } = 0;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsDisqualified))]
     public partial bool IsEjected { get; set; } = false;
 
     [ObservableProperty]
@@ -36,26 +37,31 @@ public partial class PlayerViewModel : FighterViewModel
     {
         get
         {
-            // if the weapon of choice is the best weapon, return that rank
-            var bestWeapon = GetBestWeapon();
-            if (WeaponOfChoice == bestWeapon.Class)
-                return bestWeapon.Rank;
-            else
+            if (UseEffectiveRank)
             {
-                var rank = GetWeaponRank(WeaponOfChoice);
-                if (rank > bestWeapon.Rank)
-                    throw new InvalidOperationException("Weapon of choice rank cannot be higher than best weapon rank");
-
-                // if the weapon of choice is the same rank as the best weapon, return that rank
-                else if (rank == bestWeapon.Rank)
-                    return rank;
+                // if the weapon of choice is the best weapon, return that rank
+                var bestWeapon = GetBestWeapon();
+                if (WeaponOfChoice == bestWeapon.Class)
+                    return bestWeapon.Rank;
                 else
                 {
-                    // otherwise, the weapon of choice is ranked less than the best weapon,
-                    // so combine the two ranks to take into account the fighter's overall skill
-                    return Rank.Combine(bestWeapon.Rank, GetWeaponRank(WeaponOfChoice));
+                    var rank = GetWeaponRank(WeaponOfChoice);
+                    if (rank > bestWeapon.Rank)
+                        throw new InvalidOperationException("Weapon of choice rank cannot be higher than best weapon rank");
+
+                    // if the weapon of choice is the same rank as the best weapon, return that rank
+                    else if (rank == bestWeapon.Rank)
+                        return rank;
+                    else
+                    {
+                        // otherwise, the weapon of choice is ranked less than the best weapon,
+                        // so combine the two ranks to take into account the fighter's overall skill
+                        return Rank.Combine(bestWeapon.Rank, GetWeaponRank(WeaponOfChoice));
+                    }
                 }
             }
+            else
+                return GetWeaponRank(WeaponOfChoice);
         }
     }
 
@@ -68,24 +74,24 @@ public partial class PlayerViewModel : FighterViewModel
     #endregion
 
     /// <summary>
-    /// Creates a brand new player
+    /// Creates a brand new Player
     /// </summary>
     public PlayerViewModel() : base() { }
 
     /// <summary>
-    /// Loads an existing player
+    /// Loads an existing Player
     /// </summary>
-    public PlayerViewModel(Player player) : base(player)
+    public PlayerViewModel(Player Player) : base(Player)
     {
-        Card = player.Card;
-        Honor = player.Honor;
-        ForceCalls = player.ForceCalls;
-        IsEjected = player.IsEjected;
-        WeaponOfChoice = player.WeaponOfChoice;
+        Card = Player.Card;
+        Honor = Player.Honor;
+        ForceCalls = Player.ForceCalls;
+        IsEjected = Player.IsEjected;
+        WeaponOfChoice = Player.WeaponOfChoice;
     }
 
     /// <summary>
-    /// Creates a new player from fighter info
+    /// Creates a new Player from fighter info
     /// </summary>
     public PlayerViewModel(Fighter fighter) : base(fighter) { }
 
@@ -115,4 +121,16 @@ public partial class PlayerViewModel : FighterViewModel
             OnPropertyChanged(nameof(Rank));
         }
     }
+
+    /// <summary>
+    /// Determines if the Player is disqualified either by card or ejection
+    /// </summary>
+    public bool IsDisqualified => Card == Card.Black || IsEjected;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether effective rank calculations are used in operations that support ranking.
+    /// </summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(Rank))]
+    public partial bool UseEffectiveRank { get; set; } = false;
 }

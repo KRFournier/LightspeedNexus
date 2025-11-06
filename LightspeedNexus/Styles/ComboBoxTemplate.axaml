@@ -140,10 +140,10 @@
 
 		<!--  PointerOver State  -->
 		<Style Selector="^:pointerover /template/ c|LightspeedBorder#Background">
-			<Setter Property="TopLeftBackground" Value="{StaticResource Gray}"/>
-			<Setter Property="TopLeftBorderBrush" Value="{StaticResource Gray}"/>
-			<Setter Property="BottomRightBackground" Value="{StaticResource Gray}"/>
-			<Setter Property="BottomRightBorderBrush" Value="{StaticResource Gray}"/>
+			<Setter Property="TopLeftBackground" Value="{StaticResource GrayBrush}"/>
+			<Setter Property="TopLeftBorderBrush" Value="{StaticResource GrayBrush}"/>
+			<Setter Property="BottomRightBackground" Value="{StaticResource GrayBrush}"/>
+			<Setter Property="BottomRightBorderBrush" Value="{StaticResource GrayBrush}"/>
 		</Style>
 
 		<!--  Pressed State  -->
@@ -154,20 +154,20 @@
 		<!-- Error State -->
 		<Style Selector="^:error /template/ c|LightspeedBorder#Background">
 			<Setter Property="BorderBrush" Value="{StaticResource Red}" />
-			<Setter Property="TopLeftBackground" Value="{StaticResource Red}"/>
-			<Setter Property="TopLeftBorderBrush" Value="{StaticResource Red}"/>
-			<Setter Property="BottomRightBackground" Value="{StaticResource Red}"/>
-			<Setter Property="BottomRightBorderBrush" Value="{StaticResource Red}"/>
+			<Setter Property="TopLeftBackground" Value="{StaticResource RedBrush}"/>
+			<Setter Property="TopLeftBorderBrush" Value="{StaticResource RedBrush}"/>
+			<Setter Property="BottomRightBackground" Value="{StaticResource Brush}"/>
+			<Setter Property="BottomRightBorderBrush" Value="{StaticResource RedBrush}"/>
 		</Style>
 
 		<!--  Focus Pressed State  -->
 		<Style Selector="^:focused:pressed">
 			<Style Selector="^ /template/ c|LightspeedBorder#Background">
 				<Setter Property="Background" Value="#0f0f0f"/>
-				<Setter Property="TopLeftBackground" Value="{StaticResource Blue}"/>
-				<Setter Property="TopLeftBorderBrush" Value="{StaticResource Blue}"/>
-				<Setter Property="BottomRightBackground" Value="{StaticResource Red}"/>
-				<Setter Property="BottomRightBorderBrush" Value="{StaticResource Red}"/>
+				<Setter Property="TopLeftBackground" Value="{StaticResource BlueBrush}"/>
+				<Setter Property="TopLeftBorderBrush" Value="{StaticResource BlueBrush}"/>
+				<Setter Property="BottomRightBackground" Value="{StaticResource RedBrush}"/>
+				<Setter Property="BottomRightBorderBrush" Value="{StaticResource RedBrush}"/>
 			</Style>
 			<Style Selector="^ /template/ ContentControl#ContentPresenter">
 				<Setter Property="Foreground" Value="{DynamicResource ComboBoxForegroundFocusedPressed}" />
@@ -184,10 +184,10 @@
 		<Style Selector="^:focus-visible">
 			<Style Selector="^ /template/ c|LightspeedBorder#Background">
 				<Setter Property="Background" Value="#0f0f0f"/>
-				<Setter Property="TopLeftBackground" Value="{StaticResource Blue}"/>
-				<Setter Property="TopLeftBorderBrush" Value="{StaticResource Blue}"/>
-				<Setter Property="BottomRightBackground" Value="{StaticResource Red}"/>
-				<Setter Property="BottomRightBorderBrush" Value="{StaticResource Red}"/>
+				<Setter Property="TopLeftBackground" Value="{StaticResource BlueBrush}"/>
+				<Setter Property="TopLeftBorderBrush" Value="{StaticResource BlueBrush}"/>
+				<Setter Property="BottomRightBackground" Value="{StaticResource RedBrush}"/>
+				<Setter Property="BottomRightBorderBrush" Value="{StaticResource RedBrush}"/>
 			</Style>
 			<Style Selector="^ /template/ ContentControl#ContentPresenter">
 				<Setter Property="Foreground" Value="{DynamicResource ComboBoxForegroundFocused}" />

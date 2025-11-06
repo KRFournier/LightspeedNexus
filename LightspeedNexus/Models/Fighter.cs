@@ -20,8 +20,18 @@ public enum WeaponClass
 /// <summary>
 /// The fencer's rating for a specific weapon class.
 /// </summary>
-public sealed record WeaponRating(WeaponClass Class, Rank Rank)
+public sealed class WeaponRating
 {
+    public WeaponClass Class { get; set; } = WeaponClass.Rey;
+    public Rank Rank { get; set; } = Rank.U;
+
+    public WeaponRating() { }
+    public WeaponRating(WeaponClass weaponClass, Rank rank)
+    {
+        Class = weaponClass;
+        Rank = rank;
+    }
+
     /// <summary>
     /// Creates a new instance of the WeaponRating class from a JSON node representing a SaberSport weapon rating.
     /// </summary>
@@ -36,10 +46,11 @@ public sealed record WeaponRating(WeaponClass Class, Rank Rank)
 
         try
         {
-            return new(
-                Enum.Parse<WeaponClass>(node["type"]?.GetValue<string>() ?? "", true),
-                node["rank"]?.GetValue<string>()
-                );
+            return new()
+            {
+                Class = Enum.Parse<WeaponClass>(node["type"]?.GetValue<string>() ?? "", true),
+                Rank = node["rank"]?.GetValue<string>()
+            };
         }
         catch (Exception ex)
         {
@@ -50,13 +61,33 @@ public sealed record WeaponRating(WeaponClass Class, Rank Rank)
 }
 
 /// <summary>
-/// A fighter is a Lightspeed competitor who has or will participate in events
+/// A fighter is a Lightspeed competitor who has or will participate in events.
+/// This is a global representation not tied to any specific event or team.
+/// Fighters persist between application sessions.
 /// </summary>
-public record Fighter(Guid Id,
-    int? OnlineId, string FirstName, string LastName, string? Club,
-    Rank Rey, Rank Ren, Rank Tano
-    ) : CollectionObject(Id)
+public class Fighter : CollectionObject
 {
+    public int? OnlineId { get; set; } = null;
+    public string FirstName { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
+    public string? Club { get; set; }
+    public Rank Rey { get; set; } = Rank.U;
+    public Rank Ren { get; set; } = Rank.U;
+    public Rank Tano { get; set; } = Rank.U;
+
+    public Fighter() { }
+    public Fighter(Guid id, int? onlineId, string firstName, string lastName, string? club, Rank rey, Rank ren, Rank tano)
+        : base(id)
+    {
+        OnlineId = onlineId;
+        FirstName = firstName;
+        LastName = lastName;
+        Club = club;
+        Rey = rey;
+        Ren = ren;
+        Tano = tano;
+    }
+
     /// <summary>
     /// Creates a new Fighter instance from a SaberSport-formatted JSON node.
     /// </summary>
@@ -73,18 +104,16 @@ public record Fighter(Guid Id,
 
         try
         {
+            Fighter fighter = new();
+
             // these can throw because they are required
-            var onlineId = node["id"]?.GetValue<int>();
-            var firstName = node["first_name"]?.GetValue<string>() ?? string.Empty;
-            var lastName = node["last_name"]?.GetValue<string>() ?? string.Empty;
-            string? club = null;
-            Rank rey = Rank.U;
-            Rank ren = Rank.U;
-            Rank tano = Rank.U;
+            fighter.OnlineId = node["id"]?.GetValue<int>();
+            fighter.FirstName = node["first_name"]?.GetValue<string>() ?? string.Empty;
+            fighter.LastName = node["last_name"]?.GetValue<string>() ?? string.Empty;
 
             // optional
             if (node["club"] is JsonValue jsonClub && jsonClub.GetValueKind() == System.Text.Json.JsonValueKind.String)
-                club = jsonClub.GetValue<string>();
+                fighter.Club = jsonClub.GetValue<string>();
 
             if (node["ranks"] is JsonArray ranks)
             {
@@ -95,14 +124,14 @@ public record Fighter(Guid Id,
                     {
                         switch (rating.Class)
                         {
-                            case WeaponClass.Rey when rating.Rank > rey:
-                                rey = rating.Rank;
+                            case WeaponClass.Rey when rating.Rank > fighter.Rey:
+                                fighter.Rey = rating.Rank;
                                 break;
-                            case WeaponClass.Ren when rating.Rank > ren:
-                                ren = rating.Rank;
+                            case WeaponClass.Ren when rating.Rank > fighter.Ren:
+                                fighter.Ren = rating.Rank;
                                 break;
-                            case WeaponClass.Tano when rating.Rank > tano:
-                                tano = rating.Rank;
+                            case WeaponClass.Tano when rating.Rank > fighter.Tano:
+                                fighter.Tano = rating.Rank;
                                 break;
                             default:
                                 Console.WriteLine($"Unknown weapon class: {rating.Class}");
@@ -113,10 +142,10 @@ public record Fighter(Guid Id,
             }
 
             // one last check to make sure there's a name
-            if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName))
+            if (string.IsNullOrEmpty(fighter.FirstName) || string.IsNullOrEmpty(fighter.LastName))
                 return null;
 
-            return new(Guid.NewGuid(), onlineId, firstName, lastName, club, rey, ren, tano);
+            return fighter;
         }
         catch (Exception ex)
         {
@@ -128,13 +157,13 @@ public record Fighter(Guid Id,
     /// <summary>
     /// Represents the fighter as a string in "FirstName LastName" format.
     /// </summary>
-    public override string ToString() => FullName;
+    public override string ToString() => Name;
 
     /// <summary>
     /// Gets the full name, consisting of the first and last name combined.
     /// </summary>
     [BsonIgnore]
-    public string FullName => $"{FirstName} {LastName}";
+    public string Name => $"{FirstName} {LastName}";
 
     /// <summary>
     /// Converts the current fighter entity to a corresponding view model representation.

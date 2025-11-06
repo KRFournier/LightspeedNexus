@@ -53,7 +53,11 @@ public partial class MatchSettingsViewModel : ViewModelBase, IEquatable<MatchSet
     /// <summary>
     /// The model
     /// </summary>
-    public MatchSettings ToModel() => new(WinningScore, TimeLimit);
+    public MatchSettings ToModel() => new()
+    {
+        WinningScore = WinningScore,
+        TimeLimit = TimeLimit
+    };
 
     #region Value Equality
 

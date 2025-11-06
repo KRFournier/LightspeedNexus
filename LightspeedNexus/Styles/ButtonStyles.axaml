@@ -16,20 +16,20 @@
 
 	<Style Selector="Button">
 		<Style Selector="^.gray">
-			<Setter Property="BorderBrush" Value="{StaticResource Gray}"/>
+			<Setter Property="BorderBrush" Value="{StaticResource GrayBrush}"/>
 			<Setter Property="Background" Value="{StaticResource GrayBackground}"/>
 		</Style>
 		<Style Selector="^.red">
-			<Setter Property="BorderBrush" Value="{StaticResource Red}"/>
+			<Setter Property="BorderBrush" Value="{StaticResource RedBrush}"/>
 			<Setter Property="Background" Value="{StaticResource RedBackground}"/>
 		</Style>
 		<Style Selector="^.green">
-			<Setter Property="BorderBrush" Value="{StaticResource Green}"/>
+			<Setter Property="BorderBrush" Value="{StaticResource GreenBrush}"/>
 			<Setter Property="Background" Value="{StaticResource GreenBackground}"/>
 		</Style>
 		<Style Selector="^.outlined">
 			<Setter Property="Background" Value="Transparent"/>
-			<Setter Property="BorderBrush" Value="{StaticResource White}"/>
+			<Setter Property="BorderBrush" Value="{StaticResource WhiteBrush}"/>
 		</Style>
 		<Style Selector="^.clear">
 			<Setter Property="Background" Value="Transparent"/>
@@ -42,8 +42,8 @@
 			<Setter Property="RenderTransform" Value="scale(0.9)" />
 		</Style>
 		<Style Selector="^.toolbar">
-			<Setter Property="Background" Value="#0021458d"/>
-			<Setter Property="BorderBrush" Value="#0021458d"/>
+			<Setter Property="Background" Value="{StaticResource BlueClear}"/>
+			<Setter Property="BorderBrush" Value="{StaticResource BlueClear}"/>
 			<Setter Property="Transitions">
 				<Transitions>
 					<TransformOperationsTransition Property="RenderTransform" Duration="0:0:.075" />
@@ -52,7 +52,7 @@
 				</Transitions>
 			</Setter>
 			<Style Selector="^:pointerover">
-				<Setter Property="BorderBrush" Value="{StaticResource Blue}"/>
+				<Setter Property="BorderBrush" Value="{StaticResource BlueBrush}"/>
 				<Setter Property="Background" Value="{StaticResource BlueBackground}"/>
 				<Setter Property="RenderTransform" Value="scale(1.0)" />
 			</Style>

@@ -5,10 +5,15 @@
     <Design.PreviewWith>
 		<Border Padding="20" Background="#1f1f1f">
 			<StackPanel Spacing="20">
-				<c:LightspeedBorder Classes="item">
+				<c:LightspeedBorder Classes="">
 					<TextBlock>Hello, World!</TextBlock>
 				</c:LightspeedBorder>
-				<c:LightspeedBorder Classes="eventitem">
+				<c:LightspeedBorder Classes="small fadecorners"
+									BorderBrush="{StaticResource Red}"
+									TopLeftBackground="{StaticResource Red}"
+									BottomRightBackground="{StaticResource Red}"
+									TopLeftBorderBrush="{StaticResource Red}"
+									BottomRightBorderBrush="{StaticResource Red}">
 					<TextBlock>Hello, World!</TextBlock>
 				</c:LightspeedBorder>
 			</StackPanel>
@@ -16,122 +21,72 @@
     </Design.PreviewWith>
 
 	<Style Selector="c|LightspeedBorder">
-		<Setter Property="Background">
-			<SolidColorBrush Color="Black" Opacity="0.5"/>
-		</Setter>
+		<Setter Property="Background" Value="{StaticResource BlackBackground}"/>
+		<Setter Property="TopLeftBackground" Value="{StaticResource BlackBackground}"/>
+		<Setter Property="BottomRightBackground" Value="{StaticResource BlackBackground}"/>
 		<Setter Property="BorderBrush" Value="{StaticResource Gray}"/>
-		<Setter Property="BorderThickness" Value="1.0"/>
-		<Setter Property="Padding" Value="20"/>
+		<Setter Property="TopLeftBorderBrush" Value="{StaticResource Gray}"/>
+		<Setter Property="BottomRightBorderBrush" Value="{StaticResource Gray}"/>
+		<Setter Property="Padding" Value="12"/>
 		<Setter Property="CornerThickness" Value="20,20,20,30"/>
 		<Setter Property="CornerGap" Value="4,4,4,6"/>
-		<Setter Property="TopLeftBackground" Value="#0021458d"/>
-		<Setter Property="TopLeftBorderBrush" Value="{StaticResource Gray}"/>
-		<Setter Property="BottomRightBackground" Value="#00b52d25"/>
-		<Setter Property="BottomRightBorderBrush" Value="{StaticResource Gray}"/>
-		<Style Selector="^.color">
-			<Setter Property="BorderBrush">
-				<LinearGradientBrush>
-					<LinearGradientBrush.GradientStops>
-						<GradientStop Color="{StaticResource Blue}" Offset="0.0"/>
-						<GradientStop Color="{StaticResource Red}" Offset="1.0"/>
-					</LinearGradientBrush.GradientStops>
-				</LinearGradientBrush>
-			</Setter>
-		</Style>
-		<Style Selector="^.fullcolor">
-			<Setter Property="Background" Value="{StaticResource GrayBackground}"/>
-			<Setter Property="TopLeftBorderBrush" Value="{StaticResource Blue}"/>
-			<Setter Property="TopLeftBackground" Value="{StaticResource Blue}"/>
-			<Setter Property="BottomRightBorderBrush" Value="{StaticResource Red}"/>
-			<Setter Property="BottomRightBackground" Value="{StaticResource Red}"/>
-		</Style>
-		<Style Selector="^.colorcorners">
-			<Setter Property="TopLeftBorderBrush" Value="{StaticResource Blue}"/>
-			<Setter Property="TopLeftBackground" Value="{StaticResource Blue}"/>
-			<Setter Property="BottomRightBorderBrush" Value="{StaticResource Red}"/>
-			<Setter Property="BottomRightBackground" Value="{StaticResource Red}"/>
-		</Style>
-		<Style Selector="^.darkback">
-			<Setter Property="Background">
-				<SolidColorBrush Color="Black" Opacity="0.8"/>
-			</Setter>
-		</Style>
-	</Style>
-
-	<Style Selector="c|LightspeedBorder.hover">
-		<Setter Property="Transitions">
-			<Transitions>
-				<TransformOperationsTransition Property="RenderTransform" Duration="0:0:.075" />
-			</Transitions>
-		</Setter>
-		<Style Selector="^:pointerover">
-			<Setter Property="RenderTransform" Value="scale(1.05)" />
-		</Style>
-	</Style>
-
-	<Style Selector="c|LightspeedBorder.coloritem">
-		<Setter Property="Background" Value="#4f000000"/>
-		<Setter Property="TopLeftBackground" Value="#0021458d"/>
-		<Setter Property="TopLeftBorderBrush" Value="#0021458d"/>
-		<Setter Property="BottomRightBackground" Value="#00b52d25"/>
-		<Setter Property="BottomRightBorderBrush" Value="#00b52d25"/>
-		<Setter Property="Transitions">
-			<Transitions>
-				<BrushTransition Property="Background" Duration="0:0:.3" />
-				<BrushTransition Property="TopLeftBorderBrush" Duration="0:0:.3" />
-				<BrushTransition Property="TopLeftBackground" Duration="0:0:.3" />
-				<BrushTransition Property="BottomRightBorderBrush" Duration="0:0:.3" />
-				<BrushTransition Property="BottomRightBackground" Duration="0:0:.3" />
-			</Transitions>
-		</Setter>
-		<Style Selector="^:pointerover">
-			<Setter Property="Background" Value="#4f4c4c4c"/>
-			<Setter Property="TopLeftBorderBrush" Value="{StaticResource Blue}"/>
-			<Setter Property="TopLeftBackground" Value="{StaticResource Blue}"/>
-			<Setter Property="BottomRightBorderBrush" Value="{StaticResource Red}"/>
-			<Setter Property="BottomRightBackground" Value="{StaticResource Red}"/>
-		</Style>
-	</Style>
-
-	<Style Selector="c|LightspeedBorder.eventitem">
-		<Setter Property="TopLeftBackground" Value="{x:Null}"/>
-		<Setter Property="TopLeftBorderBrush" Value="{x:Null}"/>
-		<Setter Property="BottomRightBackground" Value="{x:Null}"/>
-		<Setter Property="BottomRightBorderBrush" Value="{x:Null}"/>
-		<Setter Property="CornerThickness" Value="6,6,6,10"/>
-		<Setter Property="CornerGap" Value="0"/>
-		<Setter Property="Padding" Value="5"/>
 	</Style>
 
 	<Style Selector="c|LightspeedBorder.small">
 		<Setter Property="CornerThickness" Value="6,6,6,10"/>
-		<Setter Property="CornerGap" Value="3,3,3,5"/>
+		<Setter Property="CornerGap" Value="3,3,3,4.5"/>
 	</Style>
 
-	<Style Selector="c|LightspeedBorder.item">
+	<Style Selector="c|LightspeedBorder.nocorners">
+		<Setter Property="TopLeftBorderBrush" Value="Transparent"/>
+		<Setter Property="TopLeftBackground" Value="Transparent"/>
+		<Setter Property="TopLeftOpacity" Value="0.0"/>
+		<Setter Property="BottomRightBorderBrush" Value="Transparent"/>
+		<Setter Property="BottomRightBackground" Value="Transparent"/>
+		<Setter Property="BottomRightOpacity" Value="0.0"/>
+		<Setter Property="CornerGap" Value="0"/>
+	</Style>
+
+	<Style Selector="c|LightspeedBorder.growcorners">
 		<Setter Property="CornerThickness" Value="6,6,6,10"/>
-		<Setter Property="CornerGap" Value="3,3,3,5"/>
-		<Setter Property="Padding" Value="12"/>
+		<Setter Property="CornerGap" Value="3,3,3,4.5"/>
 		<Setter Property="Transitions">
 			<Transitions>
-				<BrushTransition Property="Background" Duration="0:0:.3" />
-				<BrushTransition Property="TopLeftBorderBrush" Duration="0:0:.3" />
-				<BrushTransition Property="TopLeftBackground" Duration="0:0:.3" />
-				<BrushTransition Property="BottomRightBorderBrush" Duration="0:0:.3" />
-				<BrushTransition Property="BottomRightBackground" Duration="0:0:.3" />
 				<ThicknessTransition Property="CornerThickness" Duration="0:0:0.3" />
 				<ThicknessTransition Property="CornerGap" Duration="0:0:0.3" />
 			</Transitions>
 		</Setter>
 		<Style Selector="^:pointerover">
-			<Setter Property="Background" Value="#4f1b1b1b"/>
 			<Setter Property="CornerThickness" Value="20,20,20,30"/>
 			<Setter Property="CornerGap" Value="4,4,4,6"/>
-			<Setter Property="TopLeftBorderBrush" Value="{StaticResource Blue}"/>
-			<Setter Property="TopLeftBackground" Value="{StaticResource Blue}"/>
-			<Setter Property="BottomRightBorderBrush" Value="{StaticResource Red}"/>
-			<Setter Property="BottomRightBackground" Value="{StaticResource Red}"/>
 		</Style>
+	</Style>
+
+	<Style Selector="c|LightspeedBorder.fadecorners">
+		<Setter Property="TopLeftOpacity" Value="0"/>
+		<Setter Property="BottomRightOpacity" Value="0"/>
+		<Setter Property="Transitions">
+			<Transitions>
+				<DoubleTransition Property="TopLeftOpacity" Duration="0:0:0.3" />
+				<DoubleTransition Property="BottomRightOpacity" Duration="0:0:0.3" />
+			</Transitions>
+		</Setter>
+		<Style Selector="^:pointerover">
+			<Setter Property="TopLeftOpacity" Value="1.0"/>
+			<Setter Property="BottomRightOpacity" Value="1.0"/>
+		</Style>
+	</Style>
+	
+	<Style Selector="c|LightspeedBorder.focus">
+		<Setter Property="Background">
+			<SolidColorBrush Color="{StaticResource Gray}" Opacity="0.1"/>
+		</Setter>
+		<Setter Property="TopLeftBorderBrush" Value="{StaticResource BlueBrush}"/>
+		<Setter Property="TopLeftBackground" Value="{StaticResource BlueBrush}"/>
+		<Setter Property="TopLeftOpacity" Value="1.0"/>
+		<Setter Property="BottomRightBorderBrush" Value="{StaticResource RedBrush}"/>
+		<Setter Property="BottomRightBackground" Value="{StaticResource RedBrush}"/>
+		<Setter Property="BottomRightOpacity" Value="1.0"/>
 	</Style>
 	
 </Styles>

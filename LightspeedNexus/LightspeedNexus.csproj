@@ -13,6 +13,10 @@
   <ItemGroup>
     <AvaloniaXaml Remove="Views\CalendarView.axaml" />
     <AvaloniaXaml Remove="Views\CompetitionView.axaml" />
+    <AvaloniaXaml Remove="Views\LocalMatchSettingsView.axaml" />
+    <AvaloniaXaml Remove="Views\PoolMatchView.axaml" />
+    <AvaloniaXaml Remove="Views\RosterView.axaml" />
+    <AvaloniaXaml Remove="Views\SettingsView.axaml" />
     <AvaloniaXaml Remove="Views\VenueView.axaml" />
   </ItemGroup>
 
@@ -21,13 +25,34 @@
     <Compile Remove="Models\Competition.cs" />
     <Compile Remove="Models\Event.cs" />
     <Compile Remove="Models\EventEstimator.cs" />
+    <Compile Remove="Models\Match.cs" />
+    <Compile Remove="Models\MatchManager.cs" />
+    <Compile Remove="Models\Pools.cs" />
+    <Compile Remove="Models\Roster.cs" />
+    <Compile Remove="Models\Settings.cs" />
     <Compile Remove="Models\Venue.cs" />
+    <Compile Remove="ViewModels\ActionViewModel.cs" />
+    <Compile Remove="ViewModels\BracketSettingsViewModel.cs" />
     <Compile Remove="ViewModels\CalendarViewModel.cs" />
     <Compile Remove="ViewModels\CompetitionViewModel.cs" />
     <Compile Remove="ViewModels\EventViewModel.cs" />
+    <Compile Remove="ViewModels\LocalMatchSettingsViewModel.cs" />
+    <Compile Remove="ViewModels\MatchSettingsViewModel.cs" />
+    <Compile Remove="ViewModels\MatchViewModel.cs" />
+    <Compile Remove="ViewModels\ParticipantViewModel.cs" />
+    <Compile Remove="ViewModels\PoolMatchViewModel.cs" />
+    <Compile Remove="ViewModels\PoolViewModel.cs" />
+    <Compile Remove="ViewModels\RosterViewModel.cs" />
+    <Compile Remove="ViewModels\SettingsViewModel.cs" />
+    <Compile Remove="ViewModels\SquadronViewModel.cs" />
+    <Compile Remove="ViewModels\TeamViewModel.cs" />
     <Compile Remove="ViewModels\VenueViewModel.cs" />
     <Compile Remove="Views\CalendarView.axaml.cs" />
     <Compile Remove="Views\CompetitionView.axaml.cs" />
+    <Compile Remove="Views\LocalMatchSettingsView.axaml.cs" />
+    <Compile Remove="Views\PoolMatchView.axaml.cs" />
+    <Compile Remove="Views\RosterView.axaml.cs" />
+    <Compile Remove="Views\SettingsView.axaml.cs" />
     <Compile Remove="Views\VenueView.axaml.cs" />
   </ItemGroup>
 
@@ -56,8 +81,8 @@
     <Compile Update="Views\FighterView.axaml.cs">
       <DependentUpon>FighterView.axaml</DependentUpon>
     </Compile>
-    <Compile Update="Views\LocalMatchSettingsView.axaml.cs">
-      <DependentUpon>LocalMatchSettingsView.axaml</DependentUpon>
+    <Compile Update="Views\SetupStageView.axaml.cs">
+      <DependentUpon>SetupStageView.axaml</DependentUpon>
     </Compile>
   </ItemGroup>
 </Project>

@@ -178,10 +178,10 @@
 					<ItemsControl.ItemTemplate>
 						<DataTemplate DataType="vm:SquadronViewModel">
 							<c:LightspeedBorder BorderBrush="{Binding Color}"
-												TopLeftBackground="{Binding Color}"
 												TopLeftBorderBrush="{Binding Color}"
-												BottomRightBackground="{Binding Color}"
+												TopLeftBackground="{Binding Color}"
 												BottomRightBorderBrush="{Binding Color}"
+												BottomRightBackground="{Binding Color}"
 												Padding="5"
 												DragDrop.AllowDrop="True">
 								<StackPanel Spacing="10" DragDrop.AllowDrop="True">

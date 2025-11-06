@@ -101,13 +101,10 @@
 		<Setter Property="Template">
 			<ControlTemplate TargetType="RadioButton">
 				<c:LightspeedBorder Name="Border"
+									Classes="small nocorners"
 					                Background="{TemplateBinding Background}"
 									BorderBrush="{TemplateBinding BorderBrush}"
 								    BorderThickness="1.0"
-									TopLeftBackground="{x:Null}"
-									TopLeftBorderBrush="{x:Null}"
-									BottomRightBackground="{x:Null}"
-									BottomRightBorderBrush="{x:Null}"
 								    Padding="{TemplateBinding Padding}"
 									CornerThickness="6,6,4,8"
 									CornerGap="0">
