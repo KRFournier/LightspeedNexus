@@ -14,10 +14,10 @@ public partial class SetupStageView : UserControl
 
     public void Player_DoubleTapped(object? sender, RoutedEventArgs e)
     {
-        if (sender is LightspeedBorder border && border.DataContext is PlayerViewModel player)
+        if (sender is LightspeedBorder border && border.DataContext is RegistreeViewModel registree)
         {
-            if (this.DataContext is SetupStageViewModel vm && vm.EditPlayerCommand.CanExecute(player))
-                vm.EditPlayerCommand.Execute(player);
+            if (this.DataContext is SetupStageViewModel vm && vm.EditPlayerCommand.CanExecute(registree))
+                vm.EditPlayerCommand.Execute(registree);
         }
     }
 }

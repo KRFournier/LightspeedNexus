@@ -4,21 +4,34 @@ using CommunityToolkit.Mvvm.Messaging;
 using LightspeedNexus.Messages;
 using LightspeedNexus.Models;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 
 namespace LightspeedNexus.ViewModels;
+
+public partial class StageItem(string name, bool isActive = false) : ViewModelBase
+{
+    [ObservableProperty]
+    public partial bool IsActive { get; set; } = isActive;
+
+    [ObservableProperty]
+    public partial string Name { get; set; } = name;
+}
 
 public partial class TournamentViewModel : ViewModelBase
 {
     #region Properties
 
+    public ObservableCollection<StageItem> StageNames { get; set; } = [
+        new("Setup", true), new("Squadrons"), new("Pools"), new("Brackets"), new("Results")
+        ];
+
     public Guid Guid { get; protected set; }
 
-    public ObservableCollection<StageViewModel> Stages { get; set; } = [new SetupStageViewModel()];
+    public StageViewModel CurrentStage => Stages.Peek();
+
+    protected Stack<StageViewModel> Stages { get; set; } = [];
 
     #endregion
 
@@ -35,8 +48,8 @@ public partial class TournamentViewModel : ViewModelBase
     public TournamentViewModel()
     {
         Guid = Guid.NewGuid();
-        Stages = [new SetupStageViewModel()];
-        Stages[0].PropertyChanged += SettingsChanged;
+        Stages.Push(new SetupStageViewModel());
+        SetupListeners();
     }
 
     /// <summary>
@@ -45,70 +58,36 @@ public partial class TournamentViewModel : ViewModelBase
     public TournamentViewModel(Tournament model)
     {
         Guid = model.Id;
-        Stages = [.. model.Stages.Select(s => s.ToViewModel())];
-        Stages.FirstOrDefault(s => s is SetupStageViewModel)?.PropertyChanged += SettingsChanged;
+        foreach (var stage in model.Stages)
+            Stages.Push(stage.ToViewModel());
+        SetupListeners();
     }
 
     /// <summary>
-    /// The name of the tournament, e.g., Open Rey
+    /// Listens for messages
     /// </summary>
-    public string Name
+    private void SetupListeners()
     {
-        get
+        WeakReferenceMessenger.Default.Register<TournamentViewModel, NextStageMessage>(this, (r, m) =>
         {
-            if (Stages.Count > 0 && Stages[0] is SetupStageViewModel Settings)
+            Stages.Push(m.NextStage);
+            OnPropertyChanged(nameof(CurrentStage));
+
+            // activate the next stage
+            for (int i = 0; i < StageNames.Count; i++)
             {
-                StringBuilder sb = new();
-
-                if (Settings.Demographic != Demographic.All)
+                if (StageNames[i].IsActive)
                 {
-                    sb.Append(Settings.Demographic.ToString());
-                    sb.Append("'s ");
+                    StageNames[i++].IsActive = false;
+                    if (i < StageNames.Count)
+                        StageNames[i].IsActive = true;
                 }
-
-                sb.Append(Settings.SkillLevel.ToString());
-
-                if (Settings.GameMode != GameMode.Standard)
-                {
-                    sb.Append(' ');
-                    sb.Append(Settings.GameMode.ToString());
-                }
-
-                if (Settings.ReyAllowed && Settings.RenAllowed && Settings.TanoAllowed)
-                    sb.Append(" Mixed Weapons");
-                else if (Settings.ReyAllowed && Settings.RenAllowed)
-                    sb.Append(" Rey/Ren");
-                else if (Settings.ReyAllowed && Settings.TanoAllowed)
-                    sb.Append(" Rey/Tano");
-                else if (Settings.RenAllowed && Settings.TanoAllowed)
-                    sb.Append(" Ren/Tano");
-                else if (Settings.ReyAllowed)
-                    sb.Append(" Rey");
-                else if (Settings.RenAllowed)
-                    sb.Append(" Ren");
-                else if (Settings.TanoAllowed)
-                    sb.Append(" Tano");
-
-                if (!string.IsNullOrEmpty(Settings.SubTitle))
-                {
-                    sb.Append($" - ");
-                    sb.Append(Settings.SubTitle);
-                }
-
-                return sb.ToString();
             }
-            else
-                return "New Tournament";
-        }
+        });
     }
 
     /// <summary>
     /// Converts to a <see cref="Tournament"/>
     /// </summary>
     public Tournament ToModel() => new(Guid, [.. Stages.Select(s => s.ToModel())]);
-
-    /// <summary>
-    /// Listens for changes in settings to update the name
-    /// </summary>
-    protected void SettingsChanged(object? sender, PropertyChangedEventArgs e) => OnPropertyChanged(nameof(Name));
 }

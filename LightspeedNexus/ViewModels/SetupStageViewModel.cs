@@ -95,7 +95,7 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
     /// Converts into a model
     /// </summary>
     public override SetupStage ToModel() => new(
-        Name, Date, GameMode, Demographic, SkillLevel, RenAllowed, RenAllowed,
+        Date, GameMode, Demographic, SkillLevel, RenAllowed, RenAllowed,
         TanoAllowed, SubTitle, Registrees.Select(r => r.ToModel())
         );
 
@@ -144,6 +144,34 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
             }
 
             return sb.ToString();
+        }
+    }
+
+    /// <summary>
+    /// Used to update registree settings when tournament settings change
+    /// </summary>
+    protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+    {
+        base.OnPropertyChanged(e);
+
+        // When the allowed weapon types change, we need to make sure that no players have that weapon selected
+        if (e.PropertyName == nameof(ReyAllowed) ||
+            e.PropertyName == nameof(RenAllowed) ||
+            e.PropertyName == nameof(TanoAllowed))
+        {
+            List<WeaponClass> allowed = [];
+            if (ReyAllowed) allowed.Add(WeaponClass.Rey);
+            if (RenAllowed) allowed.Add(WeaponClass.Ren);
+            if (TanoAllowed) allowed.Add(WeaponClass.Tano);
+            if (allowed.Count > 0)
+            {
+                // for each player set on an unallowed weapon, change it to the first weapon allowed
+                foreach (var registree in Registrees)
+                {
+                    if (!allowed.Contains(registree.WeaponOfChoice))
+                        registree.WeaponOfChoice = allowed[0];
+                }
+            }
         }
     }
 
@@ -214,9 +242,9 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
     /// </summary>
     private Dictionary<string, Fighter> FighterLookup { get; set; } = [];
 
-    [RelayCommand]
-    private static void GoHome() => WeakReferenceMessenger.Default.Send<NavigateHomeMessage>();
-
+    /// <summary>
+    /// Registers the <see cref="SelectedFighter"/>
+    /// </summary>
     [RelayCommand]
     private void AddFighter()
     {
@@ -231,6 +259,9 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
         }
     }
 
+    /// <summary>
+    /// Creates a new fighter and registers them
+    /// </summary>
     [RelayCommand]
     private async Task NewFighter()
     {
@@ -255,6 +286,9 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
         }
     }
 
+    /// <summary>
+    /// Edit's a registree's fighter information
+    /// </summary>
     [RelayCommand]
     private static async Task EditPlayer(RegistreeViewModel registree)
     {
@@ -309,4 +343,10 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
     }
 
     #endregion
+
+    [RelayCommand]
+    private void Begin()
+    {
+        //WeakReferenceMessenger.Default.Send(new NextStageMessage(StageType.Registration));
+    }
 }

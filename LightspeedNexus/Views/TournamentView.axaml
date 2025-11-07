@@ -5,7 +5,7 @@
              xmlns:vm="clr-namespace:LightspeedNexus.ViewModels"
 			 xmlns:v="clr-namespace:LightspeedNexus.Views"
 			 xmlns:c="clr-namespace:LightspeedNexus.Controls"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
 			 ClipToBounds="False"
              x:Class="LightspeedNexus.Views.TournamentView"
 			 x:DataType="vm:TournamentViewModel">
@@ -13,30 +13,51 @@
 	<Design.DataContext>
 		<vm:TournamentViewModel/>
 	</Design.DataContext>
-	
-	<TabControl x:Name="TabPanel"
-				TabStripPlacement="Left"
-				ItemsSource="{Binding Stages}"
-				Padding="0"
-				ClipToBounds="False">
-		<TabControl.ItemsPanel>
-			<ItemsPanelTemplate>
-				<StackPanel Orientation="Vertical"
-							Spacing="-40"/>
-			</ItemsPanelTemplate>
-		</TabControl.ItemsPanel>
-		<TabControl.ItemTemplate>
-			<DataTemplate DataType="vm:StageViewModel">
-				<TextBlock Classes="large" Text="{Binding Name}"/>
-			</DataTemplate>
-		</TabControl.ItemTemplate>
-		<TabControl.ContentTemplate>
-			<DataTemplate DataType="vm:StageViewModel">
-				<TransitioningContentControl Content="{Binding .}"											 
-								ClipToBounds="False"
-								Margin="10,0,0,0"/>
-			</DataTemplate>
-		</TabControl.ContentTemplate>
-	</TabControl>
+
+	<Grid ColumnDefinitions="Auto,10,*">
+
+		<Grid RowDefinitions="*,10,Auto">
+			
+			<ItemsControl ItemsSource="{Binding StageNames}"
+						  ClipToBounds="False">
+				<ItemsControl.ItemTemplate>
+					<DataTemplate DataType="vm:StageItem">
+						<c:ChevronBorder Classes.blue="{Binding IsActive}">
+							<TextBlock Classes="large"
+									   HorizontalAlignment="Center"
+									   Text="{Binding Name}"/>
+						</c:ChevronBorder>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+
+			<Viewbox StretchDirection="DownOnly"
+					 Grid.Row="2">
+				<StackPanel Spacing="10">
+					<Button Classes="clear">
+						<StackPanel Orientation="Horizontal"
+									Spacing="10">
+							<PathIcon Data="{StaticResource pane_close_regular}"/>
+							<TextBlock Text="Save &amp; Close"/>
+						</StackPanel>
+					</Button>
+				</StackPanel>
+			</Viewbox>
+			
+		</Grid>
+		
+		<TransitioningContentControl x:Name="ContentControl"
+									 Grid.Column="2"
+									 Content="{Binding CurrentStage}"
+									 ClipToBounds="False">
+			<TransitioningContentControl.PageTransition>
+				<PageSlide Orientation="Horizontal"
+						   Duration="0:0:0.5"
+						   SlideInEasing="CircularEaseOut"
+						   SlideOutEasing="CircularEaseOut"/>
+			</TransitioningContentControl.PageTransition>
+		</TransitioningContentControl>
+		
+	</Grid>
 	
 </UserControl>

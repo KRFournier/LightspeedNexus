@@ -24,6 +24,7 @@
 		<conv:RadioButtonValueConverter x:Key="RadioValue"/>
 		<conv:TrueToFadedConverter x:Key="TrueToFaded"/>
 		<conv:TrueToInvisibleConverter x:Key="TrueToInvis"/>
+		<conv:StringsAreEqualConverter x:Key="StringsEqual"/>
 	</Application.Resources>
 
 	<Application.Styles>

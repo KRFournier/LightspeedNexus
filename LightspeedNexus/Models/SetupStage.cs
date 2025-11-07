@@ -70,8 +70,8 @@ public sealed class SetupStage : Stage
 
     public SetupStage() { }
 
-    public SetupStage(string name, DateTime? date, GameMode gameMode, Demographic demographic, SkillLevel skillLevel,
-        bool reyAllowed, bool renAllowed, bool tanoAllowed, string? subTitle, IEnumerable<Registree> registrees) : base(name)
+    public SetupStage(DateTime? date, GameMode gameMode, Demographic demographic, SkillLevel skillLevel,
+        bool reyAllowed, bool renAllowed, bool tanoAllowed, string? subTitle, IEnumerable<Registree> registrees)
     {
         Date = date;
         GameMode = gameMode;

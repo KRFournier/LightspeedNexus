@@ -29,7 +29,8 @@
 				<StackPanel Orientation="Horizontal"
 							 Spacing="10">
 					<TextBlock Classes="large"
-							   Text="Begin"/>
+							   Text="Begin"
+							   Command="{Binding BeginCommand}"/>
 					<PathIcon Data="{StaticResource arrow_right_regular}"/>
 				</StackPanel>
 			</Button>
@@ -181,15 +182,16 @@
 		<!--Roster-->
 		<Grid Grid.Row="4" RowDefinitions="Auto,10,*">
 
-			<Grid ColumnDefinitions="Auto,10,*,10,Auto,10,Auto">
+			<Grid ColumnDefinitions="*,10,Auto,10,Auto"
+				  RowDefinitions="Auto,10,Auto">
 				
-				<TextBlock Classes="large"
+				<TextBlock Classes="giant"
 						   VerticalAlignment="Center"
 						   Text="Roster"/>
 			
 				<!--Search Box-->
 				<AutoCompleteBox x:Name="RosterSearch"
-								 Grid.Column="2"
+								 Grid.Row="2"
 								 VerticalAlignment="Center"
 								 FilterMode="Contains"
 								 ItemsSource="{Binding FighterNames}"
@@ -203,7 +205,8 @@
 					</AutoCompleteBox.KeyBindings>
 				</AutoCompleteBox>
 
-				<Button Grid.Column="4"
+				<Button Grid.Column="2"
+						Grid.Row="2"
 						Command="{Binding NewFighterCommand}">
 					<StackPanel Orientation="Horizontal"
 								VerticalAlignment="Center"
@@ -213,10 +216,12 @@
 					</StackPanel>
 				</Button>
 
-				<CheckBox Grid.Column="6"
+				<CheckBox Grid.Column="4"
+						  Grid.Row="2"
 						  VerticalAlignment="Center"
 						  IsChecked="{Binding UseEffectiveRank}"
-						  Content="Use Effective Ranks"/>
+						  Content="Use Balanced Ranks"
+						  ToolTip.Tip="When enabled, the players' selected weapon rank is adjusted to account for their highest recorded rank."/>
 			</Grid>
 			
 			<!-- Players -->

@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <AvaloniaXaml Remove="Controls\Field.axaml" />
     <AvaloniaXaml Remove="Views\CalendarView.axaml" />
     <AvaloniaXaml Remove="Views\CompetitionView.axaml" />
     <AvaloniaXaml Remove="Views\LocalMatchSettingsView.axaml" />
@@ -21,6 +22,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Controls\DateBar.cs" />
+    <Compile Remove="Controls\Field.axaml.cs" />
+    <Compile Remove="Controls\ScheduleGrid.cs" />
+    <Compile Remove="Controls\SchedulePanel.cs" />
+    <Compile Remove="Controls\TextControlBase.cs" />
+    <Compile Remove="Controls\TimeBar.cs" />
     <Compile Remove="Converters\VenueToStringConverter.cs" />
     <Compile Remove="Models\Competition.cs" />
     <Compile Remove="Models\Event.cs" />

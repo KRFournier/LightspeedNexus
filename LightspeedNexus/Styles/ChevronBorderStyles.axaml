@@ -4,11 +4,11 @@
   
     <Design.PreviewWith>
 		<Border Padding="20" Background="#1f1f1f">
-			<StackPanel Spacing="-20">
+			<StackPanel Spacing="0">
 				<c:ChevronBorder Classes="">
 					<TextBlock HorizontalAlignment="Center">Setup</TextBlock>
 				</c:ChevronBorder>
-				<c:ChevronBorder Classes="">
+				<c:ChevronBorder Classes="blue">
 					<TextBlock HorizontalAlignment="Center">Squadrons</TextBlock>
 				</c:ChevronBorder>
 				<c:ChevronBorder Classes="">
@@ -22,7 +22,12 @@
 		<Setter Property="Background" Value="{StaticResource BlackBackground}"/>
 		<Setter Property="BorderBrush" Value="{StaticResource Gray}"/>
 		<Setter Property="Padding" Value="10,20"/>
-		<Setter Property="Margin" Value="0,10"/>
+		<Setter Property="ArrowDepth" Value="12"/>
+		<Setter Property="Margin" Value="0"/>
+		<Style Selector="^.blue">
+			<Setter Property="Background" Value="{StaticResource BlueBackground}"/>
+			<Setter Property="BorderBrush" Value="{StaticResource Blue}"/>
+		</Style>
 	</Style>
 	
 </Styles>

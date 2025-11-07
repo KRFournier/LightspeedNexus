@@ -3,7 +3,7 @@
 	
 	<Design.PreviewWith>
 		<Border Padding="20">
-			<PathIcon Data="{StaticResource save_regular}"/>
+			<PathIcon Data="{StaticResource pane_close_regular}"/>
 		</Border>
 	</Design.PreviewWith>
 

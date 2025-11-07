@@ -35,6 +35,12 @@ public class ChevronBorder : Decorator
     public static readonly StyledProperty<Orientation> OrientationProperty =
         AvaloniaProperty.Register<Border, Orientation>(nameof(Orientation), Orientation.Vertical);
 
+    /// <summary>
+    /// Defines the <see cref="ArrowDepth"/> property.
+    /// </summary>
+    public static readonly StyledProperty<double> ArrowDepthProperty =
+        AvaloniaProperty.Register<Border, double>(nameof(ArrowDepth), 0.0);
+
 
     private Thickness? _layoutThickness;
     private double _scale;
@@ -107,6 +113,15 @@ public class ChevronBorder : Decorator
         set => SetValue(OrientationProperty, value);
     }
 
+    /// <summary>
+    /// The depth of the arrow points.
+    /// </summary>
+    public double ArrowDepth
+    {
+        get => GetValue(ArrowDepthProperty);
+        set => SetValue(ArrowDepthProperty, value);
+    }
+
     protected Thickness LayoutThickness
     {
         get
@@ -151,17 +166,16 @@ public class ChevronBorder : Decorator
 
         PathGeometry g = new();
 
-        // orientation is determine by which margin is negative
         if (Orientation == Orientation.Vertical)
         {
             // down chevron
             using var ctx = g.Open();
             ctx.BeginFigure(new Point(rect.Left, rect.Top), true);
-            ctx.LineTo(new Point(rect.Left + (rect.Width / 2.0), rect.Top + Margin.Top));
+            ctx.LineTo(new Point(rect.Left + (rect.Width / 2.0), rect.Top + ArrowDepth));
             ctx.LineTo(new Point(rect.Right, rect.Top));
-            ctx.LineTo(new Point(rect.Right, rect.Bottom - Margin.Bottom));
+            ctx.LineTo(new Point(rect.Right, rect.Bottom - ArrowDepth));
             ctx.LineTo(new Point(rect.Left + (rect.Width / 2.0), rect.Bottom));
-            ctx.LineTo(new Point(rect.Left, rect.Bottom - Margin.Bottom));
+            ctx.LineTo(new Point(rect.Left, rect.Bottom - ArrowDepth));
             ctx.EndFigure(true);
         }
         else
@@ -169,11 +183,11 @@ public class ChevronBorder : Decorator
             // right chevron
             using var ctx = g.Open();
             ctx.BeginFigure(new Point(rect.Left, rect.Top), true);
-            ctx.LineTo(new Point(rect.Right - Margin.Right, rect.Top));
+            ctx.LineTo(new Point(rect.Right - ArrowDepth, rect.Top));
             ctx.LineTo(new Point(rect.Right, rect.Top + (rect.Height / 2.0)));
-            ctx.LineTo(new Point(rect.Right - Margin.Right, rect.Bottom));
+            ctx.LineTo(new Point(rect.Right - ArrowDepth, rect.Bottom));
             ctx.LineTo(new Point(rect.Left, rect.Bottom));
-            ctx.LineTo(new Point(rect.Left + Margin.Left, rect.Top + (rect.Height / 2.0)));
+            ctx.LineTo(new Point(rect.Left + ArrowDepth, rect.Top + (rect.Height / 2.0)));
             ctx.EndFigure(true);
         }
 

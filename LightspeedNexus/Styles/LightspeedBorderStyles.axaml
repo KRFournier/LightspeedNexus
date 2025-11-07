@@ -5,7 +5,7 @@
     <Design.PreviewWith>
 		<Border Padding="20" Background="#1f1f1f">
 			<StackPanel Spacing="20">
-				<c:LightspeedBorder Classes="">
+				<c:LightspeedBorder Classes="item">
 					<TextBlock>Hello, World!</TextBlock>
 				</c:LightspeedBorder>
 				<c:LightspeedBorder Classes="small fadecorners"
@@ -87,6 +87,39 @@
 		<Setter Property="BottomRightBorderBrush" Value="{StaticResource RedBrush}"/>
 		<Setter Property="BottomRightBackground" Value="{StaticResource RedBrush}"/>
 		<Setter Property="BottomRightOpacity" Value="1.0"/>
+	</Style>
+
+	<Style Selector="c|LightspeedBorder.item">
+		<Setter Property="CornerThickness" Value="6,6,6,10"/>
+		<Setter Property="CornerGap" Value="3,3,3,4.5"/>
+		<Setter Property="Transitions">
+			<Transitions>
+				<ThicknessTransition Property="CornerThickness" Duration="0:0:0.3" />
+				<ThicknessTransition Property="CornerGap" Duration="0:0:0.3" />
+				<BrushTransition Property="Background" Duration="0:0:0.3" />
+				<BrushTransition Property="TopLeftBackground" Duration="0:0:0.3" />
+				<BrushTransition Property="TopLeftBorderBrush" Duration="0:0:0.3" />
+				<BrushTransition Property="BottomRightBackground" Duration="0:0:0.3" />
+				<BrushTransition Property="BottomRightBorderBrush" Duration="0:0:0.3" />
+				<DoubleTransition Property="TopLeftOpacity" Duration="0:0:0.3" />
+				<DoubleTransition Property="BottomRightOpacity" Duration="0:0:0.3" />
+			</Transitions>
+		</Setter>
+		<Style Selector="^:pointerover">
+			<Setter Property="CornerThickness" Value="20,20,20,30"/>
+			<Setter Property="CornerGap" Value="4,4,4,6"/>
+		</Style>
+		<Style Selector="^:pointerover">
+			<Setter Property="Background">
+				<SolidColorBrush Color="{StaticResource Gray}" Opacity="0.1"/>
+			</Setter>
+			<Setter Property="TopLeftBorderBrush" Value="{StaticResource BlueBrush}"/>
+			<Setter Property="TopLeftBackground" Value="{StaticResource BlueBrush}"/>
+			<Setter Property="TopLeftOpacity" Value="1.0"/>
+			<Setter Property="BottomRightBorderBrush" Value="{StaticResource RedBrush}"/>
+			<Setter Property="BottomRightBackground" Value="{StaticResource RedBrush}"/>
+			<Setter Property="BottomRightOpacity" Value="1.0"/>
+		</Style>
 	</Style>
 	
 </Styles>

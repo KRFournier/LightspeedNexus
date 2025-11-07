@@ -87,3 +87,11 @@ public class CloseDialogMessage()
 public class MessageBoxMessage(string msg) : ValueChangedMessage<string>(msg)
 {
 }
+
+/// <summary>
+/// Notifies the tournament view to advance to the given stage
+/// </summary>
+public class NextStageMessage(StageViewModel nextStage)
+{
+    public StageViewModel NextStage = nextStage;
+}
