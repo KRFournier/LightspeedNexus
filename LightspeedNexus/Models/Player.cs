@@ -1,7 +1,4 @@
-﻿using LightspeedNexus.ViewModels;
-using System.Collections.Generic;
-
-namespace LightspeedNexus.Models;
+﻿namespace LightspeedNexus.Models;
 
 /// <summary>
 /// Common interface for participants in a tournament, either individual contestants or teams.
@@ -9,12 +6,16 @@ namespace LightspeedNexus.Models;
 public abstract class Participant
 {
     public string Name { get; set; } = string.Empty;
+    public int PowerLevel { get; set; } = 0;
+
     public Participant() { }
-    public Participant(string name)
+    public Participant(string name, int powerLevel)
     {
         Name = name;
+        PowerLevel = powerLevel;
     }
-    public override string ToString() => Name;
+
+    public override string ToString() => $"{Name} - {PowerLevel}";
 }
 
 /// <summary>
@@ -33,9 +34,9 @@ public sealed class Player : Participant
     public WeaponClass WeaponOfChoice { get; set; } = WeaponClass.Rey;
 
     public Player() { }
-    public Player(string name, int? onlineId, string? club, Rank rank,
+    public Player(string name, int powerLevel, int? onlineId, string? club, Rank rank,
         Card card, int honor, int forceCalls, bool isEjected, WeaponClass weaponOfChoice)
-        : base(name)
+        : base(name, powerLevel)
     {
         OnlineId = onlineId;
         Club = club;
@@ -46,22 +47,18 @@ public sealed class Player : Participant
         IsEjected = isEjected;
         WeaponOfChoice = weaponOfChoice;
     }
-
-    public new PlayerViewModel ToViewModel() => new(this);
 }
 
 /// <summary>
 /// A team, consisting of one or more players
 /// </summary>
-//public sealed class Team : Participant
-//{
-//    public Player[] Members { get; set; } = [];
+public sealed class Team : Participant
+{
+    public Player[] Members { get; set; } = [];
 
-//    public Team() { }
-//    public Team(string name, Player[] members) : base(name)
-//    {
-//        Members = members;
-//    }
-
-//    public TeamViewModel ToViewModel(IReadOnlyList<PlayerViewModel> players) => new(this, players);
-//};
+    public Team() { }
+    public Team(string name, int powerLevel, Player[] members) : base(name, powerLevel)
+    {
+        Members = members;
+    }
+};

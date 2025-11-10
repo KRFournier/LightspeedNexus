@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:vm="clr-namespace:LightspeedNexus.ViewModels"
 			 xmlns:v="clr-namespace:LightspeedNexus.Views"
+			 xmlns:c="clr-namespace:LightspeedNexus.Controls"
              mc:Ignorable="d" d:DesignWidth="1440" d:DesignHeight="810"
              x:Class="LightspeedNexus.Views.HomeView"
              x:DataType="vm:HomeViewModel">
@@ -12,11 +13,11 @@
 		<vm:HomeViewModel />
 	</UserControl.DataContext>
 
-	<Grid RowDefinitions="Auto,*"
+	<Grid RowDefinitions="Auto,32,*"
 		  Margin="16">
 
-		<Viewbox Margin="50"
-				 ClipToBounds="False">
+		<!--Title-->
+		<Viewbox ClipToBounds="False">
 			<StackPanel Orientation="Horizontal"
 						VerticalAlignment="Center"
 						HorizontalAlignment="Center"
@@ -34,52 +35,83 @@
 			</StackPanel>
 		</Viewbox>
 
+		<!--Buttons-->
 		<Panel Classes="slide_up"
-			   Grid.Row="1"
-			   HorizontalAlignment="Stretch">
-			<Viewbox ClipToBounds="False">
-				<Grid RowDefinitions="100,20,60,20,75"
-					  HorizontalAlignment="Center"
-					  VerticalAlignment="Center">
-					<!--<Button Grid.Row="0"
-							HorizontalAlignment="Stretch"
-							VerticalAlignment="Stretch"
-							HorizontalContentAlignment="Center"
-							VerticalContentAlignment="Center"
-							Command="{Binding GotoNewCompetitionCommand}">
-						<StackPanel Spacing="8">
-							<TextBlock Classes="large" HorizontalAlignment="Center">New Competition</TextBlock>
-							<TextBlock Classes="info" HorizontalAlignment="Center">Plan a single or multi-event competition</TextBlock>
-						</StackPanel>
-					</Button>-->
-					<Button Grid.Row="0"
-							HorizontalAlignment="Stretch"
-							VerticalAlignment="Stretch"
-							HorizontalContentAlignment="Center"
-							VerticalContentAlignment="Center"
-							Command="{Binding GotoTournamentCommand}">
-						<StackPanel Spacing="8">
-							<TextBlock Classes="large" HorizontalAlignment="Center">New Tournament</TextBlock>
-							<!--<TextBlock Classes="info" HorizontalAlignment="Center">Jump into a tournament</TextBlock>-->
-						</StackPanel>
-					</Button>
-					<Button Grid.Row="2"
-							HorizontalAlignment="Stretch"
-							VerticalAlignment="Stretch"
-							HorizontalContentAlignment="Center"
-							VerticalContentAlignment="Center"
-							Command="{Binding GotoFightersCommand}">
-						<Button.Background>
-							<ImageBrush Source="/Assets/line.jpg"
-										Stretch="UniformToFill"
-										Opacity=".5"/>
-						</Button.Background>
-						<TextBlock Classes="large"
-								   HorizontalAlignment="Center"
-								   Text="Fighters"/>
-					</Button>
+			   Grid.Row="2">
+			
+			
+				<Grid ColumnDefinitions="*,10,Auto,10,*">
+
+					<ScrollViewer>
+						<ItemsControl ItemsSource="{Binding RecentTournaments}">
+							<ItemsControl.ItemTemplate>
+								<DataTemplate DataType="vm:TournamentViewModel">
+									<c:LightspeedBorder Classes="item"
+														PointerPressed="RecentTournament_PointerPressed">
+										<Grid ColumnDefinitions="*,10,Auto"
+											  RowDefinitions="Auto,Auto">
+											<TextBlock Classes="medium"
+													   IsHitTestVisible="False"
+													   Text="{Binding SetupStage.Title}"/>
+											<TextBlock Classes="info"
+													   Grid.Row="1"
+													   IsHitTestVisible="False"
+													   Text="{Binding SetupStage.Date, StringFormat='MMMM dd, yyyy'}"/>
+											<c:DeleteButton Grid.Column="2"
+															Command="{Binding $parent[ItemsControl].((vm:HomeViewModel)DataContext).DeleteTournamentCommand}"
+															CommandParameter="{Binding .}"/>
+										</Grid>
+									</c:LightspeedBorder>
+								</DataTemplate>
+							</ItemsControl.ItemTemplate>
+						</ItemsControl>
+					</ScrollViewer>
+					
+					<Grid x:Name="ButtonGrid"
+						  Grid.Column="2"
+						  RowDefinitions="100,20,60,20,75"
+						  VerticalAlignment="Top">
+						<!--<Button Grid.Row="0"
+								HorizontalAlignment="Stretch"
+								VerticalAlignment="Stretch"
+								HorizontalContentAlignment="Center"
+								VerticalContentAlignment="Center"
+								Command="{Binding GotoNewCompetitionCommand}">
+							<StackPanel Spacing="8">
+								<TextBlock Classes="large" HorizontalAlignment="Center">New Competition</TextBlock>
+								<TextBlock Classes="info" HorizontalAlignment="Center">Plan a single or multi-event competition</TextBlock>
+							</StackPanel>
+						</Button>-->
+						<Button Grid.Row="0"
+								HorizontalAlignment="Stretch"
+								VerticalAlignment="Stretch"
+								HorizontalContentAlignment="Center"
+								VerticalContentAlignment="Center"
+								Command="{Binding GotoTournamentCommand}">
+							<StackPanel Spacing="8">
+								<TextBlock Classes="large" HorizontalAlignment="Center">New Tournament</TextBlock>
+								<!--<TextBlock Classes="info" HorizontalAlignment="Center">Jump into a tournament</TextBlock>-->
+							</StackPanel>
+						</Button>
+						<Button Grid.Row="2"
+								HorizontalAlignment="Stretch"
+								VerticalAlignment="Stretch"
+								HorizontalContentAlignment="Center"
+								VerticalContentAlignment="Center"
+								Command="{Binding GotoFightersCommand}">
+							<Button.Background>
+								<ImageBrush Source="/Assets/line.jpg"
+											Stretch="UniformToFill"
+											Opacity=".5"/>
+							</Button.Background>
+							<TextBlock Classes="large"
+									   HorizontalAlignment="Center"
+									   Text="Fighters"/>
+						</Button>
+					</Grid>
+				
 				</Grid>
-			</Viewbox>
+			
 		</Panel>
 
 	</Grid>

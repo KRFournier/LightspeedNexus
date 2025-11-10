@@ -1,5 +1,4 @@
-﻿using LightspeedNexus.ViewModels;
-using System;
+﻿using System;
 
 namespace LightspeedNexus.Models;
 
@@ -50,5 +49,4 @@ public sealed class Registree : CollectionObject
     }
 
     public Fighter ToFighter() => new(Id, OnlineId, FirstName, LastName, Club, Rey, Ren, Tano);
-    public new RegistreeViewModel ToViewModel() => new(this);
 }

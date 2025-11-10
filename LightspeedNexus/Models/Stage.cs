@@ -1,15 +1,14 @@
-﻿using LightspeedNexus.ViewModels;
+﻿using LiteDB;
 
 namespace LightspeedNexus.Models;
 
 /// <summary>
 /// A stage in a tournament.
 /// </summary>
-public abstract class Stage
+public abstract class Stage(Stage? next = null)
 {
-    public string Type => GetType().Name;
-
-    public Stage() { }
-
-    abstract public StageViewModel ToViewModel();
+    /// <summary>
+    /// Gets or sets the next stage in the sequence, if one exists.
+    /// </summary>
+    public Stage? Next { get; set; } = next;
 }

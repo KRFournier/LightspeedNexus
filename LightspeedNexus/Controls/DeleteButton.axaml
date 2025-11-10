@@ -1,0 +1,25 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:c="clr-namespace:LightspeedNexus.Controls"
+             mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="150"
+             x:Class="LightspeedNexus.Controls.DeleteButton">
+
+	<Button Classes="delete" Click="Button_Click">
+		<StackPanel Orientation="Horizontal"
+					Spacing="0"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Center">
+			<PathIcon Data="{StaticResource delete_regular}"/>
+            <TextBlock x:Name="DeleteTextBlock"
+					   Text="Delete?"
+					   Margin="8,0,0,0"
+					   IsVisible="False"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"/>
+		</StackPanel>
+	</Button>
+	
+
+</UserControl>

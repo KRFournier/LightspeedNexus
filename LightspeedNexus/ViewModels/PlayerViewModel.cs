@@ -9,8 +9,23 @@ public abstract partial class ParticipantViewModel : ViewModelBase
 {
     #region Properties
 
+    /// <summary>
+    /// The participant's name
+    /// </summary>
     [ObservableProperty]
     public partial string Name { get; set; } = string.Empty;
+
+    /// <summary>
+    /// The participant's power level, based on rank or team members' ranks
+    /// </summary>
+    [ObservableProperty]
+    public partial int PowerLevel { get; set; } = 0;
+
+    /// <summary>
+    /// Used by parent view models to set dragging state
+    /// </summary>
+    [ObservableProperty]
+    public partial bool IsDragging { get; set; } = false;
 
     #endregion
 
@@ -25,6 +40,7 @@ public abstract partial class ParticipantViewModel : ViewModelBase
     public ParticipantViewModel(Participant participant) : base()
     {
         Name = participant.Name;
+        PowerLevel = participant.PowerLevel;
     }
 }
 
@@ -59,12 +75,6 @@ public sealed partial class PlayerViewModel : ParticipantViewModel
     [ObservableProperty]
     public partial Rank Rank { get; set; } = Rank.U;
 
-    /// <summary>
-    /// Used by parent view models to set dragging state
-    /// </summary>
-    [ObservableProperty]
-    public partial bool IsDragging { get; set; } = false;
-
     #endregion
 
     /// <summary>
@@ -97,7 +107,8 @@ public sealed partial class PlayerViewModel : ParticipantViewModel
     /// <summary>
     /// Converts to a <see cref="Player"/>
     /// </summary>
-    public Player ToModel() => new(Name, OnlineId, Club, Rank, Card, Honor, ForceCalls, IsEjected, WeaponOfChoice);
+    public Player ToModel() => new(Name, PowerLevel,
+        OnlineId, Club, Rank, Card, Honor, ForceCalls, IsEjected, WeaponOfChoice);
 
     /// <summary>
     /// Determines if the Player is disqualified either by card or ejection

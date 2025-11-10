@@ -17,24 +17,32 @@
 	<Grid ColumnDefinitions="Auto,10,*">
 
 		<Grid RowDefinitions="*,10,Auto">
-			
-			<ItemsControl ItemsSource="{Binding StageNames}"
-						  ClipToBounds="False">
-				<ItemsControl.ItemTemplate>
-					<DataTemplate DataType="vm:StageItem">
-						<c:ChevronBorder Classes.blue="{Binding IsActive}">
-							<TextBlock Classes="large"
-									   HorizontalAlignment="Center"
-									   Text="{Binding Name}"/>
-						</c:ChevronBorder>
-					</DataTemplate>
-				</ItemsControl.ItemTemplate>
-			</ItemsControl>
 
+			<StackPanel>
+				<ItemsControl ItemsSource="{Binding PreviousStages}"
+							  ClipToBounds="False">
+					<ItemsControl.ItemTemplate>
+						<DataTemplate DataType="vm:StageViewModel">
+							<c:ChevronBorder>
+								<TextBlock Classes="large"
+										   HorizontalAlignment="Center"
+										   Text="{Binding Name}"/>
+							</c:ChevronBorder>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+				<c:ChevronBorder Classes="blue">
+					<TextBlock Classes="large"
+							   HorizontalAlignment="Center"
+							   Text="{Binding CurrentStage.Name}"/>
+				</c:ChevronBorder>
+			</StackPanel>
+			
 			<Viewbox StretchDirection="DownOnly"
 					 Grid.Row="2">
 				<StackPanel Spacing="10">
-					<Button Classes="clear">
+					<Button Classes="clear"
+							Command="{Binding GoHomeCommand}">
 						<StackPanel Orientation="Horizontal"
 									Spacing="10">
 							<PathIcon Data="{StaticResource pane_close_regular}"/>

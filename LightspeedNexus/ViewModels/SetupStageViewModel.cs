@@ -26,6 +26,8 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
     #region Properties
 
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(BeginCommand))]
+    [NotifyPropertyChangedFor(nameof(BeginSubText))]
     public partial DateTime? Date { get; set; } = null;
 
     [ObservableProperty]
@@ -62,20 +64,44 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
 
     #endregion
 
+    #region Next Stage
+
+    [RelayCommand(CanExecute = nameof(CanBegin))]
+    private void Begin()
+    {
+        //WeakReferenceMessenger.Default.Send(new NextStageMessage(StageType.Registration));
+    }
+
+    public bool CanBegin() => Date is not null && Registrees.Count >= 4;
+
+    public string BeginSubText => CanBegin() ?
+        "" :
+        Date is null ?
+            "Set a date" :
+            $"Add {4 - Registrees.Count} more player{(Registrees.Count == 3 ? "" : "s")}.";
+
+    #endregion
+
     /// <summary>
     /// Creates brand new settings
     /// </summary>
-    public SetupStageViewModel()
+    public SetupStageViewModel() : base("Setup")
     {
         LoadFighters();
         SortedPlayers = new(Registrees);
         SortedPlayers.SortDescriptions.Add(new DataGridComparerSortDescription(this, ListSortDirection.Ascending));
+
+        Registrees.CollectionChanged += (s, e) =>
+        {
+            BeginCommand.NotifyCanExecuteChanged();
+            OnPropertyChanged(nameof(BeginSubText));
+        };
     }
 
     /// <summary>
     /// Loads settings from a model
     /// </summary>
-    public SetupStageViewModel(SetupStage model)
+    public SetupStageViewModel(SetupStage model) : this()
     {
         Date = model.Date;
         GameMode = model.GameMode;
@@ -85,19 +111,17 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
         RenAllowed = model.RenAllowed;
         TanoAllowed = model.TanoAllowed;
         SubTitle = model.SubTitle;
-
-        LoadFighters();
-        SortedPlayers = new(Registrees);
-        SortedPlayers.SortDescriptions.Add(new DataGridComparerSortDescription(this, ListSortDirection.Ascending));
+        foreach(var r in model.Registrees)
+            Registrees.Add(new RegistreeViewModel(r));
     }
 
     /// <summary>
     /// Converts into a model
     /// </summary>
     public override SetupStage ToModel() => new(
-        Date, GameMode, Demographic, SkillLevel, RenAllowed, RenAllowed,
-        TanoAllowed, SubTitle, Registrees.Select(r => r.ToModel())
-        );
+        Date, GameMode, Demographic, SkillLevel, ReyAllowed, RenAllowed,
+        TanoAllowed, SubTitle, Registrees.Select(r => r.ToModel()),
+        Next?.ToModel());
 
     /// <summary>
     /// The name of the tournament, e.g., Open Rey
@@ -343,10 +367,4 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
     }
 
     #endregion
-
-    [RelayCommand]
-    private void Begin()
-    {
-        //WeakReferenceMessenger.Default.Send(new NextStageMessage(StageType.Registration));
-    }
 }

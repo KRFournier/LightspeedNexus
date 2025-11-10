@@ -1,21 +1,20 @@
-﻿using LightspeedNexus.ViewModels;
-using System;
+﻿using System;
 
 namespace LightspeedNexus.Models;
 
 public sealed class Tournament : CollectionObject
 {
-    public Stage[] Stages { get; set; }
+    public SetupStage SetupStage { get; set; }
+    public bool IsCompleted { get; set; }
 
     public Tournament()
     {
-        Stages = [new SetupStage()];
+        SetupStage = new SetupStage();
     }
 
-    public Tournament(Guid id, Stage[] stages) : base(id)
+    public Tournament(Guid id, SetupStage setupStage, bool isCompleted) : base(id)
     {
-        Stages = stages;
+        SetupStage = setupStage;
+        IsCompleted = isCompleted;
     }
-
-    public TournamentViewModel ToViewModel() => new(this);
 }

@@ -51,6 +51,13 @@ public static class StorageService
     }
 
     /// <summary>
+    /// Builds the collection name from the type name
+    /// </summary>
+    private static string GetCollectionName<T>() => typeof(T).Name.ToLowerInvariant() + "s";
+
+    #region Settings
+
+    /// <summary>
     /// Writes a document to the database in the specified collection
     /// </summary>
     public static void WriteSettings(BsonDocument document)
@@ -70,10 +77,47 @@ public static class StorageService
         return collection.FindById(id);
     }
 
+    #endregion
+
+    #region Tournaments
+
     /// <summary>
-    /// Builds the collection name from the type name
+    /// Writes a tournament item, ensuring proper indexes
     /// </summary>
-    private static string GetCollectionName<T>() => typeof(T).Name.ToLowerInvariant() + "s";
+    public static void WriteTournament(Tournament item)
+    {
+        using var db = GetDatabase();
+        var collection = db.GetCollection<Tournament>(GetCollectionName<Tournament>());
+        collection.Upsert(item);
+        collection.EnsureIndex("SetupStage.Date");
+        collection.EnsureIndex("IsCompleted");
+    }
+
+    public static Tournament? GetTournament(Guid guid)
+    {
+        using var db = GetDatabase();
+        var collection = db.GetCollection<Tournament>(GetCollectionName<Tournament>());
+        return collection.FindOne(t => t.Id == guid);
+    }
+
+    public static Tournament[] ReadAllTournaments()
+    {
+        using var db = GetDatabase();
+        var collection = db.GetCollection<Tournament>(GetCollectionName<Tournament>());
+        return [.. collection.FindAll()];
+    }
+
+    public static Tournament[] ReadRecentTournaments()
+    {
+        using var db = GetDatabase();
+        var collection = db.GetCollection<Tournament>(GetCollectionName<Tournament>());
+        return collection.Query()
+            .Where(t => !t.IsCompleted)
+            .OrderByDescending(t => t.SetupStage.Date)
+            .ToArray();
+    }
+
+    #endregion
 
     /// <summary>
     /// Saves an item
@@ -81,8 +125,8 @@ public static class StorageService
     public static void Write<T>(T item) where T : CollectionObject
     {
         using var db = GetDatabase();
-        var fightersCollection = db.GetCollection<T>(GetCollectionName<T>());
-        fightersCollection.Upsert(item);
+        var collection = db.GetCollection<T>(GetCollectionName<T>());
+        collection.Upsert(item);
     }
 
     /// <summary>
@@ -90,7 +134,6 @@ public static class StorageService
     /// </summary>
     public static T[] ReadAll<T>() where T : CollectionObject
     {
-
         using var db = GetDatabase();
         var fightersCollection = db.GetCollection<T>(GetCollectionName<T>());
         return [.. fightersCollection.FindAll()];
@@ -114,5 +157,15 @@ public static class StorageService
         using var db = GetDatabase();
         var fightersCollection = db.GetCollection<T>(GetCollectionName<T>());
         fightersCollection.Delete(item.Id);
+    }
+
+    /// <summary>
+    /// Deletes the given item
+    /// </summary>
+    public static void Delete<T>(Guid id) where T : CollectionObject
+    {
+        using var db = GetDatabase();
+        var fightersCollection = db.GetCollection<T>(GetCollectionName<T>());
+        fightersCollection.Delete(id);
     }
 }

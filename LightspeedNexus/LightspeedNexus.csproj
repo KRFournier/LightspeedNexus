@@ -44,14 +44,12 @@
     <Compile Remove="ViewModels\CompetitionViewModel.cs" />
     <Compile Remove="ViewModels\EventViewModel.cs" />
     <Compile Remove="ViewModels\LocalMatchSettingsViewModel.cs" />
-    <Compile Remove="ViewModels\MatchSettingsViewModel.cs" />
     <Compile Remove="ViewModels\MatchViewModel.cs" />
     <Compile Remove="ViewModels\ParticipantViewModel.cs" />
     <Compile Remove="ViewModels\PoolMatchViewModel.cs" />
     <Compile Remove="ViewModels\PoolViewModel.cs" />
     <Compile Remove="ViewModels\RosterViewModel.cs" />
     <Compile Remove="ViewModels\SettingsViewModel.cs" />
-    <Compile Remove="ViewModels\SquadronViewModel.cs" />
     <Compile Remove="ViewModels\TeamViewModel.cs" />
     <Compile Remove="ViewModels\VenueViewModel.cs" />
     <Compile Remove="Views\CalendarView.axaml.cs" />

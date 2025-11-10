@@ -1,44 +1,70 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using LightspeedNexus.Messages;
 using LightspeedNexus.Models;
+using LightspeedNexus.Services;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 
 namespace LightspeedNexus.ViewModels;
-
-public partial class StageItem(string name, bool isActive = false) : ViewModelBase
-{
-    [ObservableProperty]
-    public partial bool IsActive { get; set; } = isActive;
-
-    [ObservableProperty]
-    public partial string Name { get; set; } = name;
-}
 
 public partial class TournamentViewModel : ViewModelBase
 {
     #region Properties
 
-    public ObservableCollection<StageItem> StageNames { get; set; } = [
-        new("Setup", true), new("Squadrons"), new("Pools"), new("Brackets"), new("Results")
-        ];
-
+    /// <summary>
+    /// The tournament's unique identifier
+    /// </summary>
     public Guid Guid { get; protected set; }
 
-    public StageViewModel CurrentStage => Stages.Peek();
+    /// <summary>
+    /// The initial stage of the tournament
+    /// </summary>
+    public SetupStageViewModel SetupStage { get; set; }
 
-    protected Stack<StageViewModel> Stages { get; set; } = [];
+    /// <summary>
+    /// The previously completed stages of the tournament
+    /// </summary>
+    public IEnumerable<StageViewModel> PreviousStages
+    {
+        get
+        {
+            StageViewModel stage = SetupStage;
+            while (stage.Next is not null)
+            {
+                yield return stage;
+                stage = stage.Next;
+            }
+        }
+    }
+
+    /// <summary>
+    /// The current stage of the tournament
+    /// </summary>
+    public StageViewModel CurrentStage
+    {
+        get
+        {
+            StageViewModel stage = SetupStage;
+            while (stage.Next is not null)
+                stage = stage.Next;
+            return stage;
+        }
+    }
 
     #endregion
 
     #region Commands
 
+    /// <summary>
+    /// Saves the tournamnet and returns to the main menu
+    /// </summary>
     [RelayCommand]
-    private static void GoHome() => WeakReferenceMessenger.Default.Send<NavigateHomeMessage>();
+    private void GoHome()
+    {
+        Save();
+        WeakReferenceMessenger.Default.Send<NavigateHomeMessage>();
+    }
 
     #endregion
 
@@ -48,7 +74,7 @@ public partial class TournamentViewModel : ViewModelBase
     public TournamentViewModel()
     {
         Guid = Guid.NewGuid();
-        Stages.Push(new SetupStageViewModel());
+        SetupStage = new();
         SetupListeners();
     }
 
@@ -58,36 +84,32 @@ public partial class TournamentViewModel : ViewModelBase
     public TournamentViewModel(Tournament model)
     {
         Guid = model.Id;
-        foreach (var stage in model.Stages)
-            Stages.Push(stage.ToViewModel());
+        SetupStage = new(model.SetupStage);
         SetupListeners();
     }
 
     /// <summary>
-    /// Listens for messages
+    /// Listens for messages so we can notify changes to the current stage
     /// </summary>
-    private void SetupListeners()
-    {
-        WeakReferenceMessenger.Default.Register<TournamentViewModel, NextStageMessage>(this, (r, m) =>
+    private void SetupListeners() =>
+        WeakReferenceMessenger.Default.Register<TournamentViewModel, StageChangedMessage>(this, (r, m) =>
         {
-            Stages.Push(m.NextStage);
+            OnPropertyChanged(nameof(PreviousStages));
             OnPropertyChanged(nameof(CurrentStage));
-
-            // activate the next stage
-            for (int i = 0; i < StageNames.Count; i++)
-            {
-                if (StageNames[i].IsActive)
-                {
-                    StageNames[i++].IsActive = false;
-                    if (i < StageNames.Count)
-                        StageNames[i].IsActive = true;
-                }
-            }
+            Save();
         });
-    }
 
     /// <summary>
     /// Converts to a <see cref="Tournament"/>
     /// </summary>
-    public Tournament ToModel() => new(Guid, [.. Stages.Select(s => s.ToModel())]);
+    public Tournament ToModel() => new(Guid, SetupStage.ToModel(), CurrentStage.IsTournamentCompleted);
+
+    /// <summary>
+    /// Saves the tournament
+    /// </summary>
+    public void Save()
+    {
+        if (SetupStage.CanBegin())
+            StorageService.WriteTournament(ToModel());
+    }
 }

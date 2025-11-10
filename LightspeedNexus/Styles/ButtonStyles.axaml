@@ -6,7 +6,7 @@
 		<Border Padding="20">
 			<StackPanel Spacing="20">
 				<Button Content="Click Me!" />
-				<Button Classes="toolbar" Content="Click Me!" />
+				<Button Classes="delete" Content="Click Me!" />
 				<Button Classes="gray" Content="Click Me!" />
 				<Button Classes="red" Content="Click Me!" />
 				<Button Classes="noscale" Content="Click Me!" />
@@ -54,6 +54,25 @@
 			<Style Selector="^:pointerover">
 				<Setter Property="BorderBrush" Value="{StaticResource BlueBrush}"/>
 				<Setter Property="Background" Value="{StaticResource BlueBackground}"/>
+				<Setter Property="RenderTransform" Value="scale(1.0)" />
+			</Style>
+			<Style Selector="^:pressed">
+				<Setter Property="RenderTransform" Value="scale(0.9)" />
+			</Style>
+		</Style>
+		<Style Selector="^.delete">
+			<Setter Property="Background" Value="{StaticResource RedClear}"/>
+			<Setter Property="BorderBrush" Value="{StaticResource RedClear}"/>
+			<Setter Property="Transitions">
+				<Transitions>
+					<TransformOperationsTransition Property="RenderTransform" Duration="0:0:.075" />
+					<BrushTransition Property="BorderBrush" Duration="0:0:.075" />
+					<BrushTransition Property="Background" Duration="0:0:.075" />
+				</Transitions>
+			</Setter>
+			<Style Selector="^:pointerover">
+				<Setter Property="BorderBrush" Value="{StaticResource RedBrush}"/>
+				<Setter Property="Background" Value="{StaticResource RedBackground}"/>
 				<Setter Property="RenderTransform" Value="scale(1.0)" />
 			</Style>
 			<Style Selector="^:pressed">

@@ -1,6 +1,4 @@
-﻿using LightspeedNexus.Controls;
-using LightspeedNexus.ViewModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace LightspeedNexus.Models;
@@ -35,24 +33,6 @@ public enum SkillLevel
     Novice
 }
 
-///// <summary>
-///// The settings for a bracket
-///// </summary>
-//public sealed class BracketSettings : MatchSettings
-//{
-//    public bool HasThirdPlaceMatch { get; set; } = true;
-//    public bool IsFullAdvancement { get; set; } = true;
-//    public new BracketSettingsViewModel ToViewModel() => new(this);
-//    public MatchSettingsViewModel ToMatchSettingsViewModel() => new(this);
-//    public BracketSettings() { }
-//    public BracketSettings(int winningScore, TimeSpan timeLimit, bool hasThirdPlaceMatch, bool isFullAdvancement)
-//        : base(winningScore, timeLimit)
-//    {
-//        HasThirdPlaceMatch = hasThirdPlaceMatch;
-//        IsFullAdvancement = isFullAdvancement;
-//    }
-//}
-
 /// <summary>
 /// The settings for a tournament
 /// </summary>
@@ -71,7 +51,8 @@ public sealed class SetupStage : Stage
     public SetupStage() { }
 
     public SetupStage(DateTime? date, GameMode gameMode, Demographic demographic, SkillLevel skillLevel,
-        bool reyAllowed, bool renAllowed, bool tanoAllowed, string? subTitle, IEnumerable<Registree> registrees)
+        bool reyAllowed, bool renAllowed, bool tanoAllowed, string? subTitle, IEnumerable<Registree> registrees,
+        Stage? next) : base(next)
     {
         Date = date;
         GameMode = gameMode;
@@ -83,6 +64,4 @@ public sealed class SetupStage : Stage
         SubTitle = subTitle;
         Registrees = [.. registrees];
     }
-
-    public override SetupStageViewModel ToViewModel() => new(this);
 }

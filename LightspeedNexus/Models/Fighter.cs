@@ -1,7 +1,5 @@
-﻿using LightspeedNexus.ViewModels;
-using LiteDB;
+﻿using LiteDB;
 using System;
-using System.Reflection;
 using System.Text.Json.Nodes;
 
 namespace LightspeedNexus.Models;
@@ -164,10 +162,4 @@ public class Fighter : CollectionObject
     /// </summary>
     [BsonIgnore]
     public string Name => $"{FirstName} {LastName}";
-
-    /// <summary>
-    /// Converts the current fighter entity to a corresponding view model representation.
-    /// </summary>
-    /// <returns>A <see cref="FighterViewModel"/> instance containing the fighter's data mapped for presentation.</returns>
-    public FighterViewModel ToViewModel() => new(this);
 }

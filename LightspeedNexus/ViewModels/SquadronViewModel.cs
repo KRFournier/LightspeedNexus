@@ -9,11 +9,11 @@ using System.Linq;
 
 namespace LightspeedNexus.ViewModels;
 
-public partial class SquadronViewModel : ViewModelBase, IDisposable
+public partial class SquadronViewModel : ViewModelBase
 {
     #region Properties
 
-    public ObservableCollection<ContestantViewModel> Players { get; set; } = [];
+    public ObservableCollection<ParticipantViewModel> Participants { get; set; } = [];
 
     [ObservableProperty]
     public partial int Weight { get; set; } = 0;
@@ -25,39 +25,28 @@ public partial class SquadronViewModel : ViewModelBase, IDisposable
     public partial IBrush Color { get; set; } = Brushes.Transparent;
 
     [ObservableProperty]
-    public partial LocalMatchSettingsViewModel Settings { get; protected set; }
+    public partial MatchSettingsViewModel Settings { get; set; } = new();
 
-    public int NumMatches => Players.Count * (Players.Count - 1) / 2;
+    public int NumMatches => Participants.Count * (Participants.Count - 1) / 2;
 
     #endregion
 
     /// <summary>
     /// Creates a brand new squadron
     /// </summary>
-    public SquadronViewModel(MatchSettingsViewModel globalSettings)
+    public SquadronViewModel()
     {
-        Settings = new LocalMatchSettingsViewModel(globalSettings);
-        Players.CollectionChanged += OnPlayersChanged;
+        Participants.CollectionChanged += OnPlayersChanged;
     }
 
     /// <summary>
     /// Loads an existing squadron
     /// </summary>
-    public SquadronViewModel(Squadron squadron, MatchSettingsViewModel globalSettings, IReadOnlyList<ContestantViewModel> fullRoster)
+    public SquadronViewModel(Squadron squadron, MatchSettingsViewModel globalSettings, IReadOnlyList<ParticipantViewModel> participants)
     {
-        Settings = new LocalMatchSettingsViewModel(globalSettings);
-        Players = [.. squadron.Players.Select(i => fullRoster[i])];
-        Players.CollectionChanged += OnPlayersChanged;
+        Participants = [.. squadron.Players.Select(i => participants[i])];
+        Participants.CollectionChanged += OnPlayersChanged;
         Weight = squadron.Weight;
-    }
-
-    /// <summary>
-    /// Necessary to ensure we properly dispose of event handlers
-    /// </summary>
-    public void Dispose()
-    {
-        Settings.Dispose();
-        GC.SuppressFinalize(this);
     }
 
     /// <summary>
@@ -68,14 +57,14 @@ public partial class SquadronViewModel : ViewModelBase, IDisposable
     /// <summary>
     /// Converts to a <see cref="Squadron"/>
     /// </summary>
-    public Squadron ToModel(IList<ContestantViewModel> players) => new([.. Players.Select(p => players.IndexOf(p))], Weight);
+    public Squadron ToModel(IList<ParticipantViewModel> players) => new([.. Participants.Select(p => players.IndexOf(p))], Weight);
 
     /// <summary>
     /// Clears players and resets weight
     /// </summary>
     public void Clear()
     {
-        Players.Clear();
+        Participants.Clear();
         Weight = 0;
     }
 }

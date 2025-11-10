@@ -1,7 +1,4 @@
-﻿using LightspeedNexus.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 
 namespace LightspeedNexus.Models;
 
@@ -50,6 +47,4 @@ public sealed class Action
         Type = type;
         SubType = subType;
     }
-
-    //public ActionViewModel ToViewModel(IReadOnlyList<ContestantViewModel> players) => new(this, players);
 }
