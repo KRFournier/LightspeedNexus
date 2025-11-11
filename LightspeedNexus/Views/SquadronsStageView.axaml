@@ -1,0 +1,195 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:LightspeedNexus.ViewModels"
+			 xmlns:m="clr-namespace:LightspeedNexus.Models"
+			 xmlns:v="clr-namespace:LightspeedNexus.Views"
+			 xmlns:c="clr-namespace:LightspeedNexus.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 ClipToBounds="False"
+             x:Class="LightspeedNexus.Views.SquadronsStageView"
+			 x:DataType="vm:SquadronsStageViewModel">
+
+	<Grid RowDefinitions="Auto,10,Auto,10,*">
+
+		<!--Header-->
+		<Grid ColumnDefinitions="200,10,*,10,200">
+			<Button HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					HorizontalContentAlignment="Center"
+					VerticalContentAlignment="Center"
+					Command="{Binding GoBackCommand}">
+				<StackPanel>
+					<StackPanel Orientation="Horizontal"
+								Spacing="10">
+						<PathIcon Data="{StaticResource arrow_left_regular}"/>
+						<TextBlock Classes="large" Text="Setup"/>
+					</StackPanel>
+				</StackPanel>
+			</Button>
+			<TextBlock Classes="giant"
+					   Grid.Column="2"
+					   HorizontalAlignment="Center"
+					   Text="{Binding Title}"/>
+			<Button Grid.Column="4"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					HorizontalContentAlignment="Center"
+					VerticalContentAlignment="Center">
+				<StackPanel>
+					<StackPanel Orientation="Horizontal"
+								Spacing="10">
+						<TextBlock Classes="large" Text="Pools"/>
+						<PathIcon Data="{StaticResource arrow_right_regular}"/>
+					</StackPanel>
+				</StackPanel>
+			</Button>
+		</Grid>
+		
+		<!--Squadron Toolbar-->
+		<c:LightspeedBorder Classes="small nocorners" Grid.Column="2" Grid.Row="2">
+			<Panel>
+				<CheckBox VerticalAlignment="Center"
+						  IsChecked="{Binding IsAutoAssigned}"
+						  Content="Auto Assign"/>
+				<Grid ColumnDefinitions="Auto,40,Auto"
+						HorizontalAlignment="Center">
+					<Button Grid.Column="0"
+							Classes="toolbar"
+							Command="{Binding RemoveSquadronCommand}">
+						<PathIcon Data="{StaticResource remove_regular}"/>
+					</Button>
+					<TextBlock Grid.Column="1"
+							   Classes="large"
+							   Text="{Binding Squadrons.Count}"
+							   VerticalAlignment="Center"
+							   HorizontalAlignment="Center"/>
+					<Button Grid.Column="2"
+							Classes="toolbar"
+							Command="{Binding AddSquadronCommand}">
+						<PathIcon Data="{StaticResource add_regular}"/>
+					</Button>
+				</Grid>
+				<Button Command="{Binding RefreshCommand}"
+						Classes="toolbar"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Right">
+					<StackPanel Orientation="Horizontal"
+								Spacing="4">
+						<PathIcon Height="16" Data="{StaticResource arrow_clockwise_regular}"/>
+						<TextBlock Text="Refresh"/>
+					</StackPanel>
+				</Button>
+			</Panel>
+		</c:LightspeedBorder>
+		
+		<!--Squadrons-->
+		<Panel Grid.Column="2" Grid.Row="4">
+
+			<ScrollViewer x:Name="RosterPanel">
+				<ItemsControl ItemsSource="{Binding Squadrons}">
+					<ItemsControl.ItemsPanel>
+						<ItemsPanelTemplate>
+							<WrapPanel ItemSpacing="10"/>
+						</ItemsPanelTemplate>
+					</ItemsControl.ItemsPanel>
+					<ItemsControl.ItemTemplate>
+						<DataTemplate DataType="vm:SquadronViewModel">
+							<c:LightspeedBorder BorderBrush="{Binding Color}"
+												TopLeftBorderBrush="{Binding Color}"
+												TopLeftBackground="{Binding Color}"
+												BottomRightBorderBrush="{Binding Color}"
+												BottomRightBackground="{Binding Color}"
+												Width="400"
+												Padding="5"
+												DragDrop.AllowDrop="True">
+								<StackPanel Spacing="10" DragDrop.AllowDrop="True">
+									<TextBlock Text="{Binding Name, StringFormat='{}{0} Squadron'}"
+											   Classes="medium"
+											   Foreground="{Binding Color}"
+											   HorizontalAlignment="Center"
+											   IsHitTestVisible="False"/>
+									<v:MatchSettingsView DataContext="{Binding Settings}"
+														 Height="120"
+														 HorizontalAlignment="Center"/>
+									<ItemsControl ItemsSource="{Binding Participants}"
+												  DragDrop.AllowDrop="True">
+										<ItemsControl.ItemsPanel>
+											<ItemsPanelTemplate>
+												<StackPanel Spacing="4"/>
+											</ItemsPanelTemplate>
+										</ItemsControl.ItemsPanel>
+										<ItemsControl.ItemTemplate>
+											<DataTemplate DataType="vm:ParticipantViewModel">
+												<Border Padding="4"
+														CornerRadius="4"
+														Background="#0FFFFFFF"
+														PointerPressed="RosterPlayer_PointerPressed"
+														DragDrop.AllowDrop="True"
+														Opacity="{Binding IsDragging, Converter={StaticResource TrueToInvis}}">
+													<Grid ColumnDefinitions="*,10,16"
+														  IsHitTestVisible="False">
+														<TextBlock Classes="medium"
+																   Text="{Binding Name}"
+																   IsHitTestVisible="False" />
+														<TextBlock Classes="medium"
+																   Grid.Column="2"
+																   IsHitTestVisible="False"
+																   Text="{Binding Power}"/>
+													</Grid>
+												</Border>
+											</DataTemplate>
+										</ItemsControl.ItemTemplate>
+									</ItemsControl>
+									<Panel IsHitTestVisible="False"
+										   Opacity="0.8"
+										   Margin="0,0,40,0">
+										<TextBlock Text="{Binding Participants.Count, StringFormat='{}{0} players'}"
+													Classes="info"
+													HorizontalAlignment="Left"
+													IsHitTestVisible="False"/>
+										<TextBlock Text="{Binding Weight, StringFormat='{}{0} weight'}"
+													Classes="info"
+													ToolTip.Tip="All the ranks added up. All pools should be similar weights."
+													HorizontalAlignment="Center"
+													IsHitTestVisible="False"/>
+										<TextBlock Text="{Binding NumMatches, StringFormat='{}{0} matches'}"
+													Classes="info"
+													HorizontalAlignment="Right"
+													IsHitTestVisible="False"/>
+									</Panel>
+								</StackPanel>
+							</c:LightspeedBorder>											
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+			</ScrollViewer>
+			
+		</Panel>
+
+		<Border x:Name="DropPanel"
+				Grid.Row="4"
+				Background="Transparent"
+				IsVisible="False"/>
+
+		<Canvas IsHitTestVisible="False"
+				Grid.Row="4"
+				Background="Transparent"
+				DataContext="{Binding DraggingParticipant}">
+			<Border x:Name="GhostItem"
+					Padding="4"
+					CornerRadius="4"
+					Background="#0FFFFFFF"
+					IsVisible="False"
+					IsHitTestVisible="False">
+				<Grid ColumnDefinitions="*,16">
+					<TextBlock Text="{Binding Name}" IsHitTestVisible="False"/>
+					<TextBlock Grid.Column="1" Text="{Binding Power}" IsHitTestVisible="False"/>
+				</Grid>
+			</Border>
+		</Canvas>
+
+	</Grid>
+	
+</UserControl>

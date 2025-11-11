@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <AvaloniaXaml Remove="Controls\Field.axaml" />
+    <AvaloniaXaml Remove="Controls\MatchSettings.axaml" />
     <AvaloniaXaml Remove="Views\CalendarView.axaml" />
     <AvaloniaXaml Remove="Views\CompetitionView.axaml" />
     <AvaloniaXaml Remove="Views\LocalMatchSettingsView.axaml" />
@@ -24,6 +25,7 @@
   <ItemGroup>
     <Compile Remove="Controls\DateBar.cs" />
     <Compile Remove="Controls\Field.axaml.cs" />
+    <Compile Remove="Controls\MatchSettings.axaml.cs" />
     <Compile Remove="Controls\ScheduleGrid.cs" />
     <Compile Remove="Controls\SchedulePanel.cs" />
     <Compile Remove="Controls\TextControlBase.cs" />
@@ -77,14 +79,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Controls\MatchSettings.axaml.cs">
-      <DependentUpon>MatchSettings.axaml</DependentUpon>
-    </Compile>
     <Compile Update="Views\FighterSearchView.axaml.cs">
       <DependentUpon>FighterSearchView.axaml</DependentUpon>
     </Compile>
     <Compile Update="Views\FighterView.axaml.cs">
       <DependentUpon>FighterView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\SquadronsStageView.axaml.cs">
+      <DependentUpon>SquadronsStageView.axaml</DependentUpon>
     </Compile>
     <Compile Update="Views\SetupStageView.axaml.cs">
       <DependentUpon>SetupStageView.axaml</DependentUpon>

@@ -9,12 +9,14 @@ public class MatchSettings
 {
     public int WinningScore { get; set; } = 12;
     public TimeSpan TimeLimit { get; set; } = TimeSpan.FromSeconds(90);
+    public int Rounds { get; set; } = 1;
 
     public MatchSettings() { }
 
-    public MatchSettings(int winningScore, TimeSpan timeLimit)
+    public MatchSettings(int winningScore, TimeSpan timeLimit, int rounds)
     {
         WinningScore = winningScore;
         TimeLimit = timeLimit;
+        Rounds = rounds;
     }
 }

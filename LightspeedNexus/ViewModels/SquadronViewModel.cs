@@ -42,11 +42,12 @@ public partial class SquadronViewModel : ViewModelBase
     /// <summary>
     /// Loads an existing squadron
     /// </summary>
-    public SquadronViewModel(Squadron squadron, MatchSettingsViewModel globalSettings, IReadOnlyList<ParticipantViewModel> participants)
+    public SquadronViewModel(Squadron squadron, IReadOnlyList<ParticipantViewModel> participants)
     {
         Participants = [.. squadron.Players.Select(i => participants[i])];
         Participants.CollectionChanged += OnPlayersChanged;
         Weight = squadron.Weight;
+        Settings = new MatchSettingsViewModel(squadron.MatchSettings);
     }
 
     /// <summary>
@@ -57,7 +58,8 @@ public partial class SquadronViewModel : ViewModelBase
     /// <summary>
     /// Converts to a <see cref="Squadron"/>
     /// </summary>
-    public Squadron ToModel(IList<ParticipantViewModel> players) => new([.. Participants.Select(p => players.IndexOf(p))], Weight);
+    public Squadron ToModel(IList<ParticipantViewModel> participants) =>
+        new([.. Participants.Select(p => participants.IndexOf(p))], Weight, Settings.ToModel());
 
     /// <summary>
     /// Clears players and resets weight

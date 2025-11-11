@@ -2,8 +2,6 @@
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
-using LightspeedNexus.Messages;
 using LightspeedNexus.Models;
 using LightspeedNexus.Services;
 using System;
@@ -67,10 +65,7 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
     #region Next Stage
 
     [RelayCommand(CanExecute = nameof(CanBegin))]
-    private void Begin()
-    {
-        //WeakReferenceMessenger.Default.Send(new NextStageMessage(StageType.Registration));
-    }
+    private void Begin() => Next = new SquadronsStageViewModel(Title, Registrees.Select(r => new PlayerViewModel(r)));
 
     public bool CanBegin() => Date is not null && Registrees.Count >= 4;
 
@@ -111,8 +106,15 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
         RenAllowed = model.RenAllowed;
         TanoAllowed = model.TanoAllowed;
         SubTitle = model.SubTitle;
-        foreach(var r in model.Registrees)
+
+        foreach (var r in model.Registrees)
             Registrees.Add(new RegistreeViewModel(r));
+
+        Next = model.Next switch
+        {
+            SquadronsStage ss => new SquadronsStageViewModel(Title, ss),
+            _ => null
+        };
     }
 
     /// <summary>

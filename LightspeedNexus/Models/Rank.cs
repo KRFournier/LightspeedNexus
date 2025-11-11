@@ -13,15 +13,28 @@ public readonly struct Rank : IComparable<Rank>
     private readonly char _rank;
 
     /// <summary>
-    /// The rank's value
+    /// The rank's power for tournament measurement purposes
     /// </summary>
-    public int Value => _rank switch
+    public int Power => _rank switch
     {
         'A' => 50,
         'B' => 40,
         'C' => 30,
         'D' => 20,
         'E' => 10,
+        _ => 1
+    };
+
+    /// <summary>
+    /// The rank's weight for balancing purposes
+    /// </summary>
+    public int Weight => _rank switch
+    {
+        'A' => 6,
+        'B' => 5,
+        'C' => 4,
+        'D' => 3,
+        'E' => 2,
         _ => 1
     };
 
@@ -103,22 +116,22 @@ public readonly struct Rank : IComparable<Rank>
     /// <summary>
     /// True if left rank is less than the right rank
     /// </summary>
-    public static bool operator <(Rank left, Rank right) => left.Value < right.Value;
+    public static bool operator <(Rank left, Rank right) => left.Power < right.Power;
 
     /// <summary>
     /// True if the left rank is greater than the right rank
     /// </summary>
-    public static bool operator >(Rank left, Rank right) => left.Value > right.Value;
+    public static bool operator >(Rank left, Rank right) => left.Power > right.Power;
 
     /// <summary>
     /// True if the left rank is less than or equal to the right rank
     /// </summary>
-    public static bool operator <=(Rank left, Rank right) => left.Value <= right.Value;
+    public static bool operator <=(Rank left, Rank right) => left.Power <= right.Power;
 
     /// <summary>
     /// True if the left rank is greater than or equal to the right rank
     /// </summary>
-    public static bool operator >=(Rank left, Rank right) => left.Value >= right.Value;
+    public static bool operator >=(Rank left, Rank right) => left.Power >= right.Power;
 
     /// <summary>
     /// Increases the rank by one level, up to A.
@@ -147,7 +160,7 @@ public readonly struct Rank : IComparable<Rank>
     /// <summary>
     /// Compares ranks
     /// </summary>
-    public int CompareTo(Rank other) => Value - other.Value;
+    public int CompareTo(Rank other) => Power - other.Power;
 
     /// <summary>
     /// Combines one's highest rank with another rank, returning a

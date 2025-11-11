@@ -2,7 +2,14 @@
 
 namespace LightspeedNexus.Messages;
 
-public class StageChangedMessage(StageViewModel stage)
+public class NextStageMessage(StageViewModel current, StageViewModel next)
 {
-    public StageViewModel Stage { get; } = stage;
+    public StageViewModel CurrentStage { get; } = current;
+    public StageViewModel NextStage { get; } = next;
+}
+
+public class PreviousStageMessage(StageViewModel current, StageViewModel? previous)
+{
+    public StageViewModel CurrentStage { get; } = current;
+    public StageViewModel? PreviousStage { get; } = previous;
 }

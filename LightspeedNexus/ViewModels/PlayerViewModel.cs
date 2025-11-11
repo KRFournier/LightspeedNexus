@@ -19,7 +19,14 @@ public abstract partial class ParticipantViewModel : ViewModelBase
     /// The participant's power level, based on rank or team members' ranks
     /// </summary>
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(Power))]
     public partial int PowerLevel { get; set; } = 0;
+
+    /// <summary>
+    /// The string representation of a participant's power. It defaults to just the
+    /// power level number, but it could be overriden to show, for example, rank.
+    /// </summary>
+    public virtual string Power => PowerLevel.ToString();
 
     /// <summary>
     /// Used by parent view models to set dragging state
@@ -41,6 +48,17 @@ public abstract partial class ParticipantViewModel : ViewModelBase
     {
         Name = participant.Name;
         PowerLevel = participant.PowerLevel;
+    }
+
+    public abstract Participant ToModel();
+
+    public static ParticipantViewModel FromModel(Participant participant)
+    {
+        return participant switch
+        {
+            Player player => new PlayerViewModel(player),
+            _ => throw new NotSupportedException($"Participant type {participant.GetType().Name} is not supported."),
+        };
     }
 }
 
@@ -74,6 +92,8 @@ public sealed partial class PlayerViewModel : ParticipantViewModel
 
     [ObservableProperty]
     public partial Rank Rank { get; set; } = Rank.U;
+    partial void OnRankChanged(Rank value) => PowerLevel = Rank.Weight;
+    public override string Power => Rank.ToString();
 
     #endregion
 
@@ -87,6 +107,9 @@ public sealed partial class PlayerViewModel : ParticipantViewModel
     /// </summary>
     public PlayerViewModel(Player Player) : base(Player)
     {
+        OnlineId = Player.OnlineId;
+        Club = Player.Club;
+        Rank = Player.Rank;
         Card = Player.Card;
         Honor = Player.Honor;
         ForceCalls = Player.ForceCalls;
@@ -107,7 +130,7 @@ public sealed partial class PlayerViewModel : ParticipantViewModel
     /// <summary>
     /// Converts to a <see cref="Player"/>
     /// </summary>
-    public Player ToModel() => new(Name, PowerLevel,
+    public override Player ToModel() => new(Name, PowerLevel,
         OnlineId, Club, Rank, Card, Honor, ForceCalls, IsEjected, WeaponOfChoice);
 
     /// <summary>

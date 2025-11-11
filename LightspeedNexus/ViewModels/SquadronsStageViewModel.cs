@@ -1,21 +1,12 @@
-﻿using Avalonia.Collections;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
+using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
-using LightspeedNexus.Messages;
 using LightspeedNexus.Models;
-using LightspeedNexus.Services;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LightspeedNexus.ViewModels;
 
@@ -34,34 +25,275 @@ public partial class SquadronsStageViewModel : StageViewModel
     [ObservableProperty]
     public partial bool IsAutoAssigned { get; set; }
 
+    public ObservableCollection<SquadronViewModel> Squadrons { get; set; } = [];
+
+    /// <summary>
+    /// Some names and colors we can use for squadrons
+    /// </summary>
+    static readonly (string Name, string Color)[] SquadronNames = [
+        ("Red", "Red"),
+        ("Blue", "Blue"),
+        ("Green", "Green"),
+        ("Purple", "Purple"),
+        ("Yellow", "Yellow"),
+        ("Light", "White"),
+        ("Dark", "Gray"),
+        ("Fire", "Orange"),
+        ("Laser", "Lime"),
+        ("Ice", "Teal"),
+        ("Nova", "Violet"),
+        ("Imperial", "Magenta"),
+        ];
+
+    /// <summary>
+    /// The max a squadron size can be
+    /// </summary>
+    public static readonly int MaxSquadronSize = SquadronNames.Length;
+
+    /// <summary>
+    /// The minimum squadrons needed to ensure no squadron exceeds the max limit
+    /// yet still accounts for all players in the roster
+    /// </summary>
+    public int MinSquadrons => (int)Math.Ceiling(Participants.Count / (double)MaxSquadronSize);
+
+    /// <summary>
+    /// The maximum size an automatic squadron can be
+    /// </summary>
+    const int AutoSquadronSize = 7;
+
     #endregion
 
     /// <summary>
     /// Creates brand new settings
     /// </summary>
-    public SquadronsStageViewModel(string title) : base("Squadrons")
+    public SquadronsStageViewModel(string title, IEnumerable<ParticipantViewModel> participants) : base("Squadrons")
     {
         Title = title;
         IsAutoAssigned = true;
+        foreach (var participant in participants)
+            Participants.Add(participant);
+        UpdateSquadrons();
     }
 
     /// <summary>
     /// Loads settings from a model
     /// </summary>
-    public SquadronsStageViewModel(string title, SquadronsStage model) : this(title)
+    public SquadronsStageViewModel(string title, SquadronsStage model) : base("Squadrons")
     {
-        //Participants = [..model.Participants.Select(p => new ParticipantViewModel(p))];
+        Title = title;
         IsAutoAssigned = model.IsAutoAssigned;
+        Participants = [.. model.Participants.Select(p => ParticipantViewModel.FromModel(p))];
+
+        int i = 0;
+        Squadrons = [.. model.Squadrons.Select(s => new SquadronViewModel(s, Participants)
+            {
+                Name = SquadronNames[i].Name,
+                Color = App.Current?.FindResource($"{SquadronNames[i++].Color}Brush") as IBrush ?? Brushes.Transparent
+            })];
     }
 
     /// <summary>
     /// Converts into a model
     /// </summary>
-    public override SquadronsStage ToModel() => new();
+    public override SquadronsStage ToModel() => new(
+        IsAutoAssigned,
+        [.. Participants.Select(p => p.ToModel())],
+        [.. Squadrons.Select(s => s.ToModel(Participants))]);
 
     [RelayCommand]
     private void StartPools()
     {
         //WeakReferenceMessenger.Default.Send(new NextStageMessage(StageType.Registration));
+    }
+
+    /// <summary>
+    /// The participant that is being dragged
+    /// </summary>
+    [ObservableProperty]
+    public partial ParticipantViewModel? DraggingParticipant { get; set; }
+    partial void OnDraggingParticipantChanged(ParticipantViewModel? oldValue, ParticipantViewModel? newValue)
+    {
+        if (oldValue is not null) oldValue.IsDragging = false;
+        if (newValue is not null) newValue.IsDragging = true;
+    }
+
+    /// <summary>
+    /// As the player drags, we drop the dragging player ont the current one
+    /// </summary>
+    public void DropOnPlayer(ParticipantViewModel target)
+    {
+        if (DraggingParticipant is null || DraggingParticipant == target)
+            return;
+
+        int iDrag = -1;
+        foreach (var squad in Squadrons)
+        {
+            iDrag = squad.Participants.IndexOf(DraggingParticipant);
+            if (iDrag >= 0)
+            {
+                int iTarget = squad.Participants.IndexOf(target);
+                if (iTarget >= 0)
+                {
+                    (squad.Participants[iDrag], squad.Participants[iTarget]) = (squad.Participants[iTarget], squad.Participants[iDrag]);
+                    return;
+                }
+                else
+                {
+                    squad.Participants.RemoveAt(iDrag);
+                    squad.Weight -= DraggingParticipant.PowerLevel;
+                    break;
+                }
+            }
+        }
+
+        // add it before
+        if (iDrag >= 0)
+        {
+            foreach (var squad in Squadrons)
+            {
+                int i = squad.Participants.IndexOf(target);
+                if (i >= 0)
+                {
+                    squad.Participants.Insert(i, DraggingParticipant);
+                    squad.Weight += DraggingParticipant.PowerLevel;
+                    return;
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// This command is used to refresh the squadrons
+    /// </summary>
+    [RelayCommand]
+    private void Refresh() => UpdateSquadrons();
+
+    /// <summary>
+    /// Adds a new squadron
+    /// </summary>
+    [RelayCommand]
+    private void AddSquadron()
+    {
+        if (Squadrons.Count < MaxSquadronSize)
+        {
+            IsAutoAssigned = false;
+            CreateAndAddSquadron();
+            UpdateSquadrons();
+        }
+    }
+
+    /// <summary>
+    /// Removes the last squadron
+    /// </summary>
+    [RelayCommand]
+    private void RemoveSquadron()
+    {
+        if (Squadrons.Count > MinSquadrons)
+        {
+            if (IsAutoAssigned)
+                IsAutoAssigned = false;
+            RemoveSquadron(Squadrons.Count - 1);
+            UpdateSquadrons();
+        }
+    }
+
+    /// <summary>
+    /// Creates a new squadron using the given index into SquadronNames
+    /// </summary>
+    private void CreateAndAddSquadron()
+    {
+        if (Squadrons.Count < MaxSquadronSize)
+        {
+            Squadrons.Add(new SquadronViewModel()
+            {
+                Name = SquadronNames[Squadrons.Count].Name,
+                Color = App.Current?.FindResource($"{SquadronNames[Squadrons.Count].Color}Brush") as IBrush ?? Brushes.Transparent
+            });
+        }
+    }
+
+    /// <summary>
+    /// Removes the squadron at the specified index from the collection.
+    /// </summary>
+    private void RemoveSquadron(int index)
+    {
+        if (index >= 0 && index < Squadrons.Count)
+            Squadrons.RemoveAt(index);
+    }
+
+    /// <summary>
+    /// Uses a bin packing algorithm to repopulate the pools in a balanced fashion
+    /// </summary>
+    private void UpdateSquadrons()
+    {
+        // auto calculate the squadrons, or base it on the requested number
+        int new_count = IsAutoAssigned
+            ? (int)Math.Ceiling(Participants.Count / (double)AutoSquadronSize)
+            : Math.Max(Squadrons.Count, MinSquadrons);
+
+        // remove extra squadrons
+        while (Squadrons.Count > new_count)
+            RemoveSquadron(Squadrons.Count - 1);
+
+        // we shouldn't have more squadrons than we have names to give them
+        if (new_count > SquadronNames.Length)
+            throw new InvalidOperationException($"Cannot have more than {SquadronNames.Length} squadrons.");
+
+        if (new_count > 0)
+        {
+            // add or remove squadrons
+            for (int i = Squadrons.Count; i < new_count; i++)
+                CreateAndAddSquadron();
+
+            // reset members
+            foreach (var s in Squadrons)
+                s.Clear();
+
+            // group participants by power level and assign from highest to lowest
+            foreach (var group in Participants.GroupBy(p => p.PowerLevel).OrderByDescending(g => g.Key))
+                RandomlyAssign([.. group]);
+
+            // move last participant from squadrons that are 2+ larger than the smallest squadrons
+            while (Squadrons.Max(s => s.Participants.Count) - Squadrons.Min(s => s.Participants.Count) > 1)
+            {
+                var small = Squadrons.MinBy(s => s.Participants.Count);
+                if (small is not null)
+                {
+                    var big = Squadrons.MaxBy(s => s.Participants.Count);
+                    if (big is not null && big.Participants.Count > 0)
+                    {
+                        int w = big.Participants[^1].PowerLevel;
+                        small.Participants.Add(big.Participants[^1]);
+                        small.Weight += w;
+                        big.Weight -= w;
+                        big.Participants.RemoveAt(big.Participants.Count - 1);
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Assigns given players to the smallest squadron. If multiple squadrons
+    /// tie for the smallest, then the player is assigned randomly.
+    /// </summary>
+    private void RandomlyAssign(IList<ParticipantViewModel> participants)
+    {
+        Random r = new();
+
+        // place each player into the squadron with the smallest total Value
+        while (participants.Count > 0)
+        {
+            int i = r.Next(participants.Count);
+            var participant = participants[i];
+            int w = participant.PowerLevel;
+            var squadron = Squadrons.MinBy(s => s.Weight);
+            if (squadron is not null)
+            {
+                squadron.Participants.Add(participant);
+                squadron.Weight += w;
+            }
+            participants.RemoveAt(i);
+        }
     }
 }

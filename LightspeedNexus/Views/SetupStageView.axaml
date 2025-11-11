@@ -25,7 +25,8 @@
 					HorizontalAlignment="Stretch"
 					VerticalAlignment="Stretch"
 					HorizontalContentAlignment="Center"
-					VerticalContentAlignment="Center">
+					VerticalContentAlignment="Center"
+					Command="{Binding BeginCommand}">
 				<StackPanel>
 					<StackPanel Orientation="Horizontal"
 								Spacing="10">

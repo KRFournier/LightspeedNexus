@@ -14,7 +14,7 @@
 		<vm:TournamentViewModel/>
 	</Design.DataContext>
 
-	<Grid ColumnDefinitions="Auto,10,*">
+	<Grid ColumnDefinitions="200,10,*">
 
 		<Grid RowDefinitions="*,10,Auto">
 
@@ -54,7 +54,7 @@
 			
 		</Grid>
 		
-		<TransitioningContentControl x:Name="ContentControl"
+		<!--<TransitioningContentControl x:Name="ContentControl"
 									 Grid.Column="2"
 									 Content="{Binding CurrentStage}"
 									 ClipToBounds="False">
@@ -64,7 +64,11 @@
 						   SlideInEasing="CircularEaseOut"
 						   SlideOutEasing="CircularEaseOut"/>
 			</TransitioningContentControl.PageTransition>
-		</TransitioningContentControl>
+		</TransitioningContentControl>-->
+
+		<ContentControl Grid.Column="2"
+						Content="{Binding CurrentStage}"
+						ClipToBounds="False"/>
 		
 	</Grid>
 	

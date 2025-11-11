@@ -15,12 +15,12 @@ public partial class TournamentViewModel : ViewModelBase
     /// <summary>
     /// The tournament's unique identifier
     /// </summary>
-    public Guid Guid { get; protected set; }
+    public Guid Guid { get; protected set; } = Guid.NewGuid();
 
     /// <summary>
     /// The initial stage of the tournament
     /// </summary>
-    public SetupStageViewModel SetupStage { get; set; }
+    public SetupStageViewModel SetupStage { get; set; } = new();
 
     /// <summary>
     /// The previously completed stages of the tournament
@@ -52,6 +52,11 @@ public partial class TournamentViewModel : ViewModelBase
         }
     }
 
+    /// <summary>
+    /// The previous stage of the tournament
+    /// </summary>
+    public StageViewModel? PreviousStage => CurrentStage.Previous;
+
     #endregion
 
     #region Commands
@@ -73,31 +78,30 @@ public partial class TournamentViewModel : ViewModelBase
     /// </summary>
     public TournamentViewModel()
     {
-        Guid = Guid.NewGuid();
-        SetupStage = new();
-        SetupListeners();
-    }
-
-    /// <summary>
-    /// Loads an existing tournament
-    /// </summary>
-    public TournamentViewModel(Tournament model)
-    {
-        Guid = model.Id;
-        SetupStage = new(model.SetupStage);
-        SetupListeners();
-    }
-
-    /// <summary>
-    /// Listens for messages so we can notify changes to the current stage
-    /// </summary>
-    private void SetupListeners() =>
-        WeakReferenceMessenger.Default.Register<TournamentViewModel, StageChangedMessage>(this, (r, m) =>
+        WeakReferenceMessenger.Default.Register<TournamentViewModel, NextStageMessage>(this, (r, m) =>
         {
             OnPropertyChanged(nameof(PreviousStages));
             OnPropertyChanged(nameof(CurrentStage));
             Save();
         });
+
+        WeakReferenceMessenger.Default.Register<TournamentViewModel, PreviousStageMessage>(this, (r, m) =>
+        {
+            m.PreviousStage?.Next = null;
+            OnPropertyChanged(nameof(PreviousStages));
+            OnPropertyChanged(nameof(CurrentStage));
+            Save();
+        });
+    }
+
+    /// <summary>
+    /// Loads an existing tournament
+    /// </summary>
+    public TournamentViewModel(Tournament model) : this()
+    {
+        Guid = model.Id;
+        SetupStage = new(model.SetupStage);
+    }
 
     /// <summary>
     /// Converts to a <see cref="Tournament"/>

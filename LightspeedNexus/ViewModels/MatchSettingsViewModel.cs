@@ -25,6 +25,65 @@ public partial class MatchSettingsViewModel : ViewModelBase, IEquatable<MatchSet
     [ObservableProperty]
     public partial TimeSpan TimeLimit { get; set; } = TimeSpan.FromSeconds(90);
 
+    /// <summary>
+    /// The number of rounds into which a match is divided
+    /// </summary>
+    [ObservableProperty]
+    public partial int Rounds { get; set; } = 1;
+
+    #endregion
+
+    #region Commands
+
+    [RelayCommand]
+    private void DecreaseAll()
+    {
+        int chunk = WinningScore / 4;
+        if (chunk-- > 0)
+        {
+            WinningScore = chunk * 4;
+            TimeLimit = TimeSpan.FromSeconds(chunk * 30);
+        }
+    }
+
+    [RelayCommand]
+    private void IncreaseAll()
+    {
+        int chunk = WinningScore / 4 + 1;
+        WinningScore = chunk * 4;
+        TimeLimit = TimeSpan.FromSeconds(chunk * 30);
+    }
+
+    [RelayCommand]
+    private void IncreaseScore() => WinningScore++;
+
+    [RelayCommand]
+    private void DecreaseScore()
+    {
+        if(WinningScore > 0)
+            WinningScore--;
+    }
+
+    [RelayCommand]
+    private void IncreaseTime() => TimeLimit += TimeSpan.FromSeconds(15);
+
+    [RelayCommand]
+    private void DecreaseTime()
+    {
+        if (TimeLimit.TotalSeconds > 15)
+            TimeLimit -= TimeSpan.FromSeconds(15);
+    }
+
+    [RelayCommand]
+    private void IncreaseRounds() => Rounds++;
+
+    [RelayCommand]
+    private void DecreaseRounds()
+    {
+        if (Rounds > 1)
+            Rounds--;
+    }
+
     #endregion
 
     /// <summary>
@@ -39,6 +98,7 @@ public partial class MatchSettingsViewModel : ViewModelBase, IEquatable<MatchSet
     {
         WinningScore = model.WinningScore;
         TimeLimit = model.TimeLimit;
+        Rounds = model.Rounds;
     }
 
     /// <summary>
@@ -47,17 +107,14 @@ public partial class MatchSettingsViewModel : ViewModelBase, IEquatable<MatchSet
     public MatchSettingsViewModel Clone() => new()
     {
         WinningScore = WinningScore,
-        TimeLimit = TimeLimit
+        TimeLimit = TimeLimit,
+        Rounds = Rounds
     };
 
     /// <summary>
     /// The model
     /// </summary>
-    public MatchSettings ToModel() => new()
-    {
-        WinningScore = WinningScore,
-        TimeLimit = TimeLimit
-    };
+    public MatchSettings ToModel() => new(WinningScore, TimeLimit, Rounds);
 
     #region Value Equality
 
