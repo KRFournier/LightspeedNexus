@@ -2,6 +2,8 @@
 using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging.Messages;
 using LightspeedNexus.Models;
 using System;
 using System.Collections.Generic;
@@ -10,20 +12,60 @@ using System.Linq;
 
 namespace LightspeedNexus.ViewModels;
 
+#region Messages
+
+/// <summary>
+/// Requests the indicies of the given participants
+/// </summary>
+public class RequestParticipantIndicies(IEnumerable<ParticipantViewModel> participants) : RequestMessage<int[]>
+{
+    public IEnumerable<ParticipantViewModel> Participants { get; set; } = participants;
+}
+
+/// <summary>
+/// Requests the index of the given participant
+/// </summary>
+public class RequestParticipantIndex(ParticipantViewModel participant) : RequestMessage<int>
+{
+    public ParticipantViewModel Participant { get; set; } = participant;
+}
+
+/// <summary>
+/// Requests the indicies of the given squadrons
+/// </summary>
+public class RequestSquadronIndicies(IEnumerable<SquadronViewModel> squadrons) : RequestMessage<int[]>
+{
+    public IEnumerable<SquadronViewModel> Squadrons { get; set; } = squadrons;
+}
+
+/// <summary>
+/// Requests the index of the given squadron
+/// </summary>
+public class RequestSquadronIndex(SquadronViewModel squadron) : RequestMessage<int>
+{
+    public SquadronViewModel Squadron { get; set; } = squadron;
+}
+
+#endregion
+
 /// <summary>
 /// The tournament settings
 /// </summary>
-public partial class SquadronsStageViewModel : StageViewModel
+public partial class SquadronsStageViewModel : StageViewModel,
+    IRecipient<RequestParticipantIndicies>, IRecipient<RequestParticipantIndex>,
+    IRecipient<RequestSquadronIndicies>, IRecipient<RequestSquadronIndex>
 {
     #region Properties
-
-    [ObservableProperty]
-    public partial string Title { get; set; }
 
     public ObservableCollection<ParticipantViewModel> Participants { get; set; } = [];
 
     [ObservableProperty]
-    public partial bool IsAutoAssigned { get; set; }
+    public partial bool IsAutoAssigned { get; set; } = true;
+    partial void OnIsAutoAssignedChanged(bool value)
+    {
+        if (value)
+            UpdateSquadrons();
+    }
 
     public ObservableCollection<SquadronViewModel> Squadrons { get; set; } = [];
 
@@ -63,12 +105,35 @@ public partial class SquadronsStageViewModel : StageViewModel
 
     #endregion
 
+    #region Message Handlers
+
+    public void Receive(RequestParticipantIndicies message) =>
+        message.Reply([.. message.Participants.Select(p => Participants.IndexOf(p))]);
+
+    public void Receive(RequestParticipantIndex message) =>
+        message.Reply(Participants.IndexOf(message.Participant));
+
+    public void Receive(RequestSquadronIndicies message) =>
+        message.Reply([.. message.Squadrons.Select(s => Squadrons.IndexOf(s))]);
+
+    public void Receive(RequestSquadronIndex message) =>
+        message.Reply(Squadrons.IndexOf(message.Squadron));
+
+    #endregion
+
+    /// <summary>
+    /// Default constructor
+    /// </summary>
+    public SquadronsStageViewModel() : base("Squadrons")
+    {
+        StrongReferenceMessenger.Default.RegisterAll(this);
+    }
+
     /// <summary>
     /// Creates brand new settings
     /// </summary>
-    public SquadronsStageViewModel(string title, IEnumerable<ParticipantViewModel> participants) : base("Squadrons")
+    public SquadronsStageViewModel(IEnumerable<ParticipantViewModel> participants) : this()
     {
-        Title = title;
         IsAutoAssigned = true;
         foreach (var participant in participants)
             Participants.Add(participant);
@@ -78,9 +143,8 @@ public partial class SquadronsStageViewModel : StageViewModel
     /// <summary>
     /// Loads settings from a model
     /// </summary>
-    public SquadronsStageViewModel(string title, SquadronsStage model) : base("Squadrons")
+    public SquadronsStageViewModel(SquadronsStage model) : this()
     {
-        Title = title;
         IsAutoAssigned = model.IsAutoAssigned;
         Participants = [.. model.Participants.Select(p => ParticipantViewModel.FromModel(p))];
 
@@ -98,13 +162,16 @@ public partial class SquadronsStageViewModel : StageViewModel
     public override SquadronsStage ToModel() => new(
         IsAutoAssigned,
         [.. Participants.Select(p => p.ToModel())],
-        [.. Squadrons.Select(s => s.ToModel(Participants))]);
+        [.. Squadrons.Select(s => s.ToModel())],
+        Next?.ToModel());
 
+    /// <summary>
+    /// Go to the Pools Stage
+    /// </summary>
     [RelayCommand]
-    private void StartPools()
-    {
-        //WeakReferenceMessenger.Default.Send(new NextStageMessage(StageType.Registration));
-    }
+    private void StartPools() => Next = new PoolsStageViewModel(Squadrons);
+
+    #region Drag and Drop
 
     /// <summary>
     /// The participant that is being dragged
@@ -118,7 +185,7 @@ public partial class SquadronsStageViewModel : StageViewModel
     }
 
     /// <summary>
-    /// As the player drags, we drop the dragging player ont the current one
+    /// As the player drags, we drop the dragging player onto the current one
     /// </summary>
     public void DropOnPlayer(ParticipantViewModel target)
     {
@@ -161,6 +228,33 @@ public partial class SquadronsStageViewModel : StageViewModel
             }
         }
     }
+
+    public void DropOnSquadron(SquadronViewModel targetSquadron)
+    {
+        if (DraggingParticipant is null)
+            return;
+        int iDrag = -1;
+        foreach (var squad in Squadrons)
+        {
+            iDrag = squad.Participants.IndexOf(DraggingParticipant);
+            if (iDrag >= 0)
+            {
+                squad.Participants.RemoveAt(iDrag);
+                squad.Weight -= DraggingParticipant.PowerLevel;
+                break;
+            }
+        }
+        // add to target squadron
+        if (iDrag >= 0)
+        {
+            targetSquadron.Participants.Add(DraggingParticipant);
+            targetSquadron.Weight += DraggingParticipant.PowerLevel;
+        }
+    }
+
+    #endregion
+
+    #region Squadron Management
 
     /// <summary>
     /// This command is used to refresh the squadrons
@@ -296,4 +390,6 @@ public partial class SquadronsStageViewModel : StageViewModel
             participants.RemoveAt(i);
         }
     }
+
+    #endregion
 }

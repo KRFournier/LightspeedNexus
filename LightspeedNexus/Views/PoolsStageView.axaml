@@ -1,0 +1,93 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:LightspeedNexus.ViewModels"
+			 xmlns:m="clr-namespace:LightspeedNexus.Models"
+			 xmlns:v="clr-namespace:LightspeedNexus.Views"
+			 xmlns:c="clr-namespace:LightspeedNexus.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 ClipToBounds="False"
+             x:Class="LightspeedNexus.Views.PoolsStageView"
+			 x:DataType="vm:PoolsStageViewModel">
+
+	<Grid RowDefinitions="Auto,10,*">
+
+		<!--Header-->
+		<Grid ColumnDefinitions="260,10,*,10,260">
+			<Button HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					HorizontalContentAlignment="Center"
+					VerticalContentAlignment="Center"
+					Command="{Binding GoBackCommand}">
+				<StackPanel>
+					<StackPanel>
+						<StackPanel Orientation="Horizontal"
+									Spacing="10">
+							<PathIcon Data="{StaticResource arrow_left_regular}"/>
+							<TextBlock Classes="large" Text="Squadrons"/>
+						</StackPanel>
+						<StackPanel Orientation="Horizontal"
+									Spacing="2">
+							<PathIcon Data="{StaticResource warning_regular}"
+									  VerticalAlignment="Center"
+									  Height="12"/>
+							<TextBlock Classes="info"
+									   VerticalAlignment="Center"
+									   Text="Matches will be reset"/>
+						</StackPanel>
+					</StackPanel>
+				</StackPanel>
+			</Button>
+			<TextBlock Classes="giant"
+					   Grid.Column="2"
+					   HorizontalAlignment="Center"
+					   VerticalAlignment="Center"
+					   Text="{Binding Title}"/>
+			<Button Grid.Column="4"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					HorizontalContentAlignment="Center"
+					VerticalContentAlignment="Center">
+				<StackPanel>
+					<StackPanel Orientation="Horizontal"
+								Spacing="10">
+						<TextBlock Classes="large" Text="Results"/>
+						<PathIcon Data="{StaticResource arrow_right_regular}"/>
+					</StackPanel>
+				</StackPanel>
+			</Button>
+		</Grid>
+		
+		<!--Pools-->
+		<Panel Grid.Column="2" Grid.Row="2">
+
+			<ScrollViewer>
+				<ItemsControl ItemsSource="{Binding Pools}">
+					<ItemsControl.ItemsPanel>
+						<ItemsPanelTemplate>
+							<WrapPanel ItemSpacing="10"/>
+						</ItemsPanelTemplate>
+					</ItemsControl.ItemsPanel>
+					<ItemsControl.ItemTemplate>
+						<DataTemplate DataType="vm:PoolViewModel">
+							<StackPanel Spacing="10" DragDrop.AllowDrop="True">
+								<TextBlock Text="{Binding Squadron.Name, StringFormat='{}{0} Squadron'}"
+											Classes="medium"
+											Foreground="{Binding Squadron.Color}"
+											HorizontalAlignment="Center"
+											IsHitTestVisible="False"/>
+								<v:MatchSettingsView DataContext="{Binding Squadron.Settings}"
+													 Height="120"
+													 HorizontalAlignment="Center"/>
+							</StackPanel>											
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+			</ScrollViewer>
+			
+		</Panel>
+
+	</Grid>
+	
+</UserControl>

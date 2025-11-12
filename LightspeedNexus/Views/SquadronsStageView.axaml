@@ -14,23 +14,35 @@
 	<Grid RowDefinitions="Auto,10,Auto,10,*">
 
 		<!--Header-->
-		<Grid ColumnDefinitions="200,10,*,10,200">
+		<Grid ColumnDefinitions="260,10,*,10,260">
 			<Button HorizontalAlignment="Stretch"
 					VerticalAlignment="Stretch"
 					HorizontalContentAlignment="Center"
 					VerticalContentAlignment="Center"
 					Command="{Binding GoBackCommand}">
 				<StackPanel>
-					<StackPanel Orientation="Horizontal"
-								Spacing="10">
-						<PathIcon Data="{StaticResource arrow_left_regular}"/>
-						<TextBlock Classes="large" Text="Setup"/>
+					<StackPanel>
+						<StackPanel Orientation="Horizontal"
+									Spacing="10">
+							<PathIcon Data="{StaticResource arrow_left_regular}"/>
+							<TextBlock Classes="large" Text="Setup"/>
+						</StackPanel>
+						<StackPanel Orientation="Horizontal"
+									Spacing="2">
+							<PathIcon Data="{StaticResource warning_regular}"
+									  VerticalAlignment="Center"
+									  Height="12"/>
+							<TextBlock Classes="info"
+									   VerticalAlignment="Center"
+									   Text="Squadrons will be reassigned"/>
+						</StackPanel>
 					</StackPanel>
 				</StackPanel>
 			</Button>
 			<TextBlock Classes="giant"
 					   Grid.Column="2"
 					   HorizontalAlignment="Center"
+					   VerticalAlignment="Center"
 					   Text="{Binding Title}"/>
 			<Button Grid.Column="4"
 					HorizontalAlignment="Stretch"
@@ -87,11 +99,11 @@
 		<!--Squadrons-->
 		<Panel Grid.Column="2" Grid.Row="4">
 
-			<ScrollViewer x:Name="RosterPanel">
+			<ScrollViewer HorizontalScrollBarVisibility="Auto" >
 				<ItemsControl ItemsSource="{Binding Squadrons}">
 					<ItemsControl.ItemsPanel>
 						<ItemsPanelTemplate>
-							<WrapPanel ItemSpacing="10"/>
+							<StackPanel Orientation="Horizontal" Spacing="10"/>
 						</ItemsPanelTemplate>
 					</ItemsControl.ItemsPanel>
 					<ItemsControl.ItemTemplate>
@@ -104,16 +116,17 @@
 												Width="400"
 												Padding="5"
 												DragDrop.AllowDrop="True">
-								<StackPanel Spacing="10" DragDrop.AllowDrop="True">
+								<Grid RowDefinitions="Auto,10,120,10,*,10,Auto" DragDrop.AllowDrop="True">
 									<TextBlock Text="{Binding Name, StringFormat='{}{0} Squadron'}"
 											   Classes="medium"
 											   Foreground="{Binding Color}"
 											   HorizontalAlignment="Center"
 											   IsHitTestVisible="False"/>
 									<v:MatchSettingsView DataContext="{Binding Settings}"
-														 Height="120"
+														 Grid.Row="2"
 														 HorizontalAlignment="Center"/>
 									<ItemsControl ItemsSource="{Binding Participants}"
+												  Grid.Row="4"
 												  DragDrop.AllowDrop="True">
 										<ItemsControl.ItemsPanel>
 											<ItemsPanelTemplate>
@@ -125,7 +138,7 @@
 												<Border Padding="4"
 														CornerRadius="4"
 														Background="#0FFFFFFF"
-														PointerPressed="RosterPlayer_PointerPressed"
+														PointerPressed="Participant_PointerPressed"
 														DragDrop.AllowDrop="True"
 														Opacity="{Binding IsDragging, Converter={StaticResource TrueToInvis}}">
 													<Grid ColumnDefinitions="*,10,16"
@@ -143,6 +156,7 @@
 										</ItemsControl.ItemTemplate>
 									</ItemsControl>
 									<Panel IsHitTestVisible="False"
+										   Grid.Row="6"
 										   Opacity="0.8"
 										   Margin="0,0,40,0">
 										<TextBlock Text="{Binding Participants.Count, StringFormat='{}{0} players'}"
@@ -159,7 +173,7 @@
 													HorizontalAlignment="Right"
 													IsHitTestVisible="False"/>
 									</Panel>
-								</StackPanel>
+								</Grid>
 							</c:LightspeedBorder>											
 						</DataTemplate>
 					</ItemsControl.ItemTemplate>
@@ -171,7 +185,7 @@
 		<Border x:Name="DropPanel"
 				Grid.Row="4"
 				Background="Transparent"
-				IsVisible="False"/>
+				IsHitTestVisible="False"/>
 
 		<Canvas IsHitTestVisible="False"
 				Grid.Row="4"
@@ -183,9 +197,9 @@
 					Background="#0FFFFFFF"
 					IsVisible="False"
 					IsHitTestVisible="False">
-				<Grid ColumnDefinitions="*,16">
-					<TextBlock Text="{Binding Name}" IsHitTestVisible="False"/>
-					<TextBlock Grid.Column="1" Text="{Binding Power}" IsHitTestVisible="False"/>
+				<Grid ColumnDefinitions="*,10,16">
+					<TextBlock Classes="medium" Text="{Binding Name}" IsHitTestVisible="False"/>
+					<TextBlock Grid.Column="2" Classes="medium" Text="{Binding Power}" IsHitTestVisible="False"/>
 				</Grid>
 			</Border>
 		</Canvas>

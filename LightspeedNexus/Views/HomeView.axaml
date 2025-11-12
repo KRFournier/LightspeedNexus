@@ -2,16 +2,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:m="clr-namespace:LightspeedNexus.Models"
 			 xmlns:vm="clr-namespace:LightspeedNexus.ViewModels"
 			 xmlns:v="clr-namespace:LightspeedNexus.Views"
 			 xmlns:c="clr-namespace:LightspeedNexus.Controls"
              mc:Ignorable="d" d:DesignWidth="1440" d:DesignHeight="810"
              x:Class="LightspeedNexus.Views.HomeView"
              x:DataType="vm:HomeViewModel">
-
-	<UserControl.DataContext>
-		<vm:HomeViewModel />
-	</UserControl.DataContext>
 
 	<Grid RowDefinitions="Auto,32,*"
 		  Margin="16">
@@ -45,22 +42,31 @@
 					<ScrollViewer>
 						<ItemsControl ItemsSource="{Binding RecentTournaments}">
 							<ItemsControl.ItemTemplate>
-								<DataTemplate DataType="vm:TournamentViewModel">
+								<DataTemplate DataType="m:Tournament">
 									<c:LightspeedBorder Classes="item"
 														PointerPressed="RecentTournament_PointerPressed">
-										<Grid ColumnDefinitions="*,10,Auto"
-											  RowDefinitions="Auto,Auto">
-											<TextBlock Classes="medium"
-													   IsHitTestVisible="False"
-													   Text="{Binding SetupStage.Title}"/>
-											<TextBlock Classes="info"
-													   Grid.Row="1"
-													   IsHitTestVisible="False"
-													   Text="{Binding SetupStage.Date, StringFormat='MMMM dd, yyyy'}"/>
-											<c:DeleteButton Grid.Column="2"
-															Command="{Binding $parent[ItemsControl].((vm:HomeViewModel)DataContext).DeleteTournamentCommand}"
-															CommandParameter="{Binding .}"/>
-										</Grid>
+										<StackPanel Spacing="10">
+											<Grid ColumnDefinitions="*,10,Auto">
+												<TextBlock Classes="medium"
+														   IsHitTestVisible="False"
+														   Text="{Binding SetupStage.Title}"/>
+												<c:DeleteButton Grid.Column="2"
+																Command="{Binding $parent[ItemsControl].((vm:HomeViewModel)DataContext).DeleteTournamentCommand}"
+																CommandParameter="{Binding .}"/>
+											</Grid>
+											<Grid ColumnDefinitions="*,10,Auto,4,Auto,15">
+												<TextBlock Classes="info"
+														   IsHitTestVisible="False"
+														   Text="{Binding SetupStage.Date, StringFormat='MMMM dd, yyyy'}"/>
+												<PathIcon Data="{StaticResource person_regular}"
+															Height="16"
+															Grid.Column="2"/>
+												<TextBlock Classes="info"
+															Grid.Column="4"
+															IsHitTestVisible="False"
+															Text="{Binding SetupStage.Registrees.Length}"/>
+											</Grid>
+										</StackPanel>
 									</c:LightspeedBorder>
 								</DataTemplate>
 							</ItemsControl.ItemTemplate>

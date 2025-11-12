@@ -5,10 +5,13 @@ using LightspeedNexus.Models;
 using LightspeedNexus.Services;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace LightspeedNexus.ViewModels;
 
-public partial class TournamentViewModel : ViewModelBase
+public partial class TournamentViewModel : ViewModelBase, IDisposable,
+    IRecipient<NextStageMessage>, IRecipient<PreviousStageMessage>,
+    IRecipient<RosterChangedMessage>
 {
     #region Properties
 
@@ -73,25 +76,39 @@ public partial class TournamentViewModel : ViewModelBase
 
     #endregion
 
+    #region Message Handlers
+
+    public void Receive(NextStageMessage message)
+    {
+        OnPropertyChanged(nameof(PreviousStages));
+        OnPropertyChanged(nameof(CurrentStage));
+        Save();
+    }
+
+    public void Receive(PreviousStageMessage message)
+    {
+        message.PreviousStage?.Dispose();
+        message.PreviousStage?.Next = null;
+        OnPropertyChanged(nameof(PreviousStages));
+        OnPropertyChanged(nameof(CurrentStage));
+        Save();
+    }
+
+    public void Receive(RosterChangedMessage message)
+    {
+        OnPropertyChanged(nameof(IsRanked));
+        OnPropertyChanged(nameof(InitialRank));
+        OnPropertyChanged(nameof(Value));
+    }
+
+    #endregion
+
     /// <summary>
     /// Creates a brand new tournament
     /// </summary>
     public TournamentViewModel()
     {
-        WeakReferenceMessenger.Default.Register<TournamentViewModel, NextStageMessage>(this, (r, m) =>
-        {
-            OnPropertyChanged(nameof(PreviousStages));
-            OnPropertyChanged(nameof(CurrentStage));
-            Save();
-        });
-
-        WeakReferenceMessenger.Default.Register<TournamentViewModel, PreviousStageMessage>(this, (r, m) =>
-        {
-            m.PreviousStage?.Next = null;
-            OnPropertyChanged(nameof(PreviousStages));
-            OnPropertyChanged(nameof(CurrentStage));
-            Save();
-        });
+        StrongReferenceMessenger.Default.RegisterAll(this);
     }
 
     /// <summary>
@@ -116,4 +133,41 @@ public partial class TournamentViewModel : ViewModelBase
         if (SetupStage.CanBegin())
             StorageService.WriteTournament(ToModel());
     }
+
+    /// <summary>
+    /// Cleans up messenger registrations
+    /// </summary>
+    public void Dispose()
+    {
+        StrongReferenceMessenger.Default.UnregisterAll(this);
+        SetupStage.Dispose();
+        GC.SuppressFinalize(this);
+    }
+
+    #region Value and Rank
+
+        /// <summary>
+        /// Determines if the tournament is ranked
+        /// </summary>
+    public bool IsRanked => SetupStage.GameMode == GameMode.Standard && GradingsChart.IsRankable(SetupStage.Registrees.Count);
+
+    /// <summary>
+    /// The tournament's initial rank
+    /// </summary>
+    public string InitialRank
+    {
+        get
+        {
+            if (!IsRanked)
+                return "Unranked";
+            return GradingsChart.FindInitial(SetupStage.Registrees.Select(r => r.Rank))?.Rating ?? "Unranked";
+        }
+    }
+
+    /// <summary>
+    /// Calculates the value of the tournament based on the registrees' ranks
+    /// </summary>
+    public int Value => SetupStage.Registrees.Select(r => r.Rank.Power).Sum();
+
+    #endregion
 }

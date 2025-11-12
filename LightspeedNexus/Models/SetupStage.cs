@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace LightspeedNexus.Models;
 
@@ -64,4 +65,10 @@ public sealed class SetupStage : Stage
         SubTitle = subTitle;
         Registrees = [.. registrees];
     }
+
+    /// <summary>
+    /// The name of the tournament, e.g., Open Rey
+    /// </summary>
+    public string Title => Tournament.GetTitle(Demographic, SkillLevel, GameMode,
+        ReyAllowed, RenAllowed, TanoAllowed, SubTitle);
 }

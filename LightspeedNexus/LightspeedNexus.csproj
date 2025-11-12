@@ -36,7 +36,6 @@
     <Compile Remove="Models\EventEstimator.cs" />
     <Compile Remove="Models\Match.cs" />
     <Compile Remove="Models\MatchManager.cs" />
-    <Compile Remove="Models\Pools.cs" />
     <Compile Remove="Models\Roster.cs" />
     <Compile Remove="Models\Settings.cs" />
     <Compile Remove="Models\Venue.cs" />
@@ -49,7 +48,6 @@
     <Compile Remove="ViewModels\MatchViewModel.cs" />
     <Compile Remove="ViewModels\ParticipantViewModel.cs" />
     <Compile Remove="ViewModels\PoolMatchViewModel.cs" />
-    <Compile Remove="ViewModels\PoolViewModel.cs" />
     <Compile Remove="ViewModels\RosterViewModel.cs" />
     <Compile Remove="ViewModels\SettingsViewModel.cs" />
     <Compile Remove="ViewModels\TeamViewModel.cs" />
@@ -84,6 +82,9 @@
     </Compile>
     <Compile Update="Views\FighterView.axaml.cs">
       <DependentUpon>FighterView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\PoolsStageView.axaml.cs">
+      <DependentUpon>PoolsStageView.axaml</DependentUpon>
     </Compile>
     <Compile Update="Views\SquadronsStageView.axaml.cs">
       <DependentUpon>SquadronsStageView.axaml</DependentUpon>

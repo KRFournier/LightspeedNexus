@@ -8,12 +8,7 @@
 				<c:LightspeedBorder Classes="item">
 					<TextBlock>Hello, World!</TextBlock>
 				</c:LightspeedBorder>
-				<c:LightspeedBorder Classes="small fadecorners"
-									BorderBrush="{StaticResource Red}"
-									TopLeftBackground="{StaticResource Red}"
-									BottomRightBackground="{StaticResource Red}"
-									TopLeftBorderBrush="{StaticResource Red}"
-									BottomRightBorderBrush="{StaticResource Red}">
+				<c:LightspeedBorder Classes="small color">
 					<TextBlock>Hello, World!</TextBlock>
 				</c:LightspeedBorder>
 			</StackPanel>
@@ -81,6 +76,15 @@
 		<Setter Property="Background">
 			<SolidColorBrush Color="{StaticResource Gray}" Opacity="0.1"/>
 		</Setter>
+		<Setter Property="TopLeftBorderBrush" Value="{StaticResource BlueBrush}"/>
+		<Setter Property="TopLeftBackground" Value="{StaticResource BlueBrush}"/>
+		<Setter Property="TopLeftOpacity" Value="1.0"/>
+		<Setter Property="BottomRightBorderBrush" Value="{StaticResource RedBrush}"/>
+		<Setter Property="BottomRightBackground" Value="{StaticResource RedBrush}"/>
+		<Setter Property="BottomRightOpacity" Value="1.0"/>
+	</Style>
+
+	<Style Selector="c|LightspeedBorder.color">
 		<Setter Property="TopLeftBorderBrush" Value="{StaticResource BlueBrush}"/>
 		<Setter Property="TopLeftBackground" Value="{StaticResource BlueBrush}"/>
 		<Setter Property="TopLeftOpacity" Value="1.0"/>

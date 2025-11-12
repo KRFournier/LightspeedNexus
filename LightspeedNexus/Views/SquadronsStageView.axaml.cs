@@ -21,7 +21,7 @@ public partial class SquadronsStageView : UserControl
 
     private Point _offset;
 
-    private async void RosterPlayer_PointerPressed(object? sender, PointerPressedEventArgs e)
+    private async void Participant_PointerPressed(object? sender, PointerPressedEventArgs e)
     {
         if (e.Source is Border item && DataContext is SquadronsStageViewModel SquadronsStageViewModel)
         {
@@ -44,12 +44,19 @@ public partial class SquadronsStageView : UserControl
 
     private void DragOver(object? sender, DragEventArgs e)
     {
-        var mousePos = e.GetPosition(DropPanel);
-        GhostItem.RenderTransform = new TranslateTransform(mousePos.X - _offset.X, mousePos.Y - _offset.Y);
-        if (e.Source is Border item && DataContext is SquadronsStageViewModel SquadronsStageViewModel)
+        if (DataContext is SquadronsStageViewModel ssvm)
         {
-            if (item.DataContext is ParticipantViewModel target)
-                SquadronsStageViewModel.DropOnPlayer(target);
+            var mousePos = e.GetPosition(DropPanel);
+            GhostItem.RenderTransform = new TranslateTransform(mousePos.X - _offset.X, mousePos.Y - _offset.Y);
+            if (e.Source is Border item)
+            {
+                if (item.DataContext is ParticipantViewModel target)
+                    ssvm.DropOnPlayer(target);
+            }
+            else if (e.Source is LightspeedBorder lsBorder && lsBorder.DataContext is SquadronViewModel svm)
+            {
+                ssvm.DropOnSquadron(svm);
+            }
         }
     }
 

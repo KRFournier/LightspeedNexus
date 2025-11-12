@@ -12,12 +12,12 @@ namespace LightspeedNexus.ViewModels;
 
 public partial class HomeViewModel : ViewModelBase
 {
-    public ObservableCollection<TournamentViewModel> RecentTournaments { get; set; } = [];
+    public ObservableCollection<Tournament> RecentTournaments { get; set; } = [];
 
     public HomeViewModel()
     {
         if (!Design.IsDesignMode)
-            RecentTournaments = [.. StorageService.ReadRecentTournaments().Select(t => new TournamentViewModel(t))];
+            RecentTournaments = [.. StorageService.ReadRecentTournaments()];
     }
 
     [RelayCommand]
@@ -33,9 +33,9 @@ public partial class HomeViewModel : ViewModelBase
     private static void GotoFighters() => WeakReferenceMessenger.Default.Send(new NavigatePageMessage(new FightersViewModel()));
 
     [RelayCommand]
-    private void DeleteTournament(TournamentViewModel tournament)
+    private void DeleteTournament(Tournament tournament)
     {
         RecentTournaments.Remove(tournament);
-        StorageService.Delete<Tournament>(tournament.Guid);
+        StorageService.Delete<Tournament>(tournament.Id);
     }
 }

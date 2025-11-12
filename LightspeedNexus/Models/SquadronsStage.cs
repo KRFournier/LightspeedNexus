@@ -28,7 +28,8 @@ public sealed class SquadronsStage : Stage
     public Squadron[] Squadrons { get; set; } = [];
 
     public SquadronsStage() { }
-    public SquadronsStage(bool isAutoAssigned, Participant[] participants, Squadron[] squadrons)
+    public SquadronsStage(bool isAutoAssigned, Participant[] participants, Squadron[] squadrons,
+        Stage? next) : base(next)
     {
         IsAutoAssigned = isAutoAssigned;
         Participants = participants;

@@ -2,6 +2,8 @@
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using LightspeedNexus.Messages;
 using LightspeedNexus.Models;
 using LightspeedNexus.Services;
 using System;
@@ -15,6 +17,15 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace LightspeedNexus.ViewModels;
+
+#region Messages
+
+/// <summary>
+/// Sent when registrees are added or removed
+/// </summary>
+public class RosterChangedMessage() { }
+
+#endregion
 
 /// <summary>
 /// The tournament settings
@@ -65,7 +76,7 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
     #region Next Stage
 
     [RelayCommand(CanExecute = nameof(CanBegin))]
-    private void Begin() => Next = new SquadronsStageViewModel(Title, Registrees.Select(r => new PlayerViewModel(r)));
+    private void Begin() => Next = new SquadronsStageViewModel(Registrees.Select(r => new PlayerViewModel(r)));
 
     public bool CanBegin() => Date is not null && Registrees.Count >= 4;
 
@@ -90,6 +101,7 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
         {
             BeginCommand.NotifyCanExecuteChanged();
             OnPropertyChanged(nameof(BeginSubText));
+            StrongReferenceMessenger.Default.Send(new RosterChangedMessage());
         };
     }
 
@@ -112,7 +124,7 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
 
         Next = model.Next switch
         {
-            SquadronsStage ss => new SquadronsStageViewModel(Title, ss),
+            SquadronsStage ss => new SquadronsStageViewModel(ss),
             _ => null
         };
     }
@@ -128,50 +140,8 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
     /// <summary>
     /// The name of the tournament, e.g., Open Rey
     /// </summary>
-    public string Title
-    {
-        get
-        {
-            StringBuilder sb = new();
-
-            if (Demographic != Demographic.All)
-            {
-                sb.Append(Demographic.ToString());
-                sb.Append("'s ");
-            }
-
-            sb.Append(SkillLevel.ToString());
-
-            if (GameMode != GameMode.Standard)
-            {
-                sb.Append(' ');
-                sb.Append(GameMode.ToString());
-            }
-
-            if (ReyAllowed && RenAllowed && TanoAllowed)
-                sb.Append(" Mixed Weapons");
-            else if (ReyAllowed && RenAllowed)
-                sb.Append(" Rey/Ren");
-            else if (ReyAllowed && TanoAllowed)
-                sb.Append(" Rey/Tano");
-            else if (RenAllowed && TanoAllowed)
-                sb.Append(" Ren/Tano");
-            else if (ReyAllowed)
-                sb.Append(" Rey");
-            else if (RenAllowed)
-                sb.Append(" Ren");
-            else if (TanoAllowed)
-                sb.Append(" Tano");
-
-            if (!string.IsNullOrEmpty(SubTitle))
-            {
-                sb.Append($" - ");
-                sb.Append(SubTitle);
-            }
-
-            return sb.ToString();
-        }
-    }
+    public override string Title => Tournament.GetTitle(Demographic, SkillLevel, GameMode,
+        ReyAllowed, RenAllowed, TanoAllowed, SubTitle);
 
     /// <summary>
     /// Used to update registree settings when tournament settings change

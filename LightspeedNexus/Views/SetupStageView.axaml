@@ -20,6 +20,7 @@
 		<!--Header-->
 		<Grid ColumnDefinitions="*,10,200">
 			<TextBlock Classes="giant"
+					   VerticalAlignment="Center"
 					   Text="{Binding Title}"/>
 			<Button Grid.Column="2"
 					HorizontalAlignment="Stretch"

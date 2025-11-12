@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using LightspeedNexus.Messages;
 using LightspeedNexus.Models;
+using System;
 using System.Security;
 
 namespace LightspeedNexus.ViewModels;
@@ -10,7 +11,7 @@ namespace LightspeedNexus.ViewModels;
 /// <summary>
 /// A tournament stage. Base class for all stages
 /// </summary>
-public abstract partial class StageViewModel(string name) : ViewModelBase
+public abstract partial class StageViewModel(string name) : ViewModelBase, IDisposable
 {
     #region Properties
 
@@ -31,7 +32,7 @@ public abstract partial class StageViewModel(string name) : ViewModelBase
         if (value is not null)
         {
             value.Previous = this;
-            WeakReferenceMessenger.Default.Send(new NextStageMessage(this, value));
+            StrongReferenceMessenger.Default.Send(new NextStageMessage(this, value));
         }
     }
 
@@ -46,6 +47,11 @@ public abstract partial class StageViewModel(string name) : ViewModelBase
     /// </summary>
     public virtual bool IsTournamentCompleted => false;
 
+    /// <summary>
+    /// Gets the title of the tournament from the previous stage
+    /// </summary>
+    public virtual string Title => Previous?.Title ?? string.Empty;
+
     #endregion
 
     /// <summary>
@@ -54,13 +60,27 @@ public abstract partial class StageViewModel(string name) : ViewModelBase
     public abstract Stage ToModel();
 
     /// <summary>
+    /// Unregisters this stage's message handlers
+    /// </summary>
+    public void Dispose()
+    {
+        Next?.Dispose();
+        StrongReferenceMessenger.Default.UnregisterAll(this);
+        GC.SuppressFinalize(this);
+    }
+
+    #region Back Navigation
+
+    /// <summary>
     /// Returns to the previous stage
     /// </summary>
     [RelayCommand(CanExecute = nameof(CanGoBack))]
-    private void GoBack() => WeakReferenceMessenger.Default.Send(new PreviousStageMessage(this, Previous));
+    private void GoBack() => StrongReferenceMessenger.Default.Send(new PreviousStageMessage(this, Previous));
 
     /// <summary>
     /// Determines whether navigation to a previous item is possible.
     /// </summary>
     protected virtual bool CanGoBack() => true;
+
+    #endregion
 }

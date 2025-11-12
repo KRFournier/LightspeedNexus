@@ -16,8 +16,10 @@
 
 	<Grid ColumnDefinitions="200,10,*">
 
+		<!--Sidebar-->
 		<Grid RowDefinitions="*,10,Auto">
 
+			<!--Stages-->
 			<StackPanel>
 				<ItemsControl ItemsSource="{Binding PreviousStages}"
 							  ClipToBounds="False">
@@ -38,19 +40,33 @@
 				</c:ChevronBorder>
 			</StackPanel>
 			
-			<Viewbox StretchDirection="DownOnly"
-					 Grid.Row="2">
-				<StackPanel Spacing="10">
-					<Button Classes="clear"
-							Command="{Binding GoHomeCommand}">
-						<StackPanel Orientation="Horizontal"
-									Spacing="10">
-							<PathIcon Data="{StaticResource pane_close_regular}"/>
-							<TextBlock Text="Save &amp; Close"/>
-						</StackPanel>
-					</Button>
-				</StackPanel>
-			</Viewbox>
+			<StackPanel Spacing="10"
+						Grid.Row="2">
+				<c:LightspeedBorder Classes="small color"
+									IsVisible="{Binding IsRanked}">
+					<StackPanel>
+						<TextBlock Classes="small" HorizontalAlignment="Center">Value</TextBlock>
+						<TextBlock Classes="large" HorizontalAlignment="Center" Text="{Binding Value}"/>
+					</StackPanel>
+				</c:LightspeedBorder>
+				<c:LightspeedBorder Classes="small color"
+									IsVisible="{Binding IsRanked}">
+					<StackPanel>
+						<TextBlock Classes="small" HorizontalAlignment="Center">Initial Rating</TextBlock>
+						<TextBlock Classes="large" HorizontalAlignment="Center" Text="{Binding InitialRank}"/>
+					</StackPanel>
+				</c:LightspeedBorder>
+				<Button Classes="clear focus"
+						HorizontalAlignment="Stretch"
+						Command="{Binding GoHomeCommand}">
+					<StackPanel Orientation="Horizontal"
+								HorizontalAlignment="Center"
+								Spacing="10">
+						<PathIcon Data="{StaticResource pane_close_regular}"/>
+						<TextBlock Text="Save &amp; Close"/>
+					</StackPanel>
+				</Button>
+			</StackPanel>
 			
 		</Grid>
 		

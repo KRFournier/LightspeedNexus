@@ -1,5 +1,6 @@
 ﻿using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using LightspeedNexus.Models;
 using System;
 using System.Collections.Generic;
@@ -46,6 +47,7 @@ public partial class SquadronViewModel : ViewModelBase
     {
         Participants = [.. squadron.Players.Select(i => participants[i])];
         Participants.CollectionChanged += OnPlayersChanged;
+
         Weight = squadron.Weight;
         Settings = new MatchSettingsViewModel(squadron.MatchSettings);
     }
@@ -58,8 +60,11 @@ public partial class SquadronViewModel : ViewModelBase
     /// <summary>
     /// Converts to a <see cref="Squadron"/>
     /// </summary>
-    public Squadron ToModel(IList<ParticipantViewModel> participants) =>
-        new([.. Participants.Select(p => participants.IndexOf(p))], Weight, Settings.ToModel());
+    public Squadron ToModel() => new(
+        StrongReferenceMessenger.Default.Send(new RequestParticipantIndicies(Participants)),
+        Weight,
+        Settings.ToModel()
+        );
 
     /// <summary>
     /// Clears players and resets weight

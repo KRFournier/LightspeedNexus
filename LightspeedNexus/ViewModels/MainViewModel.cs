@@ -4,37 +4,41 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using LightspeedNexus.Messages;
 using LightspeedNexus.Services;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace LightspeedNexus.ViewModels;
 
-public partial class MainViewModel : ViewModelBase
+public partial class MainViewModel : ViewModelBase, IRecipient<NavigatePageMessage>, IRecipient<NavigateHomeMessage>
 {
-    //// TESTING!!!!!!!
-    //[ObservableProperty]
-    //private FightersViewModel _fighters = new();
-
     [ObservableProperty]
-    private ViewModelBase _currentPage = new HomeViewModel();
-
-    [ObservableProperty]
-    private bool _showLogin = false;
-
-    [ObservableProperty]
-    private string? _email;
-
-    [ObservableProperty]
-    private string? _password;
-
-    [ObservableProperty]
-    private string? _message;
+    public partial ViewModelBase CurrentPage { get; set; } = new HomeViewModel();
 
     public MainViewModel()
     {
-        WeakReferenceMessenger.Default.Register<NavigatePageMessage>(this, (_, msg) => CurrentPage = msg.Page);
-        WeakReferenceMessenger.Default.Register<NavigateHomeMessage>(this, (_, _) => CurrentPage = new HomeViewModel());
+        WeakReferenceMessenger.Default.RegisterAll(this);
     }
+
+    #region Message Handlers
+
+    public void Receive(NavigatePageMessage message)
+    {
+        if (CurrentPage is IDisposable d)
+            d.Dispose();
+
+        CurrentPage = message.Page;
+    }
+
+    public void Receive(NavigateHomeMessage message)
+    {
+        if (CurrentPage is IDisposable d)
+            d.Dispose();
+
+        CurrentPage = new HomeViewModel();
+    }
+
+    #endregion
 
     #region Dialog Box
 
@@ -75,6 +79,20 @@ public partial class MainViewModel : ViewModelBase
 
     #endregion
 
+    #region Saber Sports
+
+    [ObservableProperty]
+    private bool _showLogin = false;
+
+    [ObservableProperty]
+    private string? _email;
+
+    [ObservableProperty]
+    private string? _password;
+
+    [ObservableProperty]
+    private string? _message;
+
     [RelayCommand]
     private async Task Register()
     {
@@ -113,4 +131,6 @@ public partial class MainViewModel : ViewModelBase
     {
         Message = null;
     }
+
+    #endregion
 }

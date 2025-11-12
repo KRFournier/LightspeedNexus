@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using LightspeedNexus.Models;
 using System;
 using System.Collections.Generic;
@@ -16,7 +17,7 @@ public partial class PoolViewModel : ViewModelBase
     [ObservableProperty]
     public partial SquadronViewModel Squadron { get; protected set; }
 
-    public ObservableCollection<PoolMatchViewModel> Matches { get; set; } = [];
+    //public ObservableCollection<PoolMatchViewModel> Matches { get; set; } = [];
 
     #endregion
 
@@ -25,56 +26,18 @@ public partial class PoolViewModel : ViewModelBase
         Squadron = squadron;
     }
 
-    public PoolViewModel(Pool pool, IReadOnlyList<SquadronViewModel> squadrons, IReadOnlyList<ContestantViewModel> fullRoster)
+    public PoolViewModel(Pool pool, IReadOnlyList<SquadronViewModel> squadrons)
     {
         Squadron = squadrons[pool.Squadron];
-        foreach (var match in pool.Matches)
-        {
-            Matches.Add(new PoolMatchViewModel(Squadron, match, fullRoster));
-        }
+        //foreach (var match in pool.Matches)
+        //{
+        //    Matches.Add(new PoolMatchViewModel(Squadron, match, fullRoster));
+        //}
     }
 
-    public Pool ToModel(IList<SquadronViewModel> squadrons, IList<ContestantViewModel> fullRoster) =>
-        new(squadrons.IndexOf(Squadron), [.. Matches.Select(m => m.ToModel(fullRoster))]);
-
-    #region Statistics
-
-    /// <summary>
-    /// A match from a player's perspective
-    /// </summary>
-    internal record PlayerMatchStatistics(ContestantViewModel Opponent, int PlayerScore, int OpponentScore, bool Winner);
-
-    /// <summary>
-    /// A player's matches and statistics
-    /// </summary>
-    internal class PlayerStatistics(ContestantViewModel player)
-    {
-        public ContestantViewModel Player = player;
-        public List<PlayerMatchStatistics> Matches = [];
-        public int Wins => Matches.Count(s => s.Winner);
-        public int Points => Matches.Sum(s => s.PlayerScore);
-        public int OpponentPoints => Matches.Sum(s => s.OpponentScore);
-        public double Score { get; private set; } = 0.0;
-
-        public double ComputeScore(double winValue, double maxScorePerPlayer)
-        {
-            Score = (Wins * winValue + (Points - OpponentPoints)) / maxScorePerPlayer * 100.0;
-            return Score;
-        }
-
-        public double ComputeAdjustedScore(double winValue, double maxScorePerPlayer, double maxPointsPerMatch, HashSet<ContestantViewModel> overOutliers, HashSet<ContestantViewModel> underOutliers)
-        {
-            if (!overOutliers.Contains(Player) && !underOutliers.Contains(Player))
-            {
-                int wins = overOutliers.Count > 0 || Wins == 0 ? Wins : Wins - underOutliers.Count;
-                int adjDiff = Matches.Sum(s => overOutliers.Contains(s.Opponent) || underOutliers.Contains(s.Opponent) ? 0 : s.PlayerScore - s.OpponentScore);
-                Score = (wins * winValue + adjDiff) / (maxScorePerPlayer - (winValue + maxPointsPerMatch) * underOutliers.Count) * 100.0;
-            }
-            return Score;
-        }
-    }
-
-    #endregion
+    public Pool ToModel() => new(
+        StrongReferenceMessenger.Default.Send(new RequestSquadronIndex(Squadron))
+        );
 
     #region Match Arrangement
 
@@ -101,12 +64,12 @@ public partial class PoolViewModel : ViewModelBase
 
     private void ArrangeMatches()
     {
-        if (Squadron.Players.Count > 1 && Squadron.Players.Count <= poolArrangements.Length)
+        if (Squadron.Participants.Count > 1 && Squadron.Participants.Count <= poolArrangements.Length)
         {
-            Matches.Clear();
-            foreach (var arrangement in poolArrangements[Squadron.Players.Count])
+            //Matches.Clear();
+            foreach (var arrangement in poolArrangements[Squadron.Participants.Count])
             {
-                var match = new MatchViewModel(Squadron.Players[arrangement[0] - 1], Squadron.Players[arrangement[1] - 1]);
+                //var match = new MatchViewModel(Squadron.Participants[arrangement[0] - 1], Squadron.Participants[arrangement[1] - 1]);
             }
         }
     }
