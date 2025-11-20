@@ -53,35 +53,46 @@
 						 ClipToBounds="False">
 					<Grid ColumnDefinitions="Auto,50,Auto,50,Auto">
 			
-						<!--Skill Level-->
+						<!--Ranks Allowed-->
 						<StackPanel Grid.Column="0"
 									Orientation="Horizontal"
 									Spacing="10">
-							<RadioButton GroupName="SkillLevel"
-											Theme="{StaticResource RadioButtonButtons}"
-											Width="100"
-											HorizontalContentAlignment="Center"
-											IsChecked="{Binding SkillLevel,
-												Converter={StaticResource RadioValue},
-												ConverterParameter={x:Static m:SkillLevel.Open}}"
-											Content="Open"/>
-							<RadioButton GroupName="SkillLevel"
-											Theme="{StaticResource RadioButtonButtons}"
-											Padding="5,5.5,5,5"
-											Width="100"
-											HorizontalContentAlignment="Center"
-											IsChecked="{Binding SkillLevel,
-												Converter={StaticResource RadioValue},
-												ConverterParameter={x:Static m:SkillLevel.Advanced}}"
-											Content="Advanced"/>
-							<RadioButton GroupName="SkillLevel"
-											Theme="{StaticResource RadioButtonButtons}"
-											Width="100"
-											HorizontalContentAlignment="Center"
-											IsChecked="{Binding SkillLevel,
-												Converter={StaticResource RadioValue},
-												ConverterParameter={x:Static m:SkillLevel.Novice}}"
-											Content="Novice"/>
+							<ToggleButton Content="A"
+										  Width="50"
+										  VerticalAlignment="Stretch"
+										  VerticalContentAlignment="Center"
+										  HorizontalContentAlignment="Center"
+										  IsChecked="{Binding AllowARanks}"/>
+							<ToggleButton Content="B"
+										  Width="50"
+										  VerticalAlignment="Stretch"
+										  VerticalContentAlignment="Center"
+										  HorizontalContentAlignment="Center"
+										  IsChecked="{Binding AllowBRanks}"/>
+							<ToggleButton Content="C"
+										  Width="50"
+										  VerticalAlignment="Stretch"
+										  VerticalContentAlignment="Center"
+										  HorizontalContentAlignment="Center"
+										  IsChecked="{Binding AllowCRanks}"/>
+							<ToggleButton Content="D"
+										  Width="50"
+										  VerticalAlignment="Stretch"
+										  VerticalContentAlignment="Center"
+										  HorizontalContentAlignment="Center"
+										  IsChecked="{Binding AllowDRanks}"/>
+							<ToggleButton Content="E"
+										  Width="50"
+										  VerticalAlignment="Stretch"
+										  VerticalContentAlignment="Center"
+										  HorizontalContentAlignment="Center"
+										  IsChecked="{Binding AllowERanks}"/>
+							<ToggleButton Content="U"
+										  Width="50"
+										  VerticalAlignment="Stretch"
+										  VerticalContentAlignment="Center"
+										  HorizontalContentAlignment="Center"
+										  IsChecked="{Binding AllowURanks}"/>
 						</StackPanel>
 		
 						<!--Demographic-->
@@ -158,27 +169,23 @@
 				</Viewbox>
 			
 				<!--Additional Info-->
-				<Grid ColumnDefinitions="Auto,10,*,10,Auto,10,Auto">
-			
-					<!--Subtitle-->
-					<TextBlock Grid.Column="0"
-							   Grid.Row="0"
-							   VerticalAlignment="Center"
-							   Text="Tagline"/>
-					<TextBox Grid.Column="2"
-							 Grid.Row="0"
-							 VerticalContentAlignment="Center"
-							 Watermark="Optional text at the end of the generated title"
-							 Text="{Binding SubTitle}"/>
-
+				<Grid ColumnDefinitions="Auto,10,Auto,10,Auto,10,*">
+									
 					<!--Date-->
-					<TextBlock Grid.Column="4"
-							   Grid.Row="2"
+					<TextBlock Grid.Column="0"
 							   VerticalAlignment="Center"
 							   Text="When"/>
-					<CalendarDatePicker Grid.Column="6"
-										Grid.Row="2"
+					<CalendarDatePicker Grid.Column="2"
 										SelectedDate="{Binding Date}"/>
+					
+					<!--Subtitle-->
+					<TextBlock Grid.Column="4"
+							   VerticalAlignment="Center"
+							   Text="Tagline"/>
+					<TextBox Grid.Column="6"
+							 VerticalContentAlignment="Center"
+							 Watermark="Additional Description"
+							 Text="{Binding SubTitle}"/>
 				</Grid>
 		
 			</StackPanel>
@@ -224,6 +231,7 @@
 
 				<CheckBox Grid.Column="4"
 						  Grid.Row="2"
+						  IsVisible="False"
 						  VerticalAlignment="Center"
 						  IsChecked="{Binding UseEffectiveRank}"
 						  Content="Use Balanced Ranks"
@@ -241,6 +249,7 @@
 					<ItemsControl.ItemTemplate>
 						<DataTemplate DataType="vm:RegistreeViewModel">
 							<c:LightspeedBorder Classes="item"
+												Classes.error="{Binding !MeetsRequirements}"
 												DoubleTapped="Player_DoubleTapped">
 								<Grid ColumnDefinitions="*,10,50,10,*,10,Auto">
 									<TextBlock Classes="large"
@@ -248,6 +257,7 @@
 											   VerticalAlignment="Center"/>
 									<TextBlock Grid.Column="2"
 											   Classes="large"
+											   Classes.error="{Binding !MeetsRequirements}"
 											   Text="{Binding Rank}"
 											   VerticalAlignment="Center"/>
 									<StackPanel Grid.Column="4"
@@ -256,6 +266,7 @@
 												HorizontalAlignment="Center">
 										<RadioButton Padding="2"
 													 Theme="{StaticResource RadioButtonButtons}"
+													 Classes.error="{Binding !MeetsRequirements}"
 													 GroupName="{Binding FullName}"
 													 IsChecked="{Binding WeaponOfChoice,
 														 Converter={StaticResource RadioValue},
@@ -275,6 +286,7 @@
 										</RadioButton>
 										<RadioButton Padding="2"
 													 Theme="{StaticResource RadioButtonButtons}"
+													 Classes.error="{Binding !MeetsRequirements}"
 													 GroupName="{Binding FullName}"
 													 IsChecked="{Binding WeaponOfChoice,
 														 Converter={StaticResource RadioValue},
@@ -294,6 +306,7 @@
 										</RadioButton>
 										<RadioButton Padding="2"
 													 Theme="{StaticResource RadioButtonButtons}"
+													 Classes.error="{Binding !MeetsRequirements}"
 													 GroupName="{Binding FullName}"
 													 IsChecked="{Binding WeaponOfChoice,
 														 Converter={StaticResource RadioValue},

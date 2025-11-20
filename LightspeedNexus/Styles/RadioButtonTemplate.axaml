@@ -5,10 +5,10 @@
 	<Design.PreviewWith>
 		<Border Padding="20">
 			<StackPanel Spacing="10">
-				<RadioButton Content="Option 1" IsChecked="True" />
-				<RadioButton Content="Option 2" />
-				<RadioButton IsEnabled="False" Content="Option 3" />
-				<RadioButton Content="Option 2" />
+				<RadioButton Theme="{StaticResource RadioButtonButtons}" Classes="error" Content="Option 1" IsChecked="True" />
+				<RadioButton Theme="{StaticResource RadioButtonButtons}" Content="Option 2" />
+				<RadioButton Theme="{StaticResource RadioButtonButtons}" IsEnabled="False" Content="Option 3" />
+				<RadioButton Theme="{StaticResource RadioButtonButtons}" Content="Option 2" />
 			</StackPanel>
 		</Border>
 	</Design.PreviewWith>
@@ -143,9 +143,19 @@
 			<Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter">
 				<Setter Property="Opacity" Value="1.0"/>
 			</Style>
-			<Style Selector="^:checked /template/ c|LightspeedBorder#Border">
+			<Style Selector="^ /template/ c|LightspeedBorder#Border">
 				<Setter Property="Background" Value="{StaticResource BlueBackground}"/>
 				<Setter Property="BorderBrush" Value="{StaticResource BlueBrush}" />
+			</Style>
+		</Style>
+
+		<Style Selector="^.error:checked">
+			<Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter">
+				<Setter Property="Opacity" Value="1.0"/>
+			</Style>
+			<Style Selector="^ /template/ c|LightspeedBorder#Border">
+				<Setter Property="Background" Value="{StaticResource RedBackground}"/>
+				<Setter Property="BorderBrush" Value="{StaticResource RedBrush}" />
 			</Style>
 		</Style>
 

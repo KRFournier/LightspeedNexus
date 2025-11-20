@@ -22,7 +22,8 @@ public sealed class Tournament : CollectionObject
     /// <summary>
     /// The name of the tournament, e.g., Open Rey
     /// </summary>
-    public static string GetTitle(Demographic demographic, SkillLevel skillLevel,
+    public static string GetTitle(Demographic demographic,
+        bool allowARanks, bool allowBRanks, bool allowCRanks, bool allowDRanks, bool allowERanks, bool allowURanks,
         GameMode gameMode, bool reyAllowed, bool renAllowed, bool tanoAllowed,
         string? subTitle)
     {
@@ -34,7 +35,26 @@ public sealed class Tournament : CollectionObject
             sb.Append("'s ");
         }
 
-        sb.Append(skillLevel.ToString());
+        if (allowARanks && allowBRanks && allowCRanks && allowDRanks && allowERanks && allowURanks)
+            sb.Append("Open");
+        else if (!allowARanks && !allowBRanks && !allowCRanks && !allowDRanks && !allowERanks && !allowURanks)
+            sb.Append("Impossible");
+        else if (!allowDRanks && !allowERanks && !allowURanks &&
+            (
+                allowARanks && allowBRanks && allowCRanks ||
+                allowARanks && allowBRanks && !allowCRanks ||
+                allowARanks && !allowBRanks && !allowCRanks
+            ))
+            sb.Append("Advanced");
+        else if (!allowARanks && !allowBRanks && !allowCRanks &&
+            (
+                allowDRanks && allowERanks && allowURanks ||
+                !allowDRanks && allowERanks && allowURanks ||
+                !allowDRanks && !allowERanks && allowURanks
+            ))
+            sb.Append("Novice");
+        else
+            sb.Append("Restricted");
 
         if (gameMode != GameMode.Standard)
         {

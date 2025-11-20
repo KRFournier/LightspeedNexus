@@ -48,11 +48,18 @@ public sealed class SetupStage : Stage
     public bool TanoAllowed { get; set; } = false;
     public string? SubTitle { get; set; }
     public Registree[] Registrees { get; set; } = [];
+    public bool AllowARanks { get; set; } = true;
+    public bool AllowBRanks { get; set; } = true;
+    public bool AllowCRanks { get; set; } = true;
+    public bool AllowDRanks { get; set; } = true;
+    public bool AllowERanks { get; set; } = true;
+    public bool AllowURanks { get; set; } = true;
 
     public SetupStage() { }
 
     public SetupStage(DateTime? date, GameMode gameMode, Demographic demographic, SkillLevel skillLevel,
         bool reyAllowed, bool renAllowed, bool tanoAllowed, string? subTitle, IEnumerable<Registree> registrees,
+        bool allowARanks, bool allowBRanks, bool allowCRanks, bool allowDRanks, bool allowERanks, bool allowURanks,
         Stage? next) : base(next)
     {
         Date = date;
@@ -63,12 +70,19 @@ public sealed class SetupStage : Stage
         RenAllowed = renAllowed;
         TanoAllowed = tanoAllowed;
         SubTitle = subTitle;
+        AllowARanks = allowARanks;
+        AllowBRanks = allowBRanks;
+        AllowCRanks = allowCRanks;
+        AllowDRanks = allowDRanks;
+        AllowERanks = allowERanks;
+        AllowURanks = allowURanks;
         Registrees = [.. registrees];
     }
 
     /// <summary>
     /// The name of the tournament, e.g., Open Rey
     /// </summary>
-    public string Title => Tournament.GetTitle(Demographic, SkillLevel, GameMode,
-        ReyAllowed, RenAllowed, TanoAllowed, SubTitle);
+    public string Title => Tournament.GetTitle(Demographic,
+        AllowARanks, AllowBRanks, AllowCRanks, AllowDRanks, AllowERanks, AllowURanks,
+        GameMode, ReyAllowed, RenAllowed, TanoAllowed, SubTitle);
 }

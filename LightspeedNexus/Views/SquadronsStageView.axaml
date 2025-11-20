@@ -48,7 +48,8 @@
 					HorizontalAlignment="Stretch"
 					VerticalAlignment="Stretch"
 					HorizontalContentAlignment="Center"
-					VerticalContentAlignment="Center">
+					VerticalContentAlignment="Center"
+					Command="{Binding StartPoolsCommand}">
 				<StackPanel>
 					<StackPanel Orientation="Horizontal"
 								Spacing="10">
@@ -116,7 +117,7 @@
 												Width="400"
 												Padding="5"
 												DragDrop.AllowDrop="True">
-								<Grid RowDefinitions="Auto,10,120,10,*,10,Auto" DragDrop.AllowDrop="True">
+								<Grid RowDefinitions="Auto,10,100,10,*,10,Auto" DragDrop.AllowDrop="True">
 									<TextBlock Text="{Binding Name, StringFormat='{}{0} Squadron'}"
 											   Classes="medium"
 											   Foreground="{Binding Color}"

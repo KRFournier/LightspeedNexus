@@ -6,7 +6,7 @@
 			<StackPanel Spacing="20">
 				<TextBlock Classes="tiny">Tiny</TextBlock>
 				<TextBlock>Normal</TextBlock>
-				<TextBlock Classes="medium">Medium</TextBlock>
+				<TextBlock Classes="medium error">Medium</TextBlock>
 				<TextBlock Classes="large">Large</TextBlock>
 				<TextBlock Classes="giant">Giant</TextBlock>
 				<TextBlock Classes="info">Subtext</TextBlock>
@@ -32,6 +32,9 @@
 		</Style>
 		<Style Selector="^.info">
 			<Setter Property="FontFamily" Value="{StaticResource Electrolize}"/>
+		</Style>
+		<Style Selector="^.error">
+			<Setter Property="Foreground" Value="{StaticResource Red}"/>
 		</Style>
 	</Style>
 	

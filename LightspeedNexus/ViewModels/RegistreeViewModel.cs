@@ -48,6 +48,9 @@ public partial class RegistreeViewModel : ViewModelBase, IComparable<RegistreeVi
     [NotifyPropertyChangedFor(nameof(Rank))]
     public partial WeaponClass WeaponOfChoice { get; set; } = WeaponClass.Rey;
 
+    [ObservableProperty]
+    public partial bool MeetsRequirements { get; set; } = true;
+
     public string FullName => $"{LastName}, {FirstName}";
 
     /// <summary>
@@ -184,4 +187,27 @@ public partial class RegistreeViewModel : ViewModelBase, IComparable<RegistreeVi
         WeaponClass.Tano => TanoRank,
         _ => Rank.U
     };
+
+    /// <summary>
+    /// Determines if the current weapon meets the given requirements
+    /// </summary>
+    public void Validate(bool allowARanks, bool allowBRanks, bool allowCRanks, bool allowDRanks, bool allowERanks, bool allowURanks)
+    {
+        MeetsRequirements = ValidateWeapon(WeaponOfChoice, allowARanks, allowBRanks, allowCRanks, allowDRanks, allowERanks, allowURanks);
+    }
+
+    /// <summary>
+    /// Determines if the current weapon meets the given requirements
+    /// </summary>
+    private bool ValidateWeapon(WeaponClass weaponClass, bool allowARanks, bool allowBRanks, bool allowCRanks, bool allowDRanks, bool allowERanks, bool allowURanks)
+        => GetWeaponRank(weaponClass).Letter switch
+        {
+            'A' => allowARanks,
+            'B' => allowBRanks,
+            'C' => allowCRanks,
+            'D' => allowDRanks,
+            'E' => allowERanks,
+            'U' => allowURanks,
+            _ => false
+        };
 }

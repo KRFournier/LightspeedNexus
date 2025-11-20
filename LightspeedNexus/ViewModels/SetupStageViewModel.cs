@@ -3,7 +3,6 @@ using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using LightspeedNexus.Messages;
 using LightspeedNexus.Models;
 using LightspeedNexus.Services;
 using System;
@@ -13,7 +12,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace LightspeedNexus.ViewModels;
@@ -52,6 +50,36 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
     [NotifyPropertyChangedFor(nameof(Title))]
     public partial SkillLevel SkillLevel { get; set; } = SkillLevel.Open;
     public static string[] SkillLevels => Enum.GetNames<SkillLevel>();
+    partial void OnSkillLevelChanged(SkillLevel value)
+    {
+        switch (value)
+        {
+            case SkillLevel.Open:
+                AllowARanks = true;
+                AllowBRanks = true;
+                AllowCRanks = true;
+                AllowDRanks = true;
+                AllowERanks = true;
+                AllowURanks = true;
+                break;
+            case SkillLevel.Advanced:
+                AllowARanks = true;
+                AllowBRanks = true;
+                AllowCRanks = true;
+                AllowDRanks = false;
+                AllowERanks = false;
+                AllowURanks = false;
+                break;
+            case SkillLevel.Novice:
+                AllowARanks = false;
+                AllowBRanks = false;
+                AllowCRanks = false;
+                AllowDRanks = true;
+                AllowERanks = true;
+                AllowURanks = true;
+                break;
+        }
+    }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Title))]
@@ -71,6 +99,42 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
 
     public ObservableCollection<RegistreeViewModel> Registrees { get; set; } = [];
 
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(BeginCommand))]
+    [NotifyPropertyChangedFor(nameof(Title))]
+    public partial bool AllowARanks { get; set; } = true;
+    partial void OnAllowARanksChanged(bool value) => ValidateRoster();
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(BeginCommand))]
+    [NotifyPropertyChangedFor(nameof(Title))]
+    public partial bool AllowBRanks { get; set; } = true;
+    partial void OnAllowBRanksChanged(bool value) => ValidateRoster();
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(BeginCommand))]
+    [NotifyPropertyChangedFor(nameof(Title))]
+    public partial bool AllowCRanks { get; set; } = true;
+    partial void OnAllowCRanksChanged(bool value) => ValidateRoster();
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(BeginCommand))]
+    [NotifyPropertyChangedFor(nameof(Title))]
+    public partial bool AllowDRanks { get; set; } = true;
+    partial void OnAllowDRanksChanged(bool value) => ValidateRoster();
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(BeginCommand))]
+    [NotifyPropertyChangedFor(nameof(Title))]
+    public partial bool AllowERanks { get; set; } = true;
+    partial void OnAllowERanksChanged(bool value) => ValidateRoster();
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(BeginCommand))]
+    [NotifyPropertyChangedFor(nameof(Title))]
+    public partial bool AllowURanks { get; set; } = true;
+    partial void OnAllowURanksChanged(bool value) => ValidateRoster();
+
     #endregion
 
     #region Next Stage
@@ -78,13 +142,22 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
     [RelayCommand(CanExecute = nameof(CanBegin))]
     private void Begin() => Next = new SquadronsStageViewModel(Registrees.Select(r => new PlayerViewModel(r)));
 
-    public bool CanBegin() => Date is not null && Registrees.Count >= 4;
+    public bool CanBegin() => Date is not null && Registrees.Count >= 4 && Registrees.All(r => r.MeetsRequirements);
 
-    public string BeginSubText => CanBegin() ?
-        "" :
-        Date is null ?
-            "Set a date" :
-            $"Add {4 - Registrees.Count} more player{(Registrees.Count == 3 ? "" : "s")}.";
+    public string BeginSubText
+    {
+        get
+        {
+            if (Date is null)
+                return "Set a date.";
+            else if (Registrees.Count < 4)
+                return $"Add {4 - Registrees.Count} more player{(Registrees.Count == 3 ? "" : "s")}.";
+            else if (Registrees.Any(r => !r.MeetsRequirements))
+                return "Meet rank requirements.";
+
+            return string.Empty;
+        }
+    }
 
     #endregion
 
@@ -118,15 +191,32 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
         RenAllowed = model.RenAllowed;
         TanoAllowed = model.TanoAllowed;
         SubTitle = model.SubTitle;
+        AllowARanks = model.AllowARanks;
+        AllowBRanks = model.AllowBRanks;
+        AllowCRanks = model.AllowCRanks;
+        AllowDRanks = model.AllowDRanks;
+        AllowERanks = model.AllowERanks;
+        AllowURanks = model.AllowURanks;
 
         foreach (var r in model.Registrees)
-            Registrees.Add(new RegistreeViewModel(r));
+            AddPlayer(new RegistreeViewModel(r));
 
         Next = model.Next switch
         {
             SquadronsStage ss => new SquadronsStageViewModel(ss),
             _ => null
         };
+
+        ValidateRoster();
+    }
+
+    /// <summary>
+    /// Releases event handlers
+    /// </summary>
+    protected override void CleanUp()
+    {
+        foreach (var r in Registrees)
+            r.PropertyChanged -= OnRegistreePropertyChanged;
     }
 
     /// <summary>
@@ -135,13 +225,15 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
     public override SetupStage ToModel() => new(
         Date, GameMode, Demographic, SkillLevel, ReyAllowed, RenAllowed,
         TanoAllowed, SubTitle, Registrees.Select(r => r.ToModel()),
+        AllowARanks, AllowBRanks, AllowCRanks, AllowDRanks, AllowERanks, AllowURanks,
         Next?.ToModel());
 
     /// <summary>
     /// The name of the tournament, e.g., Open Rey
     /// </summary>
-    public override string Title => Tournament.GetTitle(Demographic, SkillLevel, GameMode,
-        ReyAllowed, RenAllowed, TanoAllowed, SubTitle);
+    public override string Title => Tournament.GetTitle(Demographic,
+        AllowARanks, AllowBRanks, AllowCRanks, AllowDRanks, AllowERanks, AllowURanks,
+        GameMode, ReyAllowed, RenAllowed, TanoAllowed, SubTitle);
 
     /// <summary>
     /// Used to update registree settings when tournament settings change
@@ -310,6 +402,7 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
     private void RemovePlayer(RegistreeViewModel item)
     {
         Registrees.Remove(item);
+        item.PropertyChanged -= OnRegistreePropertyChanged;
         OnPropertyChanged(nameof(SortedPlayers));
     }
 
@@ -322,8 +415,31 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
     protected RegistreeViewModel CreateAndAddPlayer(Fighter fighter)
     {
         var player = new RegistreeViewModel(new Registree(fighter, UseEffectiveRank));
-        Registrees.Add(player);
+        AddPlayer(player);
         return player;
+    }
+
+    /// <summary>
+    /// Adds a player. Always add a player using this method
+    /// </summary>
+    /// <param name="registree"></param>
+    protected void AddPlayer(RegistreeViewModel registree)
+    {
+        Registrees.Add(registree);
+        registree.PropertyChanged += OnRegistreePropertyChanged;
+    }
+
+    /// <summary>
+    /// Responds to changes in weapon choice so the registree can be revalidated
+    /// </summary>
+    private void OnRegistreePropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (sender is RegistreeViewModel r && e.PropertyName == nameof(RegistreeViewModel.WeaponOfChoice))
+        {
+            r.Validate(AllowARanks, AllowBRanks, AllowCRanks, AllowDRanks, AllowERanks, AllowURanks);
+            BeginCommand.NotifyCanExecuteChanged();
+            OnPropertyChanged(nameof(BeginSubText));
+        }
     }
 
     /// <summary>
@@ -339,4 +455,15 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
     }
 
     #endregion
+
+    /// <summary>
+    /// Checks each registree to see if they meet the rank requirements
+    /// </summary>
+    protected void ValidateRoster()
+    {
+        foreach (var r in Registrees)
+            r.Validate(AllowARanks, AllowBRanks, AllowCRanks, AllowDRanks, AllowERanks, AllowURanks);
+        BeginCommand.NotifyCanExecuteChanged();
+        OnPropertyChanged(nameof(BeginSubText));
+    }
 }

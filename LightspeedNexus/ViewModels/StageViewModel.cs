@@ -66,8 +66,14 @@ public abstract partial class StageViewModel(string name) : ViewModelBase, IDisp
     {
         Next?.Dispose();
         StrongReferenceMessenger.Default.UnregisterAll(this);
+        CleanUp();
         GC.SuppressFinalize(this);
     }
+
+    /// <summary>
+    /// Allows for cleanup when disposing
+    /// </summary>
+    protected virtual void CleanUp() { }
 
     #region Back Navigation
 

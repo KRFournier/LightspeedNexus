@@ -1,79 +1,106 @@
-﻿using LightspeedNexus.ViewModels;
-using System;
-using System.Collections.Generic;
+﻿using System;
 
 namespace LightspeedNexus.Models;
 
 /// <summary>
-/// A player is a contestant in a particular match. Each player has a score that may or may not
-/// contribute to the overall score of their team, which depends on the game format.
+/// Identifies a participant the side to which they were assigned
 /// </summary>
-public sealed class Player
+public enum Side
 {
-    public Guid Fighter { get; set; } = Guid.NewGuid();
-    public int MinorViolations { get; set; } = 0;
-    public int Score { get; set; } = 0;
+    Neither,
+    First,
+    Second
+}
 
-    public Player() { }
-    public Player(Guid player, int score, int minorViolations)
+/// <summary>
+/// Specifies the type of scoring actions possible in a match.
+/// </summary>
+public enum ActionType
+{
+    Unknown = -1,
+    Card,
+    Clean,
+    Conceded,
+    Disarm,
+    Ejected,
+    FirstContact,
+    Headshot,
+    Indirect,
+    OutOfBounds,
+    Overtime,
+    Penalty,
+    Priority,
+    PriorityHeadshot,
+    Return,
+}
+
+/// <summary>
+/// An action performed in a match.
+/// </summary>
+public sealed class Action
+{
+    public Guid Id { get; set; } = Guid.NewGuid();
+    public Side Actor { get; set; } = Side.Neither;
+    public Side Scorer { get; set; } = Side.Neither;
+    public int Points { get; set; } = 0;
+    public ActionType Type { get; set; } = ActionType.Unknown;
+    public string? SubType { get; set; }
+
+    public Action() { }
+
+    public Action(Guid id, Side actor, Side scorer, int points, ActionType type, string? subType)
     {
-        Fighter = player;
-        Score = score;
-        MinorViolations = minorViolations;
+        Id = id;
+        Actor = actor;
+        Scorer = scorer;
+        Points = points;
+        Type = type;
+        SubType = subType;
     }
-
-    public ParticipantViewModel ToViewModel(IReadOnlyList<ContestantViewModel> players) => new(this, players);
 }
 
 /// <summary>
-/// Specifies the priority state for a match
+/// A score for one side or the other
 /// </summary>
-/// <remarks>Use this enumeration to indicate which player currently has priority, or to represent the absence of
-/// priority.</remarks>
-public enum PriorityState
+public sealed class Score
 {
-    None = 0,
-    PlayerOne,
-    PlayerTwo,
+    public int[] Participants { get; set; } = [];
+    public int Points { get; set; } = 0;
 }
 
 /// <summary>
-/// A match between two players, including their scores and actions.
+/// A match
 /// </summary>
 public class Match : CollectionObject
 {
-    public int Number { get; set; } = 0;
-    public MatchSettings Settings { get; set; } = new();
     public TimeSpan TimeRemaining { get; set; } = TimeSpan.FromSeconds(90);
-    public int OvertimeCount { get; set; } = 0;
-    public int[] Players { get; set; } = [];
-    public Team? PlayerOne { get; set; }
-    public Team? PlayerTwo { get; set; }
     public bool IsMatchStarted { get; set; } = false;
+
+    public int OvertimeCount { get; set; } = 0;
+
+    public Score First { get; set; } = new();
+    public Score Second { get; set; } = new();
+
     public Action[] Actions { get; set; } = [];
-    public PriorityState PreviousPriority { get; set; } = PriorityState.None;
+
+    public Side PreviousPriority { get; set; } = Side.Neither;
     public int PriorityPoints { get; set; } = 3;
     public bool InPriority { get; set; } = false;
 
-    public Match() { TimeRemaining = Settings.TimeLimit; }
+    public Match() { }
 
-    public Match(Guid id, int number, MatchSettings settings, TimeSpan timeRemaining, int overtimeCount,
-        int[] players, Team? first, Team? second, bool isMatchStarted, Action[] actions, PriorityState previousPriority,
+    public Match(Guid id, TimeSpan timeRemaining, int overtimeCount,
+        Score first, Score second, bool isMatchStarted, Action[] actions, Side previousPriority,
         int priorityPoints, bool inPriority) : base(id)
     {
-        Number = number;
-        Settings = settings;
         TimeRemaining = timeRemaining;
         OvertimeCount = overtimeCount;
-        Players = players;
-        PlayerOne = first;
-        PlayerTwo = second;
+        First = first;
+        Second = second;
         IsMatchStarted = isMatchStarted;
         Actions = actions;
         PreviousPriority = previousPriority;
         PriorityPoints = priorityPoints;
         InPriority = inPriority;
     }
-
-    public MatchViewModel ToViewModel(IReadOnlyList<ContestantViewModel> fullRoster) => new(this, fullRoster);
 }

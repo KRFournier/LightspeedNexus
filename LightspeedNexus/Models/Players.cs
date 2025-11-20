@@ -1,4 +1,6 @@
-﻿namespace LightspeedNexus.Models;
+﻿using System.Diagnostics.Metrics;
+
+namespace LightspeedNexus.Models;
 
 /// <summary>
 /// Common interface for participants in a tournament, either individual contestants or teams.
@@ -33,6 +35,8 @@ public sealed class Player : Participant
     public bool IsEjected { get; set; } = false;
     public WeaponClass WeaponOfChoice { get; set; } = WeaponClass.Rey;
 
+    public int StartingLife { get; set; } = 0;
+
     public Player() { }
     public Player(string name, int powerLevel, int? onlineId, string? club, Rank rank,
         Card card, int honor, int forceCalls, bool isEjected, WeaponClass weaponOfChoice)
@@ -50,7 +54,7 @@ public sealed class Player : Participant
 }
 
 /// <summary>
-/// A team, consisting of one or more players
+/// A team, consisting of multiple members
 /// </summary>
 public sealed class Team : Participant
 {
@@ -61,4 +65,4 @@ public sealed class Team : Participant
     {
         Members = members;
     }
-};
+}

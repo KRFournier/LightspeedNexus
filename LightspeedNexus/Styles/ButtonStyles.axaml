@@ -8,7 +8,7 @@
 				<Button Content="Click Me!" />
 				<Button Classes="delete" Content="Click Me!" />
 				<Button Classes="gray" Content="Click Me!" />
-				<Button Classes="red" Content="Click Me!" />
+				<Button Classes="error" Content="Click Me!" />
 				<Button Classes="noscale" Content="Click Me!" />
 			</StackPanel>
 		</Border>
@@ -78,6 +78,10 @@
 			<Style Selector="^:pressed">
 				<Setter Property="RenderTransform" Value="scale(0.9)" />
 			</Style>
+		</Style>
+		<Style Selector="^.error">
+			<Setter Property="BorderBrush" Value="{StaticResource RedBrush}"/>
+			<Setter Property="Background" Value="{StaticResource RedBackground}"/>
 		</Style>
 		
 	</Style>

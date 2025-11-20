@@ -73,13 +73,18 @@
 						<DataTemplate DataType="vm:PoolViewModel">
 							<StackPanel Spacing="10" DragDrop.AllowDrop="True">
 								<TextBlock Text="{Binding Squadron.Name, StringFormat='{}{0} Squadron'}"
-											Classes="medium"
-											Foreground="{Binding Squadron.Color}"
-											HorizontalAlignment="Center"
-											IsHitTestVisible="False"/>
+										   Classes="large"
+										   Foreground="{Binding Squadron.Color}"
+										   HorizontalAlignment="Center"
+										   IsHitTestVisible="False"/>
 								<v:MatchSettingsView DataContext="{Binding Squadron.Settings}"
-													 Height="120"
+													 Height="100"
 													 HorizontalAlignment="Center"/>
+
+								<ItemsControl>
+									
+								</ItemsControl>
+								
 							</StackPanel>											
 						</DataTemplate>
 					</ItemsControl.ItemTemplate>

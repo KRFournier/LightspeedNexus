@@ -5,7 +5,7 @@
     <Design.PreviewWith>
 		<Border Padding="20" Background="#1f1f1f">
 			<StackPanel Spacing="20">
-				<c:LightspeedBorder Classes="item">
+				<c:LightspeedBorder Classes="item error">
 					<TextBlock>Hello, World!</TextBlock>
 				</c:LightspeedBorder>
 				<c:LightspeedBorder Classes="small color">
@@ -122,6 +122,18 @@
 			<Setter Property="TopLeftOpacity" Value="1.0"/>
 			<Setter Property="BottomRightBorderBrush" Value="{StaticResource RedBrush}"/>
 			<Setter Property="BottomRightBackground" Value="{StaticResource RedBrush}"/>
+			<Setter Property="BottomRightOpacity" Value="1.0"/>
+		</Style>
+	</Style>
+
+	<Style Selector="c|LightspeedBorder.error">
+		<Setter Property="Background" Value="{StaticResource RedBackground}"/>
+		<Setter Property="BorderBrush" Value="{StaticResource Red}"/>
+		<Setter Property="TopLeftBorderBrush" Value="{StaticResource RedBrush}"/>
+		<Setter Property="BottomRightBorderBrush" Value="{StaticResource RedBrush}"/>
+		<Style Selector="^:pointerover">
+			<Setter Property="TopLeftBackground" Value="{StaticResource RedBrush}"/>
+			<Setter Property="TopLeftOpacity" Value="1.0"/>
 			<Setter Property="BottomRightOpacity" Value="1.0"/>
 		</Style>
 	</Style>

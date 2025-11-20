@@ -37,7 +37,7 @@ public partial class SquadronViewModel : ViewModelBase
     /// </summary>
     public SquadronViewModel()
     {
-        Participants.CollectionChanged += OnPlayersChanged;
+        Participants.CollectionChanged += OnParticipantsChanged;
     }
 
     /// <summary>
@@ -46,16 +46,16 @@ public partial class SquadronViewModel : ViewModelBase
     public SquadronViewModel(Squadron squadron, IReadOnlyList<ParticipantViewModel> participants)
     {
         Participants = [.. squadron.Players.Select(i => participants[i])];
-        Participants.CollectionChanged += OnPlayersChanged;
+        Participants.CollectionChanged += OnParticipantsChanged;
 
         Weight = squadron.Weight;
         Settings = new MatchSettingsViewModel(squadron.MatchSettings);
     }
 
     /// <summary>
-    /// When the players change, update the number of matches
+    /// When the participants change, update the number of matches
     /// </summary>
-    public void OnPlayersChanged(object? sender, NotifyCollectionChangedEventArgs e) => OnPropertyChanged(nameof(NumMatches));
+    public void OnParticipantsChanged(object? sender, NotifyCollectionChangedEventArgs e) => OnPropertyChanged(nameof(NumMatches));
 
     /// <summary>
     /// Converts to a <see cref="Squadron"/>
@@ -67,7 +67,7 @@ public partial class SquadronViewModel : ViewModelBase
         );
 
     /// <summary>
-    /// Clears players and resets weight
+    /// Clears participants and resets weight
     /// </summary>
     public void Clear()
     {

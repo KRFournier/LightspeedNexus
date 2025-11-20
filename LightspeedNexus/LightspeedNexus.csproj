@@ -31,10 +31,10 @@
     <Compile Remove="Controls\TextControlBase.cs" />
     <Compile Remove="Controls\TimeBar.cs" />
     <Compile Remove="Converters\VenueToStringConverter.cs" />
+    <Compile Remove="Models\Action.cs" />
     <Compile Remove="Models\Competition.cs" />
     <Compile Remove="Models\Event.cs" />
     <Compile Remove="Models\EventEstimator.cs" />
-    <Compile Remove="Models\Match.cs" />
     <Compile Remove="Models\MatchManager.cs" />
     <Compile Remove="Models\Roster.cs" />
     <Compile Remove="Models\Settings.cs" />
@@ -45,7 +45,6 @@
     <Compile Remove="ViewModels\CompetitionViewModel.cs" />
     <Compile Remove="ViewModels\EventViewModel.cs" />
     <Compile Remove="ViewModels\LocalMatchSettingsViewModel.cs" />
-    <Compile Remove="ViewModels\MatchViewModel.cs" />
     <Compile Remove="ViewModels\ParticipantViewModel.cs" />
     <Compile Remove="ViewModels\PoolMatchViewModel.cs" />
     <Compile Remove="ViewModels\RosterViewModel.cs" />
