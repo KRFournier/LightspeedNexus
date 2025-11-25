@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using LightspeedNexus.Models;
 using System;
-using System.ComponentModel;
 
 namespace LightspeedNexus.ViewModels;
 
@@ -34,6 +33,11 @@ public abstract partial class ParticipantViewModel : ViewModelBase
     [ObservableProperty]
     public partial bool IsDragging { get; set; } = false;
 
+    /// <summary>
+    /// Indiciates whether or not this participant is disqualified
+    /// </summary>
+    public abstract bool IsDisqualified { get; }
+
     #endregion
 
     /// <summary>
@@ -52,16 +56,25 @@ public abstract partial class ParticipantViewModel : ViewModelBase
 
     public abstract Participant ToModel();
 
-    public static ParticipantViewModel FromModel(Participant participant)
+    public static ParticipantViewModel FromModel(Participant participant) => participant switch
     {
-        return participant switch
-        {
-            Player player => new PlayerViewModel(player),
-            _ => throw new NotSupportedException($"Participant type {participant.GetType().Name} is not supported."),
-        };
-    }
+        Player player => new PlayerViewModel(player),
+        _ => throw new NotSupportedException($"Participant type {participant.GetType().Name} is not supported."),
+    };
 }
 
+/// <summary>
+/// A placeholder to indicate that a participant has a bye
+/// </summary>
+public sealed partial class ByeViewModel : ParticipantViewModel
+{
+    public override Bye ToModel() => new();
+    public override bool IsDisqualified => true;
+}
+
+/// <summary>
+/// A player
+/// </summary>
 public sealed partial class PlayerViewModel : ParticipantViewModel
 {
     #region Properties
@@ -120,9 +133,9 @@ public sealed partial class PlayerViewModel : ParticipantViewModel
     /// <summary>
     /// Creates a new Player from fighter info
     /// </summary>
-    public PlayerViewModel(RegistreeViewModel registree) : base()    
+    public PlayerViewModel(RegistreeViewModel registree, string name) : base()
     {
-        Name = registree.FullName;
+        Name = name;
         WeaponOfChoice = registree.WeaponOfChoice;
         Rank = registree.Rank;
     }
@@ -136,5 +149,5 @@ public sealed partial class PlayerViewModel : ParticipantViewModel
     /// <summary>
     /// Determines if the Player is disqualified either by card or ejection
     /// </summary>
-    public bool IsDisqualified => Card == Card.Black || IsEjected;
+    public override bool IsDisqualified => Card == Card.Black || IsEjected;
 }

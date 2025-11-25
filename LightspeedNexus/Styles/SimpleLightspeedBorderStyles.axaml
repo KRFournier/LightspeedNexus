@@ -5,8 +5,8 @@
     <Design.PreviewWith>
 		<Border Padding="20" Background="#1f1f1f">
 			<StackPanel Spacing="20">
-				<c:SimpleLightspeedBorder Classes="small growcorners"
-										  Brush="{StaticResource Blue}">
+				<c:SimpleLightspeedBorder Brush="{StaticResource Blue}"
+										  Classes="small growcorners">
 					<TextBlock>Hello, World!</TextBlock>
 				</c:SimpleLightspeedBorder>
 				<c:SimpleLightspeedBorder Classes="small fadecorners"

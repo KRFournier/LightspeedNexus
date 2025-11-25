@@ -25,6 +25,7 @@
 		<conv:TrueToFadedConverter x:Key="TrueToFaded"/>
 		<conv:TrueToInvisibleConverter x:Key="TrueToInvis"/>
 		<conv:StringsAreEqualConverter x:Key="StringsEqual"/>
+		<conv:BrushSelectConverter x:Key="BrushSelect"/>
 	</Application.Resources>
 
 	<Application.Styles>
@@ -35,6 +36,7 @@
 		<StyleInclude Source="avares://LightspeedNexus/Styles/Graphics.axaml" />
 		<StyleInclude Source="avares://LightspeedNexus/Styles/Animations.axaml" />
 		<StyleInclude Source="avares://LightspeedNexus/Styles/LightspeedBorderStyles.axaml" />
+		<StyleInclude Source="avares://LightspeedNexus/Styles/SimpleLightspeedBorderStyles.axaml" />
 		<StyleInclude Source="avares://LightspeedNexus/Styles/ChevronBorderStyles.axaml" />
 		<StyleInclude Source="avares://LightspeedNexus/Styles/ButtonStyles.axaml" />
 		<StyleInclude Source="avares://LightspeedNexus/Styles/TextBlockStyles.axaml" />

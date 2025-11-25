@@ -64,8 +64,14 @@ public sealed class Action
 /// </summary>
 public sealed class Score
 {
-    public int[] Participants { get; set; } = [];
+    public int Participant { get; set; } = 0;
     public int Points { get; set; } = 0;
+    public Score() { }
+    public Score(int participants, int points)
+    {
+        Participant = participants;
+        Points = points;
+    }
 }
 
 /// <summary>
@@ -78,8 +84,8 @@ public class Match : CollectionObject
 
     public int OvertimeCount { get; set; } = 0;
 
-    public Score First { get; set; } = new();
-    public Score Second { get; set; } = new();
+    public Score? First { get; set; }
+    public Score? Second { get; set; }
 
     public Action[] Actions { get; set; } = [];
 
@@ -90,7 +96,7 @@ public class Match : CollectionObject
     public Match() { }
 
     public Match(Guid id, TimeSpan timeRemaining, int overtimeCount,
-        Score first, Score second, bool isMatchStarted, Action[] actions, Side previousPriority,
+        Score? first, Score? second, bool isMatchStarted, Action[] actions, Side previousPriority,
         int priorityPoints, bool inPriority) : base(id)
     {
         TimeRemaining = timeRemaining;

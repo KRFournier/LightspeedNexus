@@ -1,7 +1,5 @@
 ﻿using Avalonia;
-using Avalonia.Data;
 using Avalonia.Data.Converters;
-using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using System;
 using System.Globalization;
@@ -53,10 +51,6 @@ public class BrushSelectConverter : AvaloniaObject, IValueConverter
         }
     }
 
-    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
-    {
-        // Converting a Brush back to a bool is usually not required.
-        // If it were, you would implement the logic here.
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
         throw new NotSupportedException();
-    }
 }

@@ -15,37 +15,49 @@ public class SimpleLightspeedBorder : Decorator
     /// Defines the <see cref="Brush"/> property.
     /// </summary>
     public static readonly StyledProperty<IBrush?> BrushProperty =
-        AvaloniaProperty.Register<Border, IBrush?>(nameof(Brush));
+        AvaloniaProperty.Register<SimpleLightspeedBorder, IBrush?>(nameof(Brush));
+
+    /// <summary>
+    /// Defines the <see cref="SelectionBrush"/> property.
+    /// </summary>
+    public static readonly StyledProperty<IBrush?> SelectionBrushProperty =
+        AvaloniaProperty.Register<SimpleLightspeedBorder, IBrush?>(nameof(SelectionBrush));
 
     /// <summary>
     /// Defines the <see cref="BackgroundOpacity"/> property.
     /// </summary>
     public static readonly StyledProperty<double> BackgroundOpacityProperty =
-        AvaloniaProperty.Register<Border, double>(nameof(BackgroundOpacity), 1.0);
+        AvaloniaProperty.Register<SimpleLightspeedBorder, double>(nameof(BackgroundOpacity), 1.0);
 
     /// <summary>
     /// Defines the <see cref="BorderThickness"/> property.
     /// </summary>
     public static readonly StyledProperty<Thickness> BorderThicknessProperty =
-        AvaloniaProperty.Register<Border, Thickness>(nameof(BorderThickness), new Thickness(1.0));
+        AvaloniaProperty.Register<SimpleLightspeedBorder, Thickness>(nameof(BorderThickness), new Thickness(1.0));
 
     /// <summary>
     /// Defines the <see cref="CornerThickness"/> property.
     /// </summary>
     public static readonly StyledProperty<Thickness> CornerThicknessProperty =
-        AvaloniaProperty.Register<Border, Thickness>(nameof(CornerThickness), new(10.0));
+        AvaloniaProperty.Register<SimpleLightspeedBorder, Thickness>(nameof(CornerThickness), new(10.0));
 
     /// <summary>
     /// Defines the <see cref="CornerGap"/> property.
     /// </summary>
     public static readonly StyledProperty<Thickness> CornerGapProperty =
-        AvaloniaProperty.Register<Border, Thickness>(nameof(CornerGap), new(0.0));
+        AvaloniaProperty.Register<SimpleLightspeedBorder, Thickness>(nameof(CornerGap), new(0.0));
 
     /// <summary>
     /// Defines the <see cref="CornerOpacity"/> property.
     /// </summary>
     public static readonly StyledProperty<double> CornerOpacityProperty =
-        AvaloniaProperty.Register<Border, double>(nameof(CornerOpacity), 1.0);
+        AvaloniaProperty.Register<SimpleLightspeedBorder, double>(nameof(CornerOpacity), 1.0);
+
+    /// <summary>
+    /// Defines the <see cref="IsSelected"/> property.
+    /// </summary>
+    public static readonly StyledProperty<bool> IsSelectedProperty =
+        AvaloniaProperty.Register<SimpleLightspeedBorder, bool>(nameof(IsSelected), false);
 
     private Thickness? _layoutThickness;
     private double _scale;
@@ -57,10 +69,12 @@ public class SimpleLightspeedBorder : Decorator
     {
         AffectsRender<SimpleLightspeedBorder>(
             BrushProperty,
+            SelectionBrushProperty,
             BorderThicknessProperty,
             CornerThicknessProperty,
             CornerGapProperty,
-            CornerOpacityProperty
+            CornerOpacityProperty,
+            IsSelectedProperty
             );
         AffectsMeasure<SimpleLightspeedBorder>(
             CornerThicknessProperty,
@@ -91,6 +105,15 @@ public class SimpleLightspeedBorder : Decorator
     {
         get => GetValue(BrushProperty);
         set => SetValue(BrushProperty, value);
+    }
+
+    /// <summary>
+    /// Gets or sets a brush that is used when the border is selected.
+    /// </summary>
+    public IBrush? SelectionBrush
+    {
+        get => GetValue(SelectionBrushProperty);
+        set => SetValue(SelectionBrushProperty, value);
     }
 
     /// <summary>
@@ -138,6 +161,15 @@ public class SimpleLightspeedBorder : Decorator
         set => SetValue(CornerOpacityProperty, value);
     }
 
+    /// <summary>
+    /// Gets or sets the selections state
+    /// </summary>
+    public bool IsSelected
+    {
+        get => GetValue(IsSelectedProperty);
+        set => SetValue(IsSelectedProperty, value);
+    }
+
     protected Thickness LayoutThickness
     {
         get
@@ -178,6 +210,8 @@ public class SimpleLightspeedBorder : Decorator
 
         var rect = new Rect(Bounds.Size);
 
+        var currBrush = IsSelected && SelectionBrush is not null ? SelectionBrush : Brush;
+
         PathGeometry g = new();
         using (var ctx = g.Open())
         {
@@ -190,7 +224,7 @@ public class SimpleLightspeedBorder : Decorator
             ctx.LineTo(new Point(bounds.Left, bounds.Top + CornerThickness.Left + CornerGap.Left));
             ctx.EndFigure(true);
         }
-        context.DrawGeometry(new SolidColorBrush(Colors.Black, 0.4), new Pen(Brush, thickness), g);
+        context.DrawGeometry(new SolidColorBrush(Colors.Black, 0.4), new Pen(currBrush, thickness), g);
 
         PathGeometry gCorners = new();
         using (var ctx = gCorners.Open())
@@ -206,7 +240,7 @@ public class SimpleLightspeedBorder : Decorator
             ctx.EndFigure(true);
         }
         using var state = context.PushOpacity(CornerOpacity);
-        context.DrawGeometry(Brush, new Pen(Brushes.Transparent, 0.0), gCorners);
+        context.DrawGeometry(currBrush, new Pen(Brushes.Transparent, 0.0), gCorners);
     }
 
     /// <summary>

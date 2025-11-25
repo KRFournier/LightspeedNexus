@@ -9,6 +9,7 @@
 				<TextBlock Classes="medium error">Medium</TextBlock>
 				<TextBlock Classes="large">Large</TextBlock>
 				<TextBlock Classes="giant">Giant</TextBlock>
+				<TextBlock Classes="enourmous">Enourmous</TextBlock>
 				<TextBlock Classes="info">Subtext</TextBlock>
 			</StackPanel>
 		</Border>
@@ -17,7 +18,7 @@
 	<Style Selector="TextBlock">
 		<Setter Property="FontFamily" Value="{StaticResource Prototype}"/>
 		<Setter Property="FontSize" Value="16"/>
-		<Setter Property="Foreground" Value="#ffdfdfdf"/>
+		<Setter Property="Foreground" Value="{StaticResource White}"/>
 		<Style Selector="^.tiny">
 			<Setter Property="FontSize" Value="12"/>
 		</Style>
@@ -29,6 +30,9 @@
 		</Style>
 		<Style Selector="^.giant">
 			<Setter Property="FontSize" Value="48"/>
+		</Style>
+		<Style Selector="^.enourmous">
+			<Setter Property="FontSize" Value="64"/>
 		</Style>
 		<Style Selector="^.info">
 			<Setter Property="FontFamily" Value="{StaticResource Electrolize}"/>

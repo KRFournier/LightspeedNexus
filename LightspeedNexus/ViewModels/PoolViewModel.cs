@@ -14,18 +14,32 @@ public partial class PoolViewModel : ViewModelBase
 {
     #region Properties
 
+    /// <summary>
+    /// The squadron assigned to this pool
+    /// </summary>
     [ObservableProperty]
     public partial SquadronViewModel Squadron { get; protected set; }
 
-    //public ObservableCollection<PoolMatchViewModel> Matches { get; set; } = [];
+    /// <summary>
+    /// Matches are view/viewmodel driven. We just reference them here, and the view takes
+    /// care of the rest. This means all match viewmodels must have a corresponding view
+    /// </summary>
+    public ObservableCollection<ViewModelBase> Matches { get; set; } = [];
 
     #endregion
 
+    /// <summary>
+    /// Creates a new pool from the given squadron
+    /// </summary>
     public PoolViewModel(SquadronViewModel squadron)
     {
         Squadron = squadron;
+        ArrangeMatches();
     }
 
+    /// <summary>
+    /// Loads an existing pool
+    /// </summary>
     public PoolViewModel(Pool pool, IReadOnlyList<SquadronViewModel> squadrons)
     {
         Squadron = squadrons[pool.Squadron];
@@ -35,6 +49,9 @@ public partial class PoolViewModel : ViewModelBase
         //}
     }
 
+    /// <summary>
+    /// Converts to a <see cref="Pool"/>
+    /// </summary>
     public Pool ToModel() => new(
         StrongReferenceMessenger.Default.Send(new RequestSquadronIndex(Squadron))
         );
@@ -66,10 +83,16 @@ public partial class PoolViewModel : ViewModelBase
     {
         if (Squadron.Participants.Count > 1 && Squadron.Participants.Count <= poolArrangements.Length)
         {
-            //Matches.Clear();
+            int i = 1;
+            Matches.Clear();
             foreach (var arrangement in poolArrangements[Squadron.Participants.Count])
             {
-                //var match = new MatchViewModel(Squadron.Participants[arrangement[0] - 1], Squadron.Participants[arrangement[1] - 1]);
+                Matches.Add(
+                    new MatchViewModel(Squadron.Participants[arrangement[0] - 1], Squadron.Participants[arrangement[1] - 1], Squadron.Settings)
+                    {
+                        Number = i++
+                    }
+                    );
             }
         }
     }

@@ -87,7 +87,7 @@ public partial class TournamentViewModel : ViewModelBase, IDisposable,
 
     public void Receive(PreviousStageMessage message)
     {
-        message.PreviousStage?.Dispose();
+        message.CurrentStage?.Dispose();
         message.PreviousStage?.Next = null;
         OnPropertyChanged(nameof(PreviousStages));
         OnPropertyChanged(nameof(CurrentStage));

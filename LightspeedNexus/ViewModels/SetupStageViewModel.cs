@@ -12,6 +12,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace LightspeedNexus.ViewModels;
@@ -140,7 +141,17 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
     #region Next Stage
 
     [RelayCommand(CanExecute = nameof(CanBegin))]
-    private void Begin() => Next = new SquadronsStageViewModel(Registrees.Select(r => new PlayerViewModel(r)));
+    private void Begin() => Next = new SquadronsStageViewModel(
+        Registrees.Select(r => new PlayerViewModel(r, $"{r.FirstName} {r.LastName}"))
+        );
+    //Registrees
+    //    .GroupBy(r => r.FirstName)
+    //    .SelectMany(g =>
+    //    {
+    //        bool sharesName = g.Count() > 1;
+    //        return g.Select(r => new PlayerViewModel(r, sharesName ? $"{r.FirstName} {r.LastName}" : r.FirstName));
+    //    })
+    //);
 
     public bool CanBegin() => Date is not null && Registrees.Count >= 4 && Registrees.All(r => r.MeetsRequirements);
 
@@ -172,8 +183,7 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
 
         Registrees.CollectionChanged += (s, e) =>
         {
-            BeginCommand.NotifyCanExecuteChanged();
-            OnPropertyChanged(nameof(BeginSubText));
+            ValidateRoster();
             StrongReferenceMessenger.Default.Send(new RosterChangedMessage());
         };
     }
@@ -439,6 +449,7 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
             r.Validate(AllowARanks, AllowBRanks, AllowCRanks, AllowDRanks, AllowERanks, AllowURanks);
             BeginCommand.NotifyCanExecuteChanged();
             OnPropertyChanged(nameof(BeginSubText));
+            StrongReferenceMessenger.Default.Send(new RosterChangedMessage());
         }
     }
 
@@ -463,6 +474,16 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
     {
         foreach (var r in Registrees)
             r.Validate(AllowARanks, AllowBRanks, AllowCRanks, AllowDRanks, AllowERanks, AllowURanks);
+        BeginCommand.NotifyCanExecuteChanged();
+        OnPropertyChanged(nameof(BeginSubText));
+    }
+
+    /// <summary>
+    /// Validates a single registree
+    /// </summary>
+    protected void ValidateRegistree(RegistreeViewModel registree)
+    {
+        registree.Validate(AllowARanks, AllowBRanks, AllowCRanks, AllowDRanks, AllowERanks, AllowURanks);
         BeginCommand.NotifyCanExecuteChanged();
         OnPropertyChanged(nameof(BeginSubText));
     }

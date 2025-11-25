@@ -21,6 +21,15 @@ public abstract class Participant
 }
 
 /// <summary>
+/// Represents a bye
+/// </summary>
+public sealed class Bye : Participant
+{
+    public Bye() : base("BYE", 0) { }
+    public override string ToString() => "--BYE--";
+}
+
+/// <summary>
 /// Represents an individual fencer in a tournament.
 /// </summary>
 public sealed class Player : Participant

@@ -100,29 +100,29 @@
 									Orientation="Horizontal"
 									Spacing="10">
 							<RadioButton GroupName="Demographic"
-											Theme="{StaticResource RadioButtonButtons}"
-											Width="100"
-											HorizontalContentAlignment="Center"
-											IsChecked="{Binding Demographic,
-												Converter={StaticResource RadioValue},
-												ConverterParameter={x:Static m:Demographic.All}}"
-											Content="All"/>
+										 Theme="{StaticResource RadioButtonButtons}"
+										 Width="100"
+										 HorizontalContentAlignment="Center"
+										 IsChecked="{Binding Demographic,
+											 Converter={StaticResource RadioValue},
+											 ConverterParameter={x:Static m:Demographic.All}}"
+										 Content="All"/>
 							<RadioButton GroupName="Demographic"
-											Theme="{StaticResource RadioButtonButtons}"
-											Width="100"
-											HorizontalContentAlignment="Center"
-											IsChecked="{Binding Demographic,
-												Converter={StaticResource RadioValue},
-												ConverterParameter={x:Static m:Demographic.Women}}"
-											Content="Women"/>
+										 Theme="{StaticResource RadioButtonButtons}"
+										 Width="100"
+										 HorizontalContentAlignment="Center"
+										 IsChecked="{Binding Demographic,
+											 Converter={StaticResource RadioValue},
+											 ConverterParameter={x:Static m:Demographic.Women}}"
+										 Content="Women"/>
 							<RadioButton GroupName="Demographic"
-											Theme="{StaticResource RadioButtonButtons}"
-											Width="100"
-											HorizontalContentAlignment="Center"
-											IsChecked="{Binding Demographic,
-												Converter={StaticResource RadioValue},
-												ConverterParameter={x:Static m:Demographic.Cadet}}"
-											Content="Cadet"/>
+										 Theme="{StaticResource RadioButtonButtons}"
+										 Width="100"
+										 HorizontalContentAlignment="Center"
+										 IsChecked="{Binding Demographic,
+											 Converter={StaticResource RadioValue},
+											 ConverterParameter={x:Static m:Demographic.Cadet}}"
+										 Content="Cadet"/>
 						</StackPanel>
 
 						<!--Weapons-->
@@ -131,10 +131,10 @@
 									Spacing="10"
 									HorizontalAlignment="Left">
 							<ToggleButton IsChecked="{Binding ReyAllowed}"
-											Width="100"
-											ToolTip.Tip="Allow Rey"
-											VerticalAlignment="Stretch"
-											HorizontalContentAlignment="Center">
+										  Width="100"
+										  ToolTip.Tip="Allow Rey"
+										  VerticalAlignment="Stretch"
+										  HorizontalContentAlignment="Center">
 								<StackPanel Orientation="Horizontal"
 											Spacing="2">
 									<Image Height="30" Source="{StaticResource di_Rey}"/>
@@ -142,10 +142,10 @@
 								</StackPanel>
 							</ToggleButton>
 							<ToggleButton IsChecked="{Binding RenAllowed}"
-											Width="100"
-											ToolTip.Tip="Allow Ren"
-											VerticalAlignment="Stretch"
-											HorizontalContentAlignment="Center">
+										  Width="100"
+										  ToolTip.Tip="Allow Ren"
+										  VerticalAlignment="Stretch"
+										  HorizontalContentAlignment="Center">
 								<StackPanel Orientation="Horizontal"
 											Spacing="2">
 									<Image Height="30" Source="{StaticResource di_Ren}"/>
@@ -153,10 +153,10 @@
 								</StackPanel>
 							</ToggleButton>
 							<ToggleButton IsChecked="{Binding TanoAllowed}"
-											Width="100"
-											ToolTip.Tip="Allow Tano"
-											VerticalAlignment="Stretch"
-											HorizontalContentAlignment="Center">
+										  Width="100"
+										  ToolTip.Tip="Allow Tano"
+										  VerticalAlignment="Stretch"
+										  HorizontalContentAlignment="Center">
 								<StackPanel Orientation="Horizontal"
 											Spacing="2">
 									<Image Height="30" Source="{StaticResource di_Tano}"/>

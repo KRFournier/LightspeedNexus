@@ -62,16 +62,20 @@
 		<!--Pools-->
 		<Panel Grid.Column="2" Grid.Row="2">
 
-			<ScrollViewer>
-				<ItemsControl ItemsSource="{Binding Pools}">
+			<ScrollViewer x:Name="PoolsScrollViewer" 
+						  HorizontalScrollBarVisibility="Auto"
+						  VerticalScrollBarVisibility="Hidden">
+				<ItemsControl ItemsSource="{Binding Pools}"
+							  Height="{Binding $parent.Bounds.Height}">
 					<ItemsControl.ItemsPanel>
 						<ItemsPanelTemplate>
-							<WrapPanel ItemSpacing="10"/>
+							<StackPanel Orientation="Horizontal" Spacing="10"/>
 						</ItemsPanelTemplate>
 					</ItemsControl.ItemsPanel>
 					<ItemsControl.ItemTemplate>
 						<DataTemplate DataType="vm:PoolViewModel">
-							<StackPanel Spacing="10" DragDrop.AllowDrop="True">
+							<StackPanel SizeChanged="OnPoolSizeChanged"
+										Spacing="10">
 								<TextBlock Text="{Binding Squadron.Name, StringFormat='{}{0} Squadron'}"
 										   Classes="large"
 										   Foreground="{Binding Squadron.Color}"
@@ -81,8 +85,25 @@
 													 Height="100"
 													 HorizontalAlignment="Center"/>
 
-								<ItemsControl>
-									
+								<!--Matches-->
+								<ItemsControl ItemsSource="{Binding Matches}">
+									<ItemsControl.ItemsPanel>
+										<ItemsPanelTemplate>
+											<WrapPanel Orientation="Vertical"/>
+										</ItemsPanelTemplate>
+									</ItemsControl.ItemsPanel>
+									<ItemsControl.ItemTemplate>
+										<DataTemplate DataType="vm:MatchViewModel">
+											<c:SimpleLightspeedBorder Classes="small growcorners"
+																	  Margin="0,0,10,10"
+																	  Padding="0"
+																	  Brush="{Binding $parent[StackPanel].((vm:PoolViewModel)DataContext).Squadron.Color}"
+																	  SelectionBrush="{StaticResource HilightBrush}"
+																	  IsSelected="{Binding IsLive}">
+												<ContentControl Content="{Binding .}"/>
+											</c:SimpleLightspeedBorder>
+										</DataTemplate>
+									</ItemsControl.ItemTemplate>
 								</ItemsControl>
 								
 							</StackPanel>											

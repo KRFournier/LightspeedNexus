@@ -11,6 +11,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <AvaloniaXaml Remove="Helpers\**" />
+    <Compile Remove="Helpers\**" />
+    <EmbeddedResource Remove="Helpers\**" />
+    <None Remove="Helpers\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <AvaloniaXaml Remove="Controls\Field.axaml" />
     <AvaloniaXaml Remove="Controls\MatchSettings.axaml" />
     <AvaloniaXaml Remove="Views\CalendarView.axaml" />

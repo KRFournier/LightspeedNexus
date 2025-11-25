@@ -3,7 +3,7 @@
 	
 	<Design.PreviewWith>
 		<Border Padding="20"
-				Background="{StaticResource LimeBackground}"
+				Background="{StaticResource HilightBrush}"
 				BorderBrush="{StaticResource BlueRed}">
 		</Border>
 	</Design.PreviewWith>
@@ -62,7 +62,11 @@
 			<SolidColorBrush x:Key="MagentaClear" Color="{StaticResource Magenta}" Opacity="0"/>
 			<SolidColorBrush x:Key="GrayClear" Color="{StaticResource Gray}" Opacity="0"/>
 			<SolidColorBrush x:Key="WhiteClear" Color="{StaticResource White}" Opacity="0"/>
-			
+
+			<Color x:Key="Hilight">#d9d926</Color>
+			<SolidColorBrush x:Key="HilightBrush" Color="{StaticResource Hilight}"/>
+			<SolidColorBrush x:Key="HilightClear" Color="{StaticResource Hilight}" Opacity="0"/>
+
 			<LinearGradientBrush x:Key="BlueRed">
 				<GradientStop Color="{StaticResource Blue}" Offset="0.0"/>
 				<GradientStop Color="{StaticResource Red}" Offset="1.0"/>
