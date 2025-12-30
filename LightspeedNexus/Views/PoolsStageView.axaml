@@ -81,12 +81,11 @@
 										   Foreground="{Binding Squadron.Color}"
 										   HorizontalAlignment="Center"
 										   IsHitTestVisible="False"/>
-								<v:MatchSettingsView DataContext="{Binding Squadron.Settings}"
-													 Height="100"
+								<v:MatchSettingsView DataContext="{Binding MatchGroup.Settings}"
 													 HorizontalAlignment="Center"/>
 
 								<!--Matches-->
-								<ItemsControl ItemsSource="{Binding Matches}">
+								<ItemsControl ItemsSource="{Binding MatchGroup.Matches}">
 									<ItemsControl.ItemsPanel>
 										<ItemsPanelTemplate>
 											<WrapPanel Orientation="Vertical"/>
@@ -95,11 +94,13 @@
 									<ItemsControl.ItemTemplate>
 										<DataTemplate DataType="vm:MatchViewModel">
 											<c:SimpleLightspeedBorder Classes="small growcorners"
-																	  Margin="0,0,10,10"
+																	  Margin="5"
 																	  Padding="0"
 																	  Brush="{Binding $parent[StackPanel].((vm:PoolViewModel)DataContext).Squadron.Color}"
 																	  SelectionBrush="{StaticResource HilightBrush}"
-																	  IsSelected="{Binding IsLive}">
+																	  IsSelected="{Binding IsLive}"
+																	  DoubleTapped="Match_DoubleTapped"
+																	  Opacity="{Binding IsMatchCompleted, Converter={StaticResource TrueToFaded}}">
 												<ContentControl Content="{Binding .}"/>
 											</c:SimpleLightspeedBorder>
 										</DataTemplate>

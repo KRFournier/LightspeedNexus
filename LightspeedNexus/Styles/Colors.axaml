@@ -3,7 +3,7 @@
 	
 	<Design.PreviewWith>
 		<Border Padding="20"
-				Background="{StaticResource HilightBrush}"
+				Background="{StaticResource Teal}"
 				BorderBrush="{StaticResource BlueRed}">
 		</Border>
 	</Design.PreviewWith>

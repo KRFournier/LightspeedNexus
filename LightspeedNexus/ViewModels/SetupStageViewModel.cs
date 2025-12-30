@@ -142,7 +142,7 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
 
     [RelayCommand(CanExecute = nameof(CanBegin))]
     private void Begin() => Next = new SquadronsStageViewModel(
-        Registrees.Select(r => new PlayerViewModel(r, $"{r.FirstName} {r.LastName}"))
+        Registrees.Select(r => PlayerViewModel.FromRegistree(r, $"{r.FirstName} {r.LastName}"))
         );
     //Registrees
     //    .GroupBy(r => r.FirstName)
@@ -189,38 +189,6 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
     }
 
     /// <summary>
-    /// Loads settings from a model
-    /// </summary>
-    public SetupStageViewModel(SetupStage model) : this()
-    {
-        Date = model.Date;
-        GameMode = model.GameMode;
-        Demographic = model.Demographic;
-        SkillLevel = model.SkillLevel;
-        ReyAllowed = model.ReyAllowed;
-        RenAllowed = model.RenAllowed;
-        TanoAllowed = model.TanoAllowed;
-        SubTitle = model.SubTitle;
-        AllowARanks = model.AllowARanks;
-        AllowBRanks = model.AllowBRanks;
-        AllowCRanks = model.AllowCRanks;
-        AllowDRanks = model.AllowDRanks;
-        AllowERanks = model.AllowERanks;
-        AllowURanks = model.AllowURanks;
-
-        foreach (var r in model.Registrees)
-            AddPlayer(new RegistreeViewModel(r));
-
-        Next = model.Next switch
-        {
-            SquadronsStage ss => new SquadronsStageViewModel(ss),
-            _ => null
-        };
-
-        ValidateRoster();
-    }
-
-    /// <summary>
     /// Releases event handlers
     /// </summary>
     protected override void CleanUp()
@@ -232,11 +200,57 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
     /// <summary>
     /// Converts into a model
     /// </summary>
-    public override SetupStage ToModel() => new(
-        Date, GameMode, Demographic, SkillLevel, ReyAllowed, RenAllowed,
-        TanoAllowed, SubTitle, Registrees.Select(r => r.ToModel()),
-        AllowARanks, AllowBRanks, AllowCRanks, AllowDRanks, AllowERanks, AllowURanks,
-        Next?.ToModel());
+    public override SetupStage ToModel() => new()
+    {
+        Date = Date,
+        GameMode = GameMode,
+        Demographic = Demographic,
+        SkillLevel = SkillLevel,
+        ReyAllowed = ReyAllowed,
+        RenAllowed = RenAllowed,
+        TanoAllowed = TanoAllowed,
+        SubTitle = SubTitle,
+        Registrees = [.. Registrees.Select(r => r.ToModel())],
+        AllowARanks = AllowARanks,
+        AllowBRanks = AllowBRanks,
+        AllowCRanks = AllowCRanks,
+        AllowDRanks = AllowDRanks,
+        AllowERanks = AllowERanks,
+        AllowURanks = AllowURanks,
+        Next = Next?.ToModel()
+    };
+
+    /// <summary>
+    /// Converts from a model
+    /// </summary>
+    public static SetupStageViewModel FromModel(SetupStage model)
+    {
+        var vm = new SetupStageViewModel()
+        {
+            Date = model.Date,
+            GameMode = model.GameMode,
+            Demographic = model.Demographic,
+            SkillLevel = model.SkillLevel,
+            ReyAllowed = model.ReyAllowed,
+            RenAllowed = model.RenAllowed,
+            TanoAllowed = model.TanoAllowed,
+            SubTitle = model.SubTitle,
+            AllowARanks = model.AllowARanks,
+            AllowBRanks = model.AllowBRanks,
+            AllowCRanks = model.AllowCRanks,
+            AllowDRanks = model.AllowDRanks,
+            AllowERanks = model.AllowERanks,
+            AllowURanks = model.AllowURanks,
+            Next = StageViewModel.FromModel(model.Next)
+        };
+
+        foreach (var r in model.Registrees)
+            vm.AddPlayer(RegistreeViewModel.FromModel(r));
+
+        vm.ValidateRoster();
+
+        return vm;
+    }
 
     /// <summary>
     /// The name of the tournament, e.g., Open Rey
@@ -424,7 +438,7 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
     /// updated immediately and whenever the player's rank changes, if automatic updates are enabled.</remarks>
     protected RegistreeViewModel CreateAndAddPlayer(Fighter fighter)
     {
-        var player = new RegistreeViewModel(new Registree(fighter, UseEffectiveRank));
+        var player = RegistreeViewModel.FromModel(fighter.ToRegistree(UseEffectiveRank));
         AddPlayer(player);
         return player;
     }

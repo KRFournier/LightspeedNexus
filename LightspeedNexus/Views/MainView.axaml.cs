@@ -1,4 +1,5 @@
 ﻿using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
 using CommunityToolkit.Mvvm.Input;
@@ -100,6 +101,18 @@ public partial class MainView : UserControl
             Content = "OK"
         };
 
+        // setup keybindings
+        KeyBindings.Add(new KeyBinding()
+        {
+            Command = okButton.Command,
+            Gesture = new KeyGesture(Key.Enter)
+        });
+        KeyBindings.Add(new KeyBinding()
+        {
+            Command = cancelButton.Command,
+            Gesture = new KeyGesture(Key.Escape)
+        });
+
         Control dialog = new ViewLocator().Build(msg.Item);
         dialog.DataContext = msg.Item;
 
@@ -125,6 +138,8 @@ public partial class MainView : UserControl
 
     private void CloseModal()
     {
+        KeyBindings.Clear();
+
         if (MainPanel.Children.LastOrDefault() is Border)
             MainPanel.Children.RemoveAt(MainPanel.Children.Count - 1);
 

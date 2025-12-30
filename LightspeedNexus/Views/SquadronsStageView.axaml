@@ -136,22 +136,20 @@
 										</ItemsControl.ItemsPanel>
 										<ItemsControl.ItemTemplate>
 											<DataTemplate DataType="vm:ParticipantViewModel">
-												<Border Padding="4"
-														CornerRadius="4"
+												<Border CornerRadius="6"
+														Padding="4,0"
+														Height="50"
 														Background="#0FFFFFFF"
 														PointerPressed="Participant_PointerPressed"
 														DragDrop.AllowDrop="True"
 														Opacity="{Binding IsDragging, Converter={StaticResource TrueToInvis}}">
-													<Grid ColumnDefinitions="*,10,16"
-														  IsHitTestVisible="False">
-														<TextBlock Classes="medium"
-																   Text="{Binding Name}"
-																   IsHitTestVisible="False" />
-														<TextBlock Classes="medium"
-																   Grid.Column="2"
-																   IsHitTestVisible="False"
-																   Text="{Binding Power}"/>
-													</Grid>
+													<Grid ColumnDefinitions="10,10,*"
+														  RowDefinitions="*,*,*,*,*">
+														<Ellipse Grid.Row="1" Margin="2" Fill="{StaticResource Gray}" Opacity="0.25" IsHitTestVisible="False"/>
+														<Ellipse Grid.Row="2" Margin="2" Fill="{StaticResource Gray}" Opacity="0.25" IsHitTestVisible="False"/>
+														<Ellipse Grid.Row="3" Margin="2" Fill="{StaticResource Gray}" Opacity="0.25" IsHitTestVisible="False"/>
+														<ContentControl Grid.Column="2" Grid.RowSpan="5" Content="{Binding .}"/>
+													</Grid>	
 												</Border>
 											</DataTemplate>
 										</ItemsControl.ItemTemplate>
@@ -193,14 +191,18 @@
 				Background="Transparent"
 				DataContext="{Binding DraggingParticipant}">
 			<Border x:Name="GhostItem"
-					Padding="4"
-					CornerRadius="4"
+					CornerRadius="6"
+					Padding="4,0"
+					Height="50"
 					Background="#0FFFFFFF"
 					IsVisible="False"
 					IsHitTestVisible="False">
-				<Grid ColumnDefinitions="*,10,16">
-					<TextBlock Classes="medium" Text="{Binding Name}" IsHitTestVisible="False"/>
-					<TextBlock Grid.Column="2" Classes="medium" Text="{Binding Power}" IsHitTestVisible="False"/>
+				<Grid ColumnDefinitions="10,10,*"
+					  RowDefinitions="*,*,*,*,*">
+					<Ellipse Grid.Row="1" Margin="2" Fill="{StaticResource Gray}" Opacity="0.25" IsHitTestVisible="False"/>
+					<Ellipse Grid.Row="2" Margin="2" Fill="{StaticResource Gray}" Opacity="0.25" IsHitTestVisible="False"/>
+					<Ellipse Grid.Row="3" Margin="2" Fill="{StaticResource Gray}" Opacity="0.25" IsHitTestVisible="False"/>
+					<ContentControl Grid.Column="2" Grid.RowSpan="5" Content="{Binding .}"/>
 				</Grid>
 			</Border>
 		</Canvas>

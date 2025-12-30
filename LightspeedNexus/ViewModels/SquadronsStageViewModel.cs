@@ -15,35 +15,19 @@ namespace LightspeedNexus.ViewModels;
 #region Messages
 
 /// <summary>
-/// Requests the indicies of the given participants
+/// Requests the participant with the given ID
 /// </summary>
-public class RequestParticipantIndicies(IEnumerable<ParticipantViewModel> participants) : RequestMessage<int[]>
+public class RequestParticipant(Guid id) : RequestMessage<ParticipantViewModel>
 {
-    public IEnumerable<ParticipantViewModel> Participants { get; set; } = participants;
+    public Guid Id { get; set; } = id;
 }
 
 /// <summary>
-/// Requests the index of the given participant
+/// Requests the squadron with the given ID
 /// </summary>
-public class RequestParticipantIndex(ParticipantViewModel participant) : RequestMessage<int>
+public class RequestSquadron(Guid id) : RequestMessage<SquadronViewModel>
 {
-    public ParticipantViewModel Participant { get; set; } = participant;
-}
-
-/// <summary>
-/// Requests the indicies of the given squadrons
-/// </summary>
-public class RequestSquadronIndicies(IEnumerable<SquadronViewModel> squadrons) : RequestMessage<int[]>
-{
-    public IEnumerable<SquadronViewModel> Squadrons { get; set; } = squadrons;
-}
-
-/// <summary>
-/// Requests the index of the given squadron
-/// </summary>
-public class RequestSquadronIndex(SquadronViewModel squadron) : RequestMessage<int>
-{
-    public SquadronViewModel Squadron { get; set; } = squadron;
+    public Guid Id { get; set; } = id;
 }
 
 #endregion
@@ -52,8 +36,7 @@ public class RequestSquadronIndex(SquadronViewModel squadron) : RequestMessage<i
 /// The tournament settings
 /// </summary>
 public partial class SquadronsStageViewModel : StageViewModel,
-    IRecipient<RequestParticipantIndicies>, IRecipient<RequestParticipantIndex>,
-    IRecipient<RequestSquadronIndicies>, IRecipient<RequestSquadronIndex>
+    IRecipient<RequestParticipant>, IRecipient<RequestSquadron>
 {
     #region Properties
 
@@ -107,17 +90,19 @@ public partial class SquadronsStageViewModel : StageViewModel,
 
     #region Message Handlers
 
-    public void Receive(RequestParticipantIndicies message) =>
-        message.Reply([.. message.Participants.Select(p => Participants.IndexOf(p))]);
+    public void Receive(RequestParticipant message)
+    {
+        var participant = Participants.FirstOrDefault(p => p.Guid == message.Id)
+            ?? throw new InvalidOperationException($"Participant with ID {message.Id} not found.");
+        message.Reply(participant);
+    }
 
-    public void Receive(RequestParticipantIndex message) =>
-        message.Reply(Participants.IndexOf(message.Participant));
-
-    public void Receive(RequestSquadronIndicies message) =>
-        message.Reply([.. message.Squadrons.Select(s => Squadrons.IndexOf(s))]);
-
-    public void Receive(RequestSquadronIndex message) =>
-        message.Reply(Squadrons.IndexOf(message.Squadron));
+    public void Receive(RequestSquadron message)
+    {
+        var squadron = Squadrons.FirstOrDefault(s => s.Guid == message.Id)
+            ?? throw new InvalidOperationException($"Squadron with ID {message.Id} not found.");
+        message.Reply(squadron);
+    }
 
     #endregion
 
@@ -141,35 +126,47 @@ public partial class SquadronsStageViewModel : StageViewModel,
     }
 
     /// <summary>
-    /// Loads settings from a model
-    /// </summary>
-    public SquadronsStageViewModel(SquadronsStage model) : this()
-    {
-        IsAutoAssigned = model.IsAutoAssigned;
-        Participants = [.. model.Participants.Select(p => ParticipantViewModel.FromModel(p))];
-
-        int i = 0;
-        Squadrons = [.. model.Squadrons.Select(s => new SquadronViewModel(s, Participants)
-            {
-                Name = SquadronNames[i].Name,
-                Color = App.Current?.FindResource($"{SquadronNames[i++].Color}Brush") as IBrush ?? Brushes.Transparent
-            })];
-    }
-
-    /// <summary>
     /// Converts into a model
     /// </summary>
-    public override SquadronsStage ToModel() => new(
-        IsAutoAssigned,
-        [.. Participants.Select(p => p.ToModel())],
-        [.. Squadrons.Select(s => s.ToModel())],
-        Next?.ToModel());
+    public override SquadronsStage ToModel() => new()
+    {
+        IsAutoAssigned = IsAutoAssigned,
+        Participants = [.. Participants.Select(p => p.ToModel())],
+        Squadrons = [.. Squadrons.Select(s => s.ToModel())],
+        Next = Next?.ToModel()
+    };
+
+    /// <summary>
+    /// Loads settings from a model
+    /// </summary>
+    public static SquadronsStageViewModel FromModel(SquadronsStage model)
+    {
+        SquadronsStageViewModel vm = new()
+        {
+            IsAutoAssigned = model.IsAutoAssigned,
+            Participants = [.. model.Participants.Select(p => ParticipantViewModel.FromModel(p))],
+        };
+
+        int i = 0;
+        vm.Squadrons = [.. model.Squadrons.Select(s =>
+        {
+            var vm = SquadronViewModel.FromModel(s);
+            vm.Name = SquadronNames[i].Name;
+            vm.Color = App.Current?.FindResource($"{SquadronNames[i++].Color}Brush") as IBrush ?? Brushes.Transparent;
+            return vm;
+        })];
+
+        // must do this last to avoid issues with references
+        vm.Next = StageViewModel.FromModel(model.Next);
+
+        return vm;
+    }
 
     /// <summary>
     /// Go to the Pools Stage
     /// </summary>
     [RelayCommand]
-    private void StartPools() => Next = new PoolsStageViewModel(Squadrons);
+    private void StartPools() => Next = PoolsStageViewModel.FromSquadrons(Squadrons);
 
     #region Drag and Drop
 

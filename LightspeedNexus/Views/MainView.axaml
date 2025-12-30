@@ -14,11 +14,6 @@
 		<vm:MainViewModel/>
     </Design.DataContext>
 
-	<UserControl.KeyBindings>
-		<KeyBinding Gesture="Cancel" Command="{Binding CancelDialogCommand}"/>
-		<KeyBinding Gesture="Enter" Command="{Binding AcceptDialogCommand}"/>
-	</UserControl.KeyBindings>
-
 	<Panel x:Name="MainPanel">
 
 		<Image Stretch="UniformToFill"

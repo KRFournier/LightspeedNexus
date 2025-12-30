@@ -25,7 +25,7 @@
 		<conv:TrueToFadedConverter x:Key="TrueToFaded"/>
 		<conv:TrueToInvisibleConverter x:Key="TrueToInvis"/>
 		<conv:StringsAreEqualConverter x:Key="StringsEqual"/>
-		<conv:BrushSelectConverter x:Key="BrushSelect"/>
+		<conv:WeaponToColorConverter x:Key="WeaponToColor"/>
 	</Application.Resources>
 
 	<Application.Styles>

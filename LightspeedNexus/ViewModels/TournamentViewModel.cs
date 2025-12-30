@@ -117,13 +117,18 @@ public partial class TournamentViewModel : ViewModelBase, IDisposable,
     public TournamentViewModel(Tournament model) : this()
     {
         Guid = model.Id;
-        SetupStage = new(model.SetupStage);
+        SetupStage = SetupStageViewModel.FromModel(model.SetupStage);
     }
 
     /// <summary>
     /// Converts to a <see cref="Tournament"/>
     /// </summary>
-    public Tournament ToModel() => new(Guid, SetupStage.ToModel(), CurrentStage.IsTournamentCompleted);
+    public Tournament ToModel() => new()
+    {
+        Id = Guid,
+        SetupStage = SetupStage.ToModel(),
+        IsCompleted = CurrentStage.IsTournamentCompleted
+    };
 
     /// <summary>
     /// Saves the tournament
@@ -131,7 +136,10 @@ public partial class TournamentViewModel : ViewModelBase, IDisposable,
     public void Save()
     {
         if (SetupStage.CanBegin())
+        {
             StorageService.WriteTournament(ToModel());
+            SetupStage.OnTournamentSaved();
+        }
     }
 
     /// <summary>

@@ -1,12 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using LightspeedNexus.Models;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 
 namespace LightspeedNexus.ViewModels;
 
@@ -18,43 +12,59 @@ public partial class PoolViewModel : ViewModelBase
     /// The squadron assigned to this pool
     /// </summary>
     [ObservableProperty]
-    public partial SquadronViewModel Squadron { get; protected set; }
+    public partial SquadronViewModel Squadron { get; protected set; } = new();
 
     /// <summary>
     /// Matches are view/viewmodel driven. We just reference them here, and the view takes
     /// care of the rest. This means all match viewmodels must have a corresponding view
     /// </summary>
-    public ObservableCollection<ViewModelBase> Matches { get; set; } = [];
+    [ObservableProperty]
+    public partial MatchGroupViewModel MatchGroup { get; set; } = new();
 
     #endregion
 
     /// <summary>
-    /// Creates a new pool from the given squadron
-    /// </summary>
-    public PoolViewModel(SquadronViewModel squadron)
-    {
-        Squadron = squadron;
-        ArrangeMatches();
-    }
-
-    /// <summary>
-    /// Loads an existing pool
-    /// </summary>
-    public PoolViewModel(Pool pool, IReadOnlyList<SquadronViewModel> squadrons)
-    {
-        Squadron = squadrons[pool.Squadron];
-        //foreach (var match in pool.Matches)
-        //{
-        //    Matches.Add(new PoolMatchViewModel(Squadron, match, fullRoster));
-        //}
-    }
-
-    /// <summary>
     /// Converts to a <see cref="Pool"/>
     /// </summary>
-    public Pool ToModel() => new(
-        StrongReferenceMessenger.Default.Send(new RequestSquadronIndex(Squadron))
-        );
+    public Pool ToModel() => new()
+    {
+        Squadron = Squadron.Guid,
+        MatchGroup = MatchGroup.ToModel()
+    };
+
+    /// <summary>
+    /// Converts from a <see cref="Pool"/>
+    /// </summary>
+    public static PoolViewModel FromModel(Pool pool) => new()
+    {
+        Squadron = StrongReferenceMessenger.Default.Send(new RequestSquadron(pool.Squadron)),
+        MatchGroup = MatchGroupViewModel.FromModel(pool.MatchGroup)
+    };
+
+    /// <summary>
+    /// Creates from a <see cref="SquadronViewModel"/>
+    /// </summary>
+    public static PoolViewModel FromSquadron(SquadronViewModel squadron)
+    {
+        PoolViewModel vm = new()
+        {
+            Squadron = squadron,
+            MatchGroup = new() { Settings = squadron.Settings.Clone() }
+        };
+
+        // find the match arrangements for the number of participants, and create matches accordingly
+        if (squadron.Participants.Count > 1 && squadron.Participants.Count <= poolArrangements.Length)
+        {
+            foreach (var arrangement in poolArrangements[squadron.Participants.Count])
+            {
+                var match = vm.MatchGroup.NewMatch<StandardMatchViewModel>();
+                match.First = new ScoreViewModel() { Participant = vm.Squadron.Participants[arrangement[0] - 1] };
+                match.Second = new ScoreViewModel() { Participant = vm.Squadron.Participants[arrangement[1] - 1] };
+            }
+        }
+
+        return vm;
+    }
 
     #region Match Arrangement
 
@@ -78,24 +88,6 @@ public partial class PoolViewModel : ViewModelBase
         [[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12], [13, 1], [2, 3], [4, 5], [6, 7], [8, 9], [10, 11], [12, 1], [2, 13], [3, 5], [4, 6], [7, 9], [8, 10], [1, 11], [12, 2], [13, 3], [5, 7], [9, 4], [6, 8], [10, 1], [11, 2], [3, 12], [5, 13], [7, 4], [9, 6], [1, 8], [2, 10], [11, 3], [12, 5], [4, 13], [1, 7], [6, 2], [3, 9], [8, 11], [10, 5], [4, 12], [13, 7], [6, 1], [2, 9], [8, 3], [5, 11], [10, 4], [7, 12], [13, 6], [9, 1], [2, 8], [11, 4], [3, 10], [12, 6], [9, 13], [1, 5], [7, 2], [4, 8], [6, 11], [10, 12], [1, 3], [8, 13], [5, 9], [11, 7], [6, 10], [12, 8], [2, 4], [13, 11], [3, 7], [8, 5], [9, 12], [10, 13], [4, 1], [3, 6], [5, 2], [11, 9], [7, 10], [12, 13]],
         [[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12], [13, 14], [3, 1], [2, 4], [7, 5], [6, 8], [11, 9], [10, 12], [1, 13], [14, 3], [2, 5], [4, 7], [6, 9], [8, 11], [10, 1], [12, 13], [3, 2], [5, 14], [4, 6], [9, 7], [8, 1], [11, 10], [12, 2], [13, 3], [4, 5], [14, 6], [1, 7], [8, 9], [2, 10], [11, 3], [12, 4], [5, 13], [6, 1], [7, 14], [2, 8], [9, 3], [10, 4], [12, 14], [5, 11], [13, 6], [7, 2], [1, 12], [14, 8], [3, 10], [4, 9], [1, 5], [6, 11], [12, 7], [2, 13], [8, 3], [10, 14], [4, 1], [9, 5], [6, 7], [11, 2], [3, 12], [13, 8], [14, 1], [5, 10], [11, 4], [2, 9], [3, 6], [7, 13], [8, 12], [1, 11], [4, 14], [5, 3], [10, 6], [9, 13], [14, 2], [7, 11], [8, 4], [12, 5], [1, 9], [13, 10], [6, 2], [3, 7], [9, 12], [14, 11], [13, 4], [5, 8], [10, 7], [12, 6], [11, 13], [9, 14], [8, 10]],
         ];
-
-    private void ArrangeMatches()
-    {
-        if (Squadron.Participants.Count > 1 && Squadron.Participants.Count <= poolArrangements.Length)
-        {
-            int i = 1;
-            Matches.Clear();
-            foreach (var arrangement in poolArrangements[Squadron.Participants.Count])
-            {
-                Matches.Add(
-                    new MatchViewModel(Squadron.Participants[arrangement[0] - 1], Squadron.Participants[arrangement[1] - 1], Squadron.Settings)
-                    {
-                        Number = i++
-                    }
-                    );
-            }
-        }
-    }
 
     #endregion
 }

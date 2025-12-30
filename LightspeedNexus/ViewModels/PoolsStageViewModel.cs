@@ -1,9 +1,13 @@
-﻿using LightspeedNexus.Models;
+﻿using CommunityToolkit.Mvvm.Input;
+using LightspeedNexus.Messages;
+using LightspeedNexus.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace LightspeedNexus.ViewModels;
 
@@ -15,19 +19,55 @@ public partial class PoolsStageViewModel : StageViewModel
 
     #endregion
 
+    #region Commands
+
+    [RelayCommand]
+    private async static Task EditMatch(MatchViewModel match)
+    {
+        try
+        {
+            var result = await DialogBox(match.GetEditViewModel(), "Set Final Match Score");
+            if (result.IsOk)
+                match.UpdateMatch(result.Item);
+        }
+        catch (Exception e)
+        {
+            Debug.WriteLine($"Unexpected error editing a match: {e}");
+        }
+    }
+
+    #endregion
+
     public PoolsStageViewModel() : base("Pools")
     {
     }
 
-    public PoolsStageViewModel(IEnumerable<SquadronViewModel> sqaudrons) : this()
+    public override PoolsStage ToModel() => new()
     {
-        Pools = [.. sqaudrons.Select(s => new PoolViewModel(s))];
+        Pools = [..Pools.Select(p => p.ToModel())],
+        Next = Next?.ToModel()
+    };
+
+    public static PoolsStageViewModel FromModel(PoolsStage model) => new()
+    {
+        Pools = [.. model.Pools.Select(p => PoolViewModel.FromModel(p))]
+    };
+
+    public static PoolsStageViewModel FromSquadrons(IEnumerable<SquadronViewModel> sqaudrons) => new()
+    {
+        Pools = [.. sqaudrons.Select(s => PoolViewModel.FromSquadron(s))]
+    };
+
+    public override void OnTournamentSaved()
+    {
+        foreach (var pool in Pools)
+            pool.MatchGroup.Save();
+        Next?.OnTournamentSaved();
     }
 
-    public PoolsStageViewModel(PoolsStage model, IReadOnlyList<SquadronViewModel> squadrons) : this()
+    protected override void OnGoingBack()
     {
-        Pools = [.. model.Pools.Select(p => new PoolViewModel(p, squadrons))];
+        foreach (var pool in Pools)
+            pool.MatchGroup.PermanentlyDeleteAll();
     }
-
-    public override PoolsStage ToModel() => new([.. Pools.Select(p => p.ToModel())], Next?.ToModel());
 }

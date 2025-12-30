@@ -115,7 +115,7 @@ public partial class FightersViewModel : ViewModelBase, IComparer
 
             // we add new fighters at the end so the above loop doesn't have to search new additions
             foreach (var fighter in fightersToAdd)
-                Fighters.Add(new(fighter));
+                Fighters.Add(FighterViewModel.FromModel(fighter));
         }
         else
             MessageBox(message);
@@ -157,7 +157,7 @@ public partial class FightersViewModel : ViewModelBase, IComparer
 
         try
         {
-            Fighters = [.. StorageService.ReadAll<Fighter>().Select(f => new FighterViewModel(f))];
+            Fighters = [.. StorageService.ReadAll<Fighter>().Select(f => FighterViewModel.FromModel(f))];
         }
         catch (Exception e)
         {

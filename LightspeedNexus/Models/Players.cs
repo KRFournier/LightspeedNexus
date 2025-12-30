@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.Metrics;
+﻿using System;
 
 namespace LightspeedNexus.Models;
 
@@ -7,25 +7,24 @@ namespace LightspeedNexus.Models;
 /// </summary>
 public abstract class Participant
 {
+    public Guid Id { get; set; } = Guid.NewGuid();
     public string Name { get; set; } = string.Empty;
     public int PowerLevel { get; set; } = 0;
-
-    public Participant() { }
-    public Participant(string name, int powerLevel)
-    {
-        Name = name;
-        PowerLevel = powerLevel;
-    }
 
     public override string ToString() => $"{Name} - {PowerLevel}";
 }
 
 /// <summary>
-/// Represents a bye
+/// Represents a bye, i.e., a placeholder participant that automatically loses.
 /// </summary>
 public sealed class Bye : Participant
 {
-    public Bye() : base("BYE", 0) { }
+    public Bye()
+    {
+        Id = Guid.Empty;
+        Name = "BYE";
+    }
+
     public override string ToString() => "--BYE--";
 }
 
@@ -45,21 +44,6 @@ public sealed class Player : Participant
     public WeaponClass WeaponOfChoice { get; set; } = WeaponClass.Rey;
 
     public int StartingLife { get; set; } = 0;
-
-    public Player() { }
-    public Player(string name, int powerLevel, int? onlineId, string? club, Rank rank,
-        Card card, int honor, int forceCalls, bool isEjected, WeaponClass weaponOfChoice)
-        : base(name, powerLevel)
-    {
-        OnlineId = onlineId;
-        Club = club;
-        Rank = rank;
-        Card = card;
-        Honor = honor;
-        ForceCalls = forceCalls;
-        IsEjected = isEjected;
-        WeaponOfChoice = weaponOfChoice;
-    }
 }
 
 /// <summary>
@@ -68,10 +52,4 @@ public sealed class Player : Participant
 public sealed class Team : Participant
 {
     public Player[] Members { get; set; } = [];
-
-    public Team() { }
-    public Team(string name, int powerLevel, Player[] members) : base(name, powerLevel)
-    {
-        Members = members;
-    }
 }

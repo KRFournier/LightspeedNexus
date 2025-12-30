@@ -9,7 +9,7 @@ namespace LightspeedNexus.ViewModels;
 /// <summary>
 /// Settings for a group of matches
 /// </summary>
-public partial class MatchSettingsViewModel : ViewModelBase, IEquatable<MatchSettingsViewModel>
+public partial class MatchSettingsViewModel : ViewModelBase
 {
     #region Properties
 
@@ -30,6 +30,13 @@ public partial class MatchSettingsViewModel : ViewModelBase, IEquatable<MatchSet
     /// </summary>
     [ObservableProperty]
     public partial int Rounds { get; set; } = 1;
+
+    /// <summary>
+    /// Set this to true to lock the user from making changes, typically
+    /// after a match in a group has started
+    /// </summary>
+    [ObservableProperty]
+    public partial bool IsLocked { get; set; } = false;
 
     #endregion
 
@@ -87,52 +94,30 @@ public partial class MatchSettingsViewModel : ViewModelBase, IEquatable<MatchSet
     #endregion
 
     /// <summary>
-    /// Initializes the settings
-    /// </summary>
-    public MatchSettingsViewModel() { }
-
-    /// <summary>
-    /// Loads settings from a model
-    /// </summary>
-    public MatchSettingsViewModel(MatchSettings model)
-    {
-        WinningScore = model.WinningScore;
-        TimeLimit = model.TimeLimit;
-        Rounds = model.Rounds;
-    }
-
-    /// <summary>
-    /// Creates a copy of the MatchSettingsViewModel
+    /// Creates a copy that is unlocked
     /// </summary>
     public MatchSettingsViewModel Clone() => new()
     {
         WinningScore = WinningScore,
         TimeLimit = TimeLimit,
-        Rounds = Rounds
+        Rounds = Rounds,
     };
 
-    /// <summary>
-    /// The model
-    /// </summary>
-    public MatchSettings ToModel() => new(WinningScore, TimeLimit, Rounds);
+    public MatchSettings ToModel() => new()
+    {
+        WinningScore = WinningScore,
+        TimeLimit = TimeLimit,
+        Rounds = Rounds,
+        IsLocked = IsLocked
+    };
 
-    #region Value Equality
-
-    public bool Equals(MatchSettingsViewModel? other) =>
-        other is not null &&
-        WinningScore == other.WinningScore &&
-        TimeLimit == other.TimeLimit;
-
-    public override bool Equals(object? obj) => Equals(obj as MatchSettingsViewModel);
-
-    public override int GetHashCode() => HashCode.Combine(WinningScore, TimeLimit);
-
-    public static bool operator ==(MatchSettingsViewModel? left, MatchSettingsViewModel? right) =>
-        left is null ? right is null : left.Equals(right);
-
-    public static bool operator !=(MatchSettingsViewModel? left, MatchSettingsViewModel? right) => !(left == right);
-
-    #endregion
+    public static MatchSettingsViewModel FromModel(MatchSettings model) => new()
+    {
+        WinningScore = model.WinningScore,
+        TimeLimit = model.TimeLimit,
+        Rounds = model.Rounds,
+        IsLocked = model.IsLocked
+    };
 
     #region Saber Sports
 

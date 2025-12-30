@@ -1,0 +1,72 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:LightspeedNexus.ViewModels"
+			 xmlns:m="clr-namespace:LightspeedNexus.Models"
+			 xmlns:v="clr-namespace:LightspeedNexus.Views"
+			 xmlns:c="clr-namespace:LightspeedNexus.Controls"
+			 xmlns:cv="clr-namespace:LightspeedNexus.Converters"
+             mc:Ignorable="d" d:DesignWidth="250" d:DesignHeight="50"
+             x:Class="LightspeedNexus.Views.PlayerView"
+			 x:DataType="vm:PlayerViewModel"
+			 IsHitTestVisible="False">
+	
+	<Design.DataContext>
+		<vm:PlayerViewModel Name="Jayne Doe"
+							WeaponOfChoice="Tano"/>
+	</Design.DataContext>
+	
+	<Grid ColumnDefinitions="Auto,5,*"
+		  IsHitTestVisible="False">
+		
+		<Viewbox StretchDirection="DownOnly"
+				 IsHitTestVisible="False">
+			<TextBlock Classes="medium"
+					   Foreground="{StaticResource Gray}"
+					   IsHitTestVisible="False"
+					   FontWeight="UltraBold"
+					   Text="{Binding Rank}"/>
+		</Viewbox>
+
+		<StackPanel Spacing="-4"
+					Grid.Column="2"
+					IsHitTestVisible="False"
+					VerticalAlignment="Center">
+			<TextBlock Classes="medium"
+					   IsHitTestVisible="False"
+					   HorizontalAlignment="Left"
+					   VerticalAlignment="Center"
+					   TextTrimming="CharacterEllipsis"
+					   Text="{Binding Name}"/>
+			<!--<Border Background="{Binding WeaponOfChoice,
+						Converter={StaticResource WeaponToColor}}"
+					Height="10"
+					Padding="4,0"
+					Width="32"
+					IsHitTestVisible="False"
+					HorizontalAlignment="Left"
+					VerticalAlignment="Bottom"
+					CornerRadius="4">
+				<Panel>
+					<TextBlock FontSize="7"
+							   LineHeight="8"
+							   Foreground="Black"
+							   VerticalAlignment="Center"
+							   IsHitTestVisible="False"
+							   Text="{Binding WeaponOfChoice}"/>
+					<TextBlock FontSize="7"
+							   LineHeight="8"
+							   FontWeight="Bold"
+							   Foreground="Black"
+							   VerticalAlignment="Center"
+							   HorizontalAlignment="Right"
+							   IsHitTestVisible="False"
+							   Text="{Binding Rank}"/>
+				</Panel>
+			</Border>-->
+		</StackPanel>
+		
+	</Grid>
+	
+</UserControl>

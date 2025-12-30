@@ -12,7 +12,7 @@ public partial class FighterViewModel : ViewModelBase, IComparable<FighterViewMo
     #region Properties
 
     [ObservableProperty]
-    public partial Guid Guid { get; protected set; } = Guid.NewGuid();
+    public partial Guid Guid { get; set; } = Guid.NewGuid();
 
     [ObservableProperty]
     public partial int? OnlineId { get; set; }
@@ -64,50 +64,49 @@ public partial class FighterViewModel : ViewModelBase, IComparable<FighterViewMo
     #endregion
 
     /// <summary>
-    /// Creates a brand new fighter
-    /// </summary>
-    public FighterViewModel() { }
-
-    /// <summary>
-    /// Loads an existing fighter
-    /// </summary>
-    public FighterViewModel(Fighter fighter)
-    {
-        Guid = fighter.Id;
-        OnlineId = fighter.OnlineId;
-        FirstName = fighter.FirstName;
-        LastName = fighter.LastName;
-        Club = fighter.Club;
-        ReyRank = fighter.Rey;
-        RenRank = fighter.Ren;
-        TanoRank = fighter.Tano;
-    }
-
-    /// <summary>
-    /// Creates a fighter from the given fields
-    /// </summary>
-    public FighterViewModel(Guid id, int? onlineId, string firstName, string lastName, string? club,
-        Rank reyRank, Rank renRank, Rank tanoRank)
-    {
-        Guid = id;
-        OnlineId = onlineId;
-        FirstName = firstName;
-        LastName = lastName;
-        Club = club;
-        ReyRank = reyRank;
-        RenRank = renRank;
-        TanoRank = tanoRank;
-    }
-
-    /// <summary>
     /// Converts to a <see cref="Fighter"/>
     /// </summary>
-    public Fighter ToModel() => new(Guid, OnlineId, FirstName, LastName, Club, ReyRank, RenRank, TanoRank);
+    public Fighter ToModel() => new()
+    {
+        Id = Guid,
+        OnlineId = OnlineId,
+        FirstName = FirstName,
+        LastName = LastName,
+        Club = Club,
+        Rey = ReyRank,
+        Ren = RenRank,
+        Tano = TanoRank
+    };
+
+    /// <summary>
+    /// Converts from a <see cref="Fighter"/>
+    /// </summary>
+    public static FighterViewModel FromModel(Fighter fighter) => new()
+    {
+        Guid = fighter.Id,
+        OnlineId = fighter.OnlineId,
+        FirstName = fighter.FirstName,
+        LastName = fighter.LastName,
+        Club = fighter.Club,
+        ReyRank = fighter.Rey,
+        RenRank = fighter.Ren,
+        TanoRank = fighter.Tano
+    };
 
     /// <summary>
     /// Creates a copy.
     /// </summary>
-    public FighterViewModel Clone() => new(ToModel());
+    public FighterViewModel Clone() => new()
+    {
+        Guid = Guid,
+        OnlineId = OnlineId,
+        FirstName = FirstName,
+        LastName = LastName,
+        Club = Club,
+        ReyRank = ReyRank,
+        RenRank = RenRank,
+        TanoRank = TanoRank
+    };
 
     /// <summary>
     /// Compares the current Fighter to another Fighter.

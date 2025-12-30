@@ -40,45 +40,6 @@ public partial class MainViewModel : ViewModelBase, IRecipient<NavigatePageMessa
 
     #endregion
 
-    #region Dialog Box
-
-    [ObservableProperty]
-    private bool _hasDialog = false;
-
-    [ObservableProperty]
-    private MainViewModel? _dialog = null;
-
-    private OpenDialogMessage? _dialogMessage = null;
-
-    [ObservableProperty]
-    private bool _usingDeleteButton = false;
-
-    [RelayCommand]
-    private void CancelDialog()
-    {
-        Dialog = null;
-        _dialogMessage?.Respond(OpenDialogMessage.DialogResponse.Cancel);
-    }
-
-    [RelayCommand]
-    private void AcceptDialog()
-    {
-        if (Dialog is not null)
-        {
-            _dialogMessage?.Respond(OpenDialogMessage.DialogResponse.Ok);
-            Dialog = null;
-        }
-    }
-
-    [RelayCommand]
-    private void DeleteDialog()
-    {
-        Dialog = null;
-        _dialogMessage?.Respond(OpenDialogMessage.DialogResponse.Delete);
-    }
-
-    #endregion
-
     #region Saber Sports
 
     [ObservableProperty]

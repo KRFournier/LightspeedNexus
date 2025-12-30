@@ -86,8 +86,17 @@
     <Compile Update="Views\FighterSearchView.axaml.cs">
       <DependentUpon>FighterSearchView.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\MatchEditView.axaml.cs">
+      <DependentUpon>MatchEditView.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\FighterView.axaml.cs">
       <DependentUpon>FighterView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\MatchNotFoundView.axaml.cs">
+      <DependentUpon>MatchNotFoundView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\StandardMatchView.axaml.cs">
+      <DependentUpon>StandardMatchView.axaml</DependentUpon>
     </Compile>
     <Compile Update="Views\PoolsStageView.axaml.cs">
       <DependentUpon>PoolsStageView.axaml</DependentUpon>

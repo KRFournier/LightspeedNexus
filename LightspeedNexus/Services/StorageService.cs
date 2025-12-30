@@ -119,6 +119,44 @@ public static class StorageService
 
     #endregion
 
+    #region Matches
+
+    /// <summary>
+    /// Writes a bunch of matches
+    /// </summary>
+    /// <param name="matches"></param>
+    public static void WriteMatches(IEnumerable<Match?> matches)
+    {
+        using var db = GetDatabase();
+        var collection = db.GetCollection<Match>(GetCollectionName<Match>());
+        collection.Upsert(matches.Where(m => m is not null).Select(m => m!));
+    }
+
+    /// <summary>
+    /// Writes a match item, ensuring proper indexes
+    /// </summary>
+    public static void WriteMatch(Match? match)
+    {
+        if (match is not null)
+        {
+            using var db = GetDatabase();
+            var collection = db.GetCollection<Match>(GetCollectionName<Match>());
+            collection.Upsert(match);
+        }
+    }
+
+    /// <summary>
+    /// Gets the match with the given id
+    /// </summary>
+    public static Match? GetMatch(Guid id)
+    {
+        using var db = GetDatabase();
+        var fightersCollection = db.GetCollection<Match>(GetCollectionName<Match>());
+        return fightersCollection.FindById(id);
+    }
+
+    #endregion
+
     /// <summary>
     /// Saves an item
     /// </summary>

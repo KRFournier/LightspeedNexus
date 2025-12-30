@@ -1,0 +1,42 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:LightspeedNexus.ViewModels"
+			 xmlns:v="clr-namespace:LightspeedNexus.Views"
+			 xmlns:c="clr-namespace:LightspeedNexus.Controls"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450"
+             x:Class="LightspeedNexus.Views.ScoreEditView"
+			 x:DataType="vm:ScoreEditViewModel">
+	
+	<Grid ColumnDefinitions="*,10,130">
+
+		<TextBlock Grid.Column="0"
+				   VerticalAlignment="Center"
+				   TextTrimming="CharacterEllipsis"
+				   Text="{Binding Name}"/>
+		
+		<TextBox Grid.Column="2"
+				 Padding="0"
+				 HorizontalAlignment="Left"
+				 HorizontalContentAlignment="Center"
+				 VerticalContentAlignment="Center"
+				 Text="{Binding Points}">
+			<TextBox.InnerLeftContent>
+				<Button Classes="clear"
+						IsTabStop="False"
+						Command="{Binding DecrementCommand}">
+					<PathIcon Data="{StaticResource chevron_left_regular}"/>
+				</Button>
+			</TextBox.InnerLeftContent>
+			<TextBox.InnerRightContent>
+				<Button Classes="clear"
+						IsTabStop="False"
+						Command="{Binding IncrementCommand}">
+					<PathIcon Data="{StaticResource chevron_right_regular}"/>
+				</Button>
+			</TextBox.InnerRightContent>
+		</TextBox>
+	</Grid>
+	
+</UserControl>

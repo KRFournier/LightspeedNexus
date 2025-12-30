@@ -19,34 +19,15 @@ public sealed class Registree : CollectionObject
     public bool UsesEffectiveRank { get; set; } = false;
     public WeaponClass WeaponOfChoice { get; set; } = WeaponClass.Rey;
 
-    public Registree() { }
-    public Registree(Guid id, int? onlineId, string firstName, string lastName, string? club,
-        Rank rey, Rank ren, Rank tano, bool usesEffectiveRank, WeaponClass weaponOfChoice)
-        : base(id)
+    public Fighter ToFighter() => new()
     {
-        OnlineId = onlineId;
-        FirstName = firstName;
-        LastName = lastName;
-        Club = club;
-        Rey = rey;
-        Ren = ren;
-        Tano = tano;
-        UsesEffectiveRank = usesEffectiveRank;
-        WeaponOfChoice = weaponOfChoice;
-    }
-    public Registree(Fighter fighter, bool usesEffectiveRank = false, WeaponClass weaponOfChoice = WeaponClass.Rey)
-        : base(fighter.Id)
-    {
-        OnlineId = fighter.OnlineId;
-        FirstName = fighter.FirstName;
-        LastName = fighter.LastName;
-        Club = fighter.Club;
-        Rey = fighter.Rey;
-        Ren = fighter.Ren;
-        Tano = fighter.Tano;
-        UsesEffectiveRank = usesEffectiveRank;
-        WeaponOfChoice = weaponOfChoice;
-    }
-
-    public Fighter ToFighter() => new(Id, OnlineId, FirstName, LastName, Club, Rey, Ren, Tano);
+        Id = Id,
+        OnlineId = OnlineId,
+        FirstName = FirstName,
+        LastName = LastName,
+        Club = Club,
+        Rey = Rey,
+        Ren = Ren,
+        Tano = Tano
+    };
 }

@@ -4,9 +4,9 @@ using Avalonia.Markup.Xaml;
 
 namespace LightspeedNexus.Views;
 
-public partial class MatchView : UserControl
+public partial class PlayerView : UserControl
 {
-    public MatchView()
+    public PlayerView()
     {
         InitializeComponent();
     }

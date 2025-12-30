@@ -5,12 +5,13 @@
              xmlns:vm="clr-namespace:LightspeedNexus.ViewModels"
 			 xmlns:m="clr-namespace:LightspeedNexus.Models"
              xmlns:c="clr-namespace:LightspeedNexus.Controls"
-             mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="120"
+             mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="100"
+			 Width="200" Height="100"
              x:Class="LightspeedNexus.Views.MatchSettingsView"
 			 x:DataType="vm:MatchSettingsViewModel">
 	
 	<Design.DataContext>
-		<vm:MatchSettingsViewModel/>
+		<vm:MatchSettingsViewModel IsLocked="True"/>
 	</Design.DataContext>
 
 	<UserControl.Styles>
@@ -83,6 +84,7 @@
 					VerticalAlignment="Stretch"
 					HorizontalAlignment="Stretch"
 					CornerRadius="0"
+					IsVisible="{Binding !IsLocked}"
 					Command="{Binding DecreaseAllCommand}">
 				<PathIcon Width="24" Height="24" Data="{StaticResource arrow_previous_regular}"/>
 			</Button>
@@ -93,6 +95,7 @@
 					Classes="noscale squareblue"
 					VerticalAlignment="Stretch"
 					HorizontalAlignment="Stretch"
+					IsVisible="{Binding !IsLocked}"
 					Command="{Binding DecreaseScoreCommand}">
 				<PathIcon Width="12" Height="12" Data="{StaticResource remove_regular}"/>
 			</Button>
@@ -107,6 +110,7 @@
 					Classes="noscale squarered"
 					VerticalAlignment="Stretch"
 					HorizontalAlignment="Stretch"
+					IsVisible="{Binding !IsLocked}"
 					Command="{Binding IncreaseScoreCommand}">
 				<PathIcon Width="12" Height="12" Data="{StaticResource add_regular}"/>
 			</Button>
@@ -117,6 +121,7 @@
 					Classes="noscale squareblue"
 					VerticalAlignment="Stretch"
 					HorizontalAlignment="Stretch"
+					IsVisible="{Binding !IsLocked}"
 					Command="{Binding DecreaseTimeCommand}">
 				<PathIcon Width="12" Height="12" Data="{StaticResource remove_regular}"/>
 			</Button>
@@ -130,6 +135,7 @@
 					Classes="noscale squarered"
 					VerticalAlignment="Stretch"
 					HorizontalAlignment="Stretch"
+					IsVisible="{Binding !IsLocked}"
 					Command="{Binding IncreaseTimeCommand}">
 				<PathIcon Width="12" Height="12" Data="{StaticResource add_regular}"/>
 			</Button>
@@ -140,6 +146,7 @@
 					Classes="noscale squareblue"
 					VerticalAlignment="Stretch"
 					HorizontalAlignment="Stretch"
+					IsVisible="{Binding !IsLocked}"
 					Command="{Binding DecreaseRoundsCommand}">
 				<PathIcon Width="12" Height="12" Data="{StaticResource remove_regular}"/>
 			</Button>
@@ -153,6 +160,7 @@
 					Classes="noscale squarered"
 					VerticalAlignment="Stretch"
 					HorizontalAlignment="Stretch"
+					IsVisible="{Binding !IsLocked}"
 					Command="{Binding IncreaseRoundsCommand}">
 				<PathIcon Width="12" Height="12" Data="{StaticResource add_regular}"/>
 			</Button>
@@ -162,6 +170,7 @@
 					Classes="noscale right red"
 					VerticalAlignment="Stretch"
 					HorizontalAlignment="Stretch"
+					IsVisible="{Binding !IsLocked}"
 					Command="{Binding IncreaseAllCommand}">
 				<PathIcon Width="24" Height="24" Data="{StaticResource arrow_next_regular}"/>
 			</Button>

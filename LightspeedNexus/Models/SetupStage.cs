@@ -55,30 +55,6 @@ public sealed class SetupStage : Stage
     public bool AllowERanks { get; set; } = true;
     public bool AllowURanks { get; set; } = true;
 
-    public SetupStage() { }
-
-    public SetupStage(DateTime? date, GameMode gameMode, Demographic demographic, SkillLevel skillLevel,
-        bool reyAllowed, bool renAllowed, bool tanoAllowed, string? subTitle, IEnumerable<Registree> registrees,
-        bool allowARanks, bool allowBRanks, bool allowCRanks, bool allowDRanks, bool allowERanks, bool allowURanks,
-        Stage? next) : base(next)
-    {
-        Date = date;
-        GameMode = gameMode;
-        Demographic = demographic;
-        SkillLevel = skillLevel;
-        ReyAllowed = reyAllowed;
-        RenAllowed = renAllowed;
-        TanoAllowed = tanoAllowed;
-        SubTitle = subTitle;
-        AllowARanks = allowARanks;
-        AllowBRanks = allowBRanks;
-        AllowCRanks = allowCRanks;
-        AllowDRanks = allowDRanks;
-        AllowERanks = allowERanks;
-        AllowURanks = allowURanks;
-        Registrees = [.. registrees];
-    }
-
     /// <summary>
     /// The name of the tournament, e.g., Open Rey
     /// </summary>

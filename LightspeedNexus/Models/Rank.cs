@@ -171,37 +171,34 @@ public readonly struct Rank : IComparable<Rank>
         if (weapon > highest)
             return weapon;
 
-        switch (highest._rank)
+        return highest._rank switch
         {
-            case 'A': return weapon._rank switch
-                {
-                    'A' or 'B' => A,
-                    'C' or 'D' => B,
-                    _ => C
-                };
-            case 'B':
-                return weapon._rank switch
-                {
-                    'B' or 'C' => B,
-                    'D' or 'E' => C,
-                    _ => D
-                };
-            case 'C':
-                return weapon._rank switch
-                {
-                    'C' => C,
-                    'D' or 'E' => D,
-                    _ => E
-                };
-            case 'D':
-                return weapon._rank switch
-                {
-                    'D' => D,
-                    'E' => E,
-                    _ => U
-                };
-            default: return U;
-        }
+            'A' => weapon._rank switch
+            {
+                'A' or 'B' => A,
+                'C' or 'D' => B,
+                _ => C
+            },
+            'B' => weapon._rank switch
+            {
+                'B' or 'C' => B,
+                'D' or 'E' => C,
+                _ => D
+            },
+            'C' => weapon._rank switch
+            {
+                'C' => C,
+                'D' or 'E' => D,
+                _ => E
+            },
+            'D' => weapon._rank switch
+            {
+                'D' => D,
+                'E' => E,
+                _ => U
+            },
+            _ => U,
+        };
     }
 
     public static readonly Rank A = new('A');

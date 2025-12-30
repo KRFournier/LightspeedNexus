@@ -8,11 +8,4 @@ namespace LightspeedNexus.Models;
 public class CollectionObject
 {
     public Guid Id { get; set; } = Guid.NewGuid();
-
-    public CollectionObject() { }
-
-    public CollectionObject(Guid id)
-    {
-        Id = id;
-    }
 }

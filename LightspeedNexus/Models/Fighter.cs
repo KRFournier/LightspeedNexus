@@ -74,17 +74,6 @@ public class Fighter : CollectionObject
     public Rank Tano { get; set; } = Rank.U;
 
     public Fighter() { }
-    public Fighter(Guid id, int? onlineId, string firstName, string lastName, string? club, Rank rey, Rank ren, Rank tano)
-        : base(id)
-    {
-        OnlineId = onlineId;
-        FirstName = firstName;
-        LastName = lastName;
-        Club = club;
-        Rey = rey;
-        Ren = ren;
-        Tano = tano;
-    }
 
     /// <summary>
     /// Creates a new Fighter instance from a SaberSport-formatted JSON node.
@@ -162,4 +151,21 @@ public class Fighter : CollectionObject
     /// </summary>
     [BsonIgnore]
     public string Name => $"{FirstName} {LastName}";
+
+    /// <summary>
+    /// Convenient method to convert this Fighter into a Registree.
+    /// </summary>
+    public Registree ToRegistree(bool usesEffectiveRank = false, WeaponClass weaponOfChoice = WeaponClass.Rey) => new()
+    {
+        Id = Id,
+        OnlineId = OnlineId,
+        FirstName = FirstName,
+        LastName = LastName,
+        Club = Club,
+        Rey = Rey,
+        Ren = Ren,
+        Tano = Tano,
+        UsesEffectiveRank = usesEffectiveRank,
+        WeaponOfChoice = weaponOfChoice
+    };
 }

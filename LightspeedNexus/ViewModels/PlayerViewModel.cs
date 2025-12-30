@@ -9,6 +9,12 @@ public abstract partial class ParticipantViewModel : ViewModelBase
     #region Properties
 
     /// <summary>
+    /// The participant's unique identifier
+    /// </summary>
+    [ObservableProperty]
+    public partial Guid Guid { get; set; } = Guid.NewGuid();
+
+    /// <summary>
     /// The participant's name
     /// </summary>
     [ObservableProperty]
@@ -18,14 +24,7 @@ public abstract partial class ParticipantViewModel : ViewModelBase
     /// The participant's power level, based on rank or team members' ranks
     /// </summary>
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(Power))]
     public partial int PowerLevel { get; set; } = 0;
-
-    /// <summary>
-    /// The string representation of a participant's power. It defaults to just the
-    /// power level number, but it could be overriden to show, for example, rank.
-    /// </summary>
-    public virtual string Power => PowerLevel.ToString();
 
     /// <summary>
     /// Used by parent view models to set dragging state
@@ -40,25 +39,11 @@ public abstract partial class ParticipantViewModel : ViewModelBase
 
     #endregion
 
-    /// <summary>
-    /// Creates a brand new Participant
-    /// </summary>
-    public ParticipantViewModel() : base() { }
-
-    /// <summary>
-    /// Loads an existing Participant
-    /// </summary>
-    public ParticipantViewModel(Participant participant) : base()
-    {
-        Name = participant.Name;
-        PowerLevel = participant.PowerLevel;
-    }
-
     public abstract Participant ToModel();
 
     public static ParticipantViewModel FromModel(Participant participant) => participant switch
     {
-        Player player => new PlayerViewModel(player),
+        Player player => PlayerViewModel.FromModel(player),
         _ => throw new NotSupportedException($"Participant type {participant.GetType().Name} is not supported."),
     };
 }
@@ -106,45 +91,56 @@ public sealed partial class PlayerViewModel : ParticipantViewModel
     [ObservableProperty]
     public partial Rank Rank { get; set; } = Rank.U;
     partial void OnRankChanged(Rank value) => PowerLevel = Rank.Weight;
-    public override string Power => Rank.ToString();
 
     #endregion
 
     /// <summary>
-    /// Creates a brand new Player
-    /// </summary>
-    public PlayerViewModel() : base() { }
-
-    /// <summary>
-    /// Loads an existing Player
-    /// </summary>
-    public PlayerViewModel(Player Player) : base(Player)
-    {
-        OnlineId = Player.OnlineId;
-        Club = Player.Club;
-        Rank = Player.Rank;
-        Card = Player.Card;
-        Honor = Player.Honor;
-        ForceCalls = Player.ForceCalls;
-        IsEjected = Player.IsEjected;
-        WeaponOfChoice = Player.WeaponOfChoice;
-    }
-
-    /// <summary>
-    /// Creates a new Player from fighter info
-    /// </summary>
-    public PlayerViewModel(RegistreeViewModel registree, string name) : base()
-    {
-        Name = name;
-        WeaponOfChoice = registree.WeaponOfChoice;
-        Rank = registree.Rank;
-    }
-
-    /// <summary>
     /// Converts to a <see cref="Player"/>
     /// </summary>
-    public override Player ToModel() => new(Name, PowerLevel,
-        OnlineId, Club, Rank, Card, Honor, ForceCalls, IsEjected, WeaponOfChoice);
+    public override Player ToModel() => new()
+    {
+        Id = Guid,
+        Name = Name,
+        PowerLevel = PowerLevel,
+        OnlineId = OnlineId,
+        Club = Club,
+        Rank = Rank,
+        Card = Card,
+        Honor = Honor,
+        ForceCalls = ForceCalls,
+        IsEjected = IsEjected,
+        WeaponOfChoice = WeaponOfChoice
+    };
+
+    /// <summary>
+    /// Creates a new view model from a <see cref="Player"/>
+    /// </summary>
+    public static PlayerViewModel FromModel(Player player) => new()
+    {
+        Guid = player.Id,
+        Name = player.Name,
+        PowerLevel = player.PowerLevel,
+        OnlineId = player.OnlineId,
+        Club = player.Club,
+        Rank = player.Rank,
+        Card = player.Card,
+        Honor = player.Honor,
+        ForceCalls = player.ForceCalls,
+        IsEjected = player.IsEjected,
+        WeaponOfChoice = player.WeaponOfChoice
+    };
+
+    /// <summary>
+    /// Creates a player view model from a registree and a specified name
+    /// </summary>
+    public static PlayerViewModel FromRegistree(RegistreeViewModel registree, string name) => new()
+    {
+        Name = name,
+        OnlineId = registree.OnlineId,
+        Club = registree.Club,
+        Rank = registree.Rank,
+        WeaponOfChoice = registree.WeaponOfChoice
+    };
 
     /// <summary>
     /// Determines if the Player is disqualified either by card or ejection

@@ -94,41 +94,53 @@ public partial class RegistreeViewModel : ViewModelBase, IComparable<RegistreeVi
     #endregion
 
     /// <summary>
-    /// Creates a brand new Player
+    /// Converts to a <see cref="Player"/>
     /// </summary>
-    public RegistreeViewModel() { }
+    public Registree ToModel() => new()
+    {
+        Id = Guid,
+        OnlineId = OnlineId,
+        FirstName = FirstName,
+        LastName = LastName,
+        Club = Club,
+        Rey = ReyRank,
+        Ren = RenRank,
+        Tano = TanoRank,
+        UsesEffectiveRank = UseEffectiveRank,
+        WeaponOfChoice = WeaponOfChoice
+    };
 
     /// <summary>
     /// Loads an existing Player
     /// </summary>
-    public RegistreeViewModel(Registree registree)
+    public static RegistreeViewModel FromModel(Registree registree) => new()
     {
-        Guid = registree.Id;
-        OnlineId = registree.OnlineId;
-        FirstName = registree.FirstName;
-        LastName = registree.LastName;
-        Club = registree.Club;
-        ReyRank = registree.Rey;
-        RenRank = registree.Ren;
-        TanoRank = registree.Tano;
-        UseEffectiveRank = registree.UsesEffectiveRank;
-        WeaponOfChoice = registree.WeaponOfChoice;
-    }
-
-    /// <summary>
-    /// Converts to a <see cref="Player"/>
-    /// </summary>
-    public Registree ToModel() => new(
-        Guid, OnlineId, FirstName, LastName, Club, ReyRank, RenRank, TanoRank,
-        UseEffectiveRank, WeaponOfChoice
-        );
+        Guid = registree.Id,
+        OnlineId = registree.OnlineId,
+        FirstName = registree.FirstName,
+        LastName = registree.LastName,
+        Club = registree.Club,
+        ReyRank = registree.Rey,
+        RenRank = registree.Ren,
+        TanoRank = registree.Tano,
+        UseEffectiveRank = registree.UsesEffectiveRank,
+        WeaponOfChoice = registree.WeaponOfChoice
+    };
 
     /// <summary>
     /// Converts to a <see cref="FighterViewModel"/>
     /// </summary>
-    public FighterViewModel ToFighterViewModel() => new(
-        Guid, OnlineId, FirstName, LastName, Club, ReyRank, RenRank, TanoRank
-        );
+    public FighterViewModel ToFighterViewModel() => new()
+    {
+        Guid = Guid,
+        OnlineId = OnlineId,
+        FirstName = FirstName,
+        LastName = LastName,
+        Club = Club,
+        ReyRank = ReyRank,
+        RenRank = RenRank,
+        TanoRank = TanoRank
+    };
 
     /// <summary>
     /// Updates this registree with values from the given fighter. Useful for dialog boxes that edit fighter info.

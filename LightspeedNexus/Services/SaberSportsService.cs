@@ -1,21 +1,22 @@
-﻿using LiteDB;
+﻿using LightspeedNexus.Models;
+using LiteDB;
 using RestSharp;
 using System;
+using System.Linq;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
-using System.Security.Cryptography;
-using LightspeedNexus.Models;
-using System.Linq;
-using System.Text.Json;
 
 namespace LightspeedNexus.Services;
 
 public static class SaberSportsService
 {
-#if DEBUG
-    private static readonly RestClient _client = new("https://services-test.saber-sport.com");
-#else
     private static readonly RestClient _client = new("https://services.saber-sport.com");
+    private static readonly RestClient _testClient = new("https://services-test.saber-sport.com");
+
+#if DEBUG
+    private static RestClient Client => _testClient;
+#else
+    private static RestClient Client => _client;
 #endif
 
     private static string? _bearerToken;
@@ -52,7 +53,7 @@ public static class SaberSportsService
     {
         try
         {
-            await _client.PostAsync(
+            await Client.PostAsync(
                 new RestRequest("/auth/register")
                 .AddJsonBody($"{{\"email\":\"{email}\"}}")
                 );
@@ -68,7 +69,7 @@ public static class SaberSportsService
     {
         try
         {
-            await _client.PostAsync(
+            await Client.PostAsync(
                 new RestRequest("/auth/resend")
                 .AddJsonBody($"{{\"email\":\"{email}\"}}")
                 );
@@ -84,7 +85,7 @@ public static class SaberSportsService
     {
         try
         {
-            await _client.PostAsync(
+            await Client.PostAsync(
                 new RestRequest("/auth/rotate")
                 .AddJsonBody($"{{\"email\":\"{email}\",\"password\":\"{password}\"}}")
                 );
@@ -100,7 +101,7 @@ public static class SaberSportsService
     {
         try
         {
-            var response = await _client.PostAsync(
+            var response = await Client.PostAsync(
                 new RestRequest("/auth/token")
                 .AddJsonBody($"{{\"email\":\"{email}\",\"password\":\"{password}\"}}")
                 );
@@ -132,10 +133,10 @@ public static class SaberSportsService
                 if (node is JsonArray arr)
                 {
                     Fighter[] fighters = [.. arr.Select(f => Fighter.FromSaberSport(f)).Where(f => f is not null)!];
-                    return(true, "", fighters);
+                    return (true, "", fighters);
                 }
                 else
-                    return (false, "Saber sport returned fencers in an unexpected format.", []);                
+                    return (false, "Saber sport returned fencers in an unexpected format.", []);
             }
             else
                 return (false, response.ErrorMessage ?? response.ErrorException?.Message ?? "", []);

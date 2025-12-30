@@ -60,6 +60,26 @@ public abstract partial class StageViewModel(string name) : ViewModelBase, IDisp
     public abstract Stage ToModel();
 
     /// <summary>
+    /// Converts from a model
+    /// </summary>
+    public static StageViewModel? FromModel(Stage? model)
+    {
+        return model switch
+        {
+            SetupStage ss => SetupStageViewModel.FromModel(ss),
+            SquadronsStage sqs => SquadronsStageViewModel.FromModel(sqs),
+            PoolsStage ps => PoolsStageViewModel.FromModel(ps),
+            null => null,
+            _ => throw new NotSupportedException("Unsupported stage type"),
+        };
+    }
+
+    /// <summary>
+    /// Called when the tournament is saved
+    /// </summary>
+    public virtual void OnTournamentSaved() => Next?.OnTournamentSaved();
+
+    /// <summary>
     /// Unregisters this stage's message handlers
     /// </summary>
     public void Dispose()
@@ -81,12 +101,21 @@ public abstract partial class StageViewModel(string name) : ViewModelBase, IDisp
     /// Returns to the previous stage
     /// </summary>
     [RelayCommand(CanExecute = nameof(CanGoBack))]
-    private void GoBack() => StrongReferenceMessenger.Default.Send(new PreviousStageMessage(this, Previous));
+    private void GoBack()
+    {
+        OnGoingBack();
+        StrongReferenceMessenger.Default.Send(new PreviousStageMessage(this, Previous));
+    }
 
     /// <summary>
     /// Determines whether navigation to a previous item is possible.
     /// </summary>
     protected virtual bool CanGoBack() => true;
+
+    /// <summary>
+    /// Called before going back to the previous stage
+    /// </summary>
+    protected virtual void OnGoingBack() { }
 
     #endregion
 }

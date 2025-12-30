@@ -1,4 +1,7 @@
 using Avalonia.Controls;
+using Avalonia.Interactivity;
+using LightspeedNexus.Controls;
+using LightspeedNexus.ViewModels;
 using System;
 
 namespace LightspeedNexus.Views;
@@ -23,6 +26,15 @@ public partial class PoolsStageView : UserControl
         if (sender is StackPanel panel)
         {
             panel.Children[2].Height = Math.Max(0, panel.Bounds.Height - panel.Children[0].Bounds.Height - panel.Children[1].Bounds.Height);
+        }
+    }
+
+    public void Match_DoubleTapped(object? sender, RoutedEventArgs e)
+    {
+        if (sender is Decorator border && border.DataContext is MatchViewModel match && this.DataContext is PoolsStageViewModel vm)
+        {
+            if (vm.EditMatchCommand.CanExecute(match))
+                vm.EditMatchCommand.Execute(match);
         }
     }
 }

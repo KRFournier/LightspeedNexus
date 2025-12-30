@@ -17,6 +17,9 @@ public partial class SquadronViewModel : ViewModelBase
     public ObservableCollection<ParticipantViewModel> Participants { get; set; } = [];
 
     [ObservableProperty]
+    public partial Guid Guid { get; set; } = Guid.NewGuid();
+
+    [ObservableProperty]
     public partial int Weight { get; set; } = 0;
 
     [ObservableProperty]
@@ -41,18 +44,6 @@ public partial class SquadronViewModel : ViewModelBase
     }
 
     /// <summary>
-    /// Loads an existing squadron
-    /// </summary>
-    public SquadronViewModel(Squadron squadron, IReadOnlyList<ParticipantViewModel> participants)
-    {
-        Participants = [.. squadron.Players.Select(i => participants[i])];
-        Participants.CollectionChanged += OnParticipantsChanged;
-
-        Weight = squadron.Weight;
-        Settings = new MatchSettingsViewModel(squadron.MatchSettings);
-    }
-
-    /// <summary>
     /// When the participants change, update the number of matches
     /// </summary>
     public void OnParticipantsChanged(object? sender, NotifyCollectionChangedEventArgs e) => OnPropertyChanged(nameof(NumMatches));
@@ -60,11 +51,24 @@ public partial class SquadronViewModel : ViewModelBase
     /// <summary>
     /// Converts to a <see cref="Squadron"/>
     /// </summary>
-    public Squadron ToModel() => new(
-        StrongReferenceMessenger.Default.Send(new RequestParticipantIndicies(Participants)),
-        Weight,
-        Settings.ToModel()
-        );
+    public Squadron ToModel() => new()
+    {
+        Guid = Guid,
+        Players = [.. Participants.Select(p => p.Guid)],
+        Weight = Weight,
+        MatchSettings = Settings.ToModel()
+    };
+
+    /// <summary>
+    /// Converts from a <see cref="Squadron"/>
+    /// </summary>
+    public static SquadronViewModel FromModel(Squadron squadron) => new()
+    {
+        Guid = squadron.Guid,
+        Participants = [.. squadron.Players.Select(id => StrongReferenceMessenger.Default.Send(new RequestParticipant(id)))],
+        Weight = squadron.Weight,
+        Settings = MatchSettingsViewModel.FromModel(squadron.MatchSettings)
+    };
 
     /// <summary>
     /// Clears participants and resets weight

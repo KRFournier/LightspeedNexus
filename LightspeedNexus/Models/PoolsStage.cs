@@ -1,20 +1,14 @@
-﻿namespace LightspeedNexus.Models;
+﻿using System;
+
+namespace LightspeedNexus.Models;
 
 /// <summary>
 /// A round robin pool of matches.
 /// </summary>
 public class Pool
 {
-    public int Squadron { get; set; } = -1;
-    //public Match[] Matches { get; set; } = [];
-
-    public Pool() { }
-
-    public Pool(int squadron) //, Match[] matches)
-    {
-        Squadron = squadron;
-        //Matches = matches;
-    }
+    public Guid Squadron { get; set; } = Guid.NewGuid();
+    public MatchGroup MatchGroup { get; set; } = new();
 }
 
 /// <summary>
@@ -24,11 +18,4 @@ public class Pool
 public class PoolsStage : Stage
 {
     public Pool[] Pools { get; set; } = [];
-
-    public PoolsStage() { }
-
-    public PoolsStage(Pool[] pools, Stage? next) : base(next)
-    {
-        Pools = pools;
-    }
 }
