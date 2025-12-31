@@ -26,6 +26,7 @@
 		<conv:TrueToInvisibleConverter x:Key="TrueToInvis"/>
 		<conv:StringsAreEqualConverter x:Key="StringsEqual"/>
 		<conv:WeaponToColorConverter x:Key="WeaponToColor"/>
+		<conv:UppercaseConverter x:Key="Uppercase"/>
 	</Application.Resources>
 
 	<Application.Styles>

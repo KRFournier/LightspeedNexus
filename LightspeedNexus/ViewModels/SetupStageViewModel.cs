@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging.Messages;
 using LightspeedNexus.Models;
 using LightspeedNexus.Services;
 using System;
@@ -12,7 +13,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace LightspeedNexus.ViewModels;
@@ -92,7 +92,10 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Title))]
+    [NotifyPropertyChangedFor(nameof(HasChoice))]
     public partial bool TanoAllowed { get; set; } = false;
+
+    public bool HasChoice => new bool[] { ReyAllowed, RenAllowed, TanoAllowed }.Count(b => b) > 1;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Title))]
@@ -141,17 +144,12 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
     #region Next Stage
 
     [RelayCommand(CanExecute = nameof(CanBegin))]
-    private void Begin() => Next = new SquadronsStageViewModel(
-        Registrees.Select(r => PlayerViewModel.FromRegistree(r, $"{r.FirstName} {r.LastName}"))
-        );
-    //Registrees
-    //    .GroupBy(r => r.FirstName)
-    //    .SelectMany(g =>
-    //    {
-    //        bool sharesName = g.Count() > 1;
-    //        return g.Select(r => new PlayerViewModel(r, sharesName ? $"{r.FirstName} {r.LastName}" : r.FirstName));
-    //    })
-    //);
+    private void Begin()
+    {
+        bool hasChoice = HasChoice;
+        var players = Registrees.Select(r => PlayerViewModel.FromRegistree(r, $"{r.FirstName} {r.LastName}", hasChoice));
+        Next = new SquadronsStageViewModel(players);
+    }
 
     public bool CanBegin() => Date is not null && Registrees.Count >= 4 && Registrees.All(r => r.MeetsRequirements);
 
@@ -240,14 +238,15 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
             AllowCRanks = model.AllowCRanks,
             AllowDRanks = model.AllowDRanks,
             AllowERanks = model.AllowERanks,
-            AllowURanks = model.AllowURanks,
-            Next = StageViewModel.FromModel(model.Next)
+            AllowURanks = model.AllowURanks
         };
 
         foreach (var r in model.Registrees)
             vm.AddPlayer(RegistreeViewModel.FromModel(r));
 
         vm.ValidateRoster();
+
+        vm.Next = FromModel(model.Next, vm.HasChoice);
 
         return vm;
     }

@@ -14,12 +14,115 @@
 	
 	<Design.DataContext>
 		<vm:PlayerViewModel Name="Jayne Doe"
-							WeaponOfChoice="Tano"/>
+							ShowWeapons="True"
+							WeaponOfChoice="Ren"/>
 	</Design.DataContext>
 	
-	<Grid ColumnDefinitions="Auto,5,*"
+	<Grid ColumnDefinitions="30,1,*"
 		  IsHitTestVisible="False">
+
+		<Panel IsVisible="{Binding ShowWeapons}">
+			
+			<!--Rey/Ren-->
+			<Grid ColumnDefinitions="15,4,4,100"
+				  Grid.ColumnSpan="4"
+				  Height="24"
+				  VerticalAlignment="Bottom"
+				  IsVisible="{Binding !IsTano}"
+				  Margin="5,0">
+
+				<!--Quillons-->
+				<Border Background="{Binding WeaponOfChoice,
+							Converter={StaticResource WeaponToColor}}"
+						IsVisible="{Binding IsRen}"
+						Grid.Column="2"
+						Opacity="0.3"
+						CornerRadius="2"
+						IsHitTestVisible="False"
+						HorizontalAlignment="Stretch"
+						VerticalAlignment="Stretch"/>
+
+				<!--Main Blade-->
+				<Border Background="{Binding WeaponOfChoice,
+							Converter={StaticResource WeaponToColor}}"
+						Grid.Column="2"
+						Grid.ColumnSpan="2"
+						Height="4"
+						Opacity="0.3"
+						CornerRadius="2"
+						IsHitTestVisible="False"
+						HorizontalAlignment="Stretch"
+						VerticalAlignment="Stretch"/>
+
+				<!--Main Hilt-->
+				<Rectangle Fill="#2f2f2f"
+						   Grid.ColumnSpan="3"
+						   Height="4"
+						   IsHitTestVisible="False"
+						   HorizontalAlignment="Stretch"
+						   VerticalAlignment="Stretch"/>
+
+			</Grid>
 		
+			<!--Tano-->
+			<StackPanel Spacing="2"
+						VerticalAlignment="Bottom"
+						Margin="0,0,0,4"
+						Grid.ColumnSpan="4"
+						IsVisible="{Binding IsTano}">			
+				<Grid ColumnDefinitions="15,4,4,80"
+					  Margin="5,0">
+
+					<!--Blade-->
+					<Border Background="{Binding WeaponOfChoice,
+								Converter={StaticResource WeaponToColor}}"
+							Grid.Column="2"
+							Grid.ColumnSpan="2"
+							Height="4"
+							Opacity="0.3"
+							CornerRadius="2"
+							IsHitTestVisible="False"
+							HorizontalAlignment="Stretch"
+							VerticalAlignment="Stretch"/>
+
+					<!--Hilt-->
+					<Rectangle Fill="#2f2f2f"
+							   Grid.ColumnSpan="3"
+							   Height="4"
+							   IsHitTestVisible="False"
+							   HorizontalAlignment="Stretch"
+							   VerticalAlignment="Stretch"/>
+				
+				</Grid>
+				<Grid ColumnDefinitions="15,4,4,80"
+					  Margin="5,0">
+
+					<!--Blade-->
+					<Border Background="{Binding WeaponOfChoice,
+								Converter={StaticResource WeaponToColor}}"
+							Grid.Column="2"
+							Grid.ColumnSpan="2"
+							Height="4"
+							Opacity="0.3"
+							CornerRadius="2"
+							IsHitTestVisible="False"
+							HorizontalAlignment="Stretch"
+							VerticalAlignment="Stretch"/>
+
+					<!--Hilt-->
+					<Rectangle Fill="#2f2f2f"
+							   Grid.ColumnSpan="3"
+							   Height="4"
+							   IsHitTestVisible="False"
+							   HorizontalAlignment="Stretch"
+							   VerticalAlignment="Stretch"/>
+				
+				</Grid>			
+			</StackPanel>
+
+		</Panel>
+		
+		<!--Rank-->
 		<Viewbox StretchDirection="DownOnly"
 				 IsHitTestVisible="False">
 			<TextBlock Classes="medium"
@@ -29,43 +132,14 @@
 					   Text="{Binding Rank}"/>
 		</Viewbox>
 
-		<StackPanel Spacing="-4"
+		<!--Name-->
+		<TextBlock Classes="medium"
 					Grid.Column="2"
 					IsHitTestVisible="False"
-					VerticalAlignment="Center">
-			<TextBlock Classes="medium"
-					   IsHitTestVisible="False"
-					   HorizontalAlignment="Left"
-					   VerticalAlignment="Center"
-					   TextTrimming="CharacterEllipsis"
-					   Text="{Binding Name}"/>
-			<!--<Border Background="{Binding WeaponOfChoice,
-						Converter={StaticResource WeaponToColor}}"
-					Height="10"
-					Padding="4,0"
-					Width="32"
-					IsHitTestVisible="False"
 					HorizontalAlignment="Left"
-					VerticalAlignment="Bottom"
-					CornerRadius="4">
-				<Panel>
-					<TextBlock FontSize="7"
-							   LineHeight="8"
-							   Foreground="Black"
-							   VerticalAlignment="Center"
-							   IsHitTestVisible="False"
-							   Text="{Binding WeaponOfChoice}"/>
-					<TextBlock FontSize="7"
-							   LineHeight="8"
-							   FontWeight="Bold"
-							   Foreground="Black"
-							   VerticalAlignment="Center"
-							   HorizontalAlignment="Right"
-							   IsHitTestVisible="False"
-							   Text="{Binding Rank}"/>
-				</Panel>
-			</Border>-->
-		</StackPanel>
+					VerticalAlignment="Center"
+					TextTrimming="CharacterEllipsis"
+					Text="{Binding Name}"/>
 		
 	</Grid>
 	

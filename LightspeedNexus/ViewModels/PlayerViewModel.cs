@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using LightspeedNexus.Models;
 using System;
 
@@ -41,9 +42,9 @@ public abstract partial class ParticipantViewModel : ViewModelBase
 
     public abstract Participant ToModel();
 
-    public static ParticipantViewModel FromModel(Participant participant) => participant switch
+    public static ParticipantViewModel FromModel(Participant participant, bool showWeapons) => participant switch
     {
-        Player player => PlayerViewModel.FromModel(player),
+        Player player => PlayerViewModel.FromModel(player, showWeapons),
         _ => throw new NotSupportedException($"Participant type {participant.GetType().Name} is not supported."),
     };
 }
@@ -86,7 +87,16 @@ public sealed partial class PlayerViewModel : ParticipantViewModel
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Rank))]
+    [NotifyPropertyChangedFor(nameof(IsRey))]
+    [NotifyPropertyChangedFor(nameof(IsRen))]
+    [NotifyPropertyChangedFor(nameof(IsTano))]
     public partial WeaponClass WeaponOfChoice { get; set; } = WeaponClass.Rey;
+    public bool IsRey => WeaponOfChoice == WeaponClass.Rey;
+    public bool IsRen => WeaponOfChoice == WeaponClass.Ren;
+    public bool IsTano => WeaponOfChoice == WeaponClass.Tano;
+
+    [ObservableProperty]
+    public partial bool ShowWeapons { get; set; } = false;
 
     [ObservableProperty]
     public partial Rank Rank { get; set; } = Rank.U;
@@ -115,7 +125,7 @@ public sealed partial class PlayerViewModel : ParticipantViewModel
     /// <summary>
     /// Creates a new view model from a <see cref="Player"/>
     /// </summary>
-    public static PlayerViewModel FromModel(Player player) => new()
+    public static PlayerViewModel FromModel(Player player, bool showWeapons) => new()
     {
         Guid = player.Id,
         Name = player.Name,
@@ -127,19 +137,21 @@ public sealed partial class PlayerViewModel : ParticipantViewModel
         Honor = player.Honor,
         ForceCalls = player.ForceCalls,
         IsEjected = player.IsEjected,
-        WeaponOfChoice = player.WeaponOfChoice
+        WeaponOfChoice = player.WeaponOfChoice,
+        ShowWeapons = showWeapons
     };
 
     /// <summary>
     /// Creates a player view model from a registree and a specified name
     /// </summary>
-    public static PlayerViewModel FromRegistree(RegistreeViewModel registree, string name) => new()
+    public static PlayerViewModel FromRegistree(RegistreeViewModel registree, string name, bool showWeapons) => new()
     {
         Name = name,
         OnlineId = registree.OnlineId,
         Club = registree.Club,
         Rank = registree.Rank,
-        WeaponOfChoice = registree.WeaponOfChoice
+        WeaponOfChoice = registree.WeaponOfChoice,
+        ShowWeapons = showWeapons
     };
 
     /// <summary>

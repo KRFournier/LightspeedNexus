@@ -62,12 +62,12 @@ public abstract partial class StageViewModel(string name) : ViewModelBase, IDisp
     /// <summary>
     /// Converts from a model
     /// </summary>
-    public static StageViewModel? FromModel(Stage? model)
+    public static StageViewModel? FromModel(Stage? model, bool showWeapons)
     {
         return model switch
         {
             SetupStage ss => SetupStageViewModel.FromModel(ss),
-            SquadronsStage sqs => SquadronsStageViewModel.FromModel(sqs),
+            SquadronsStage sqs => SquadronsStageViewModel.FromModel(sqs, showWeapons),
             PoolsStage ps => PoolsStageViewModel.FromModel(ps),
             null => null,
             _ => throw new NotSupportedException("Unsupported stage type"),

@@ -15,10 +15,32 @@
 
 		<!--Header-->
 		<Grid ColumnDefinitions="260,10,*,10,260">
+			
+			<!--Safe Back Button-->
 			<Button HorizontalAlignment="Stretch"
 					VerticalAlignment="Stretch"
 					HorizontalContentAlignment="Center"
 					VerticalContentAlignment="Center"
+					IsVisible="{Binding !IsStarted}"
+					Command="{Binding GoBackCommand}">
+				<StackPanel>
+					<StackPanel>
+						<StackPanel Orientation="Horizontal"
+									Spacing="10">
+							<PathIcon Data="{StaticResource arrow_left_regular}"/>
+							<TextBlock Classes="large" Text="Squadrons"/>
+						</StackPanel>
+					</StackPanel>
+				</StackPanel>
+			</Button>
+
+			<!--Dengerous! Back Button-->
+			<RepeatButton Classes="red"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					HorizontalContentAlignment="Center"
+					VerticalContentAlignment="Center"
+					IsVisible="{Binding IsStarted}"
 					Command="{Binding GoBackCommand}">
 				<StackPanel>
 					<StackPanel>
@@ -38,7 +60,8 @@
 						</StackPanel>
 					</StackPanel>
 				</StackPanel>
-			</Button>
+			</RepeatButton>
+			
 			<TextBlock Classes="giant"
 					   Grid.Column="2"
 					   HorizontalAlignment="Center"

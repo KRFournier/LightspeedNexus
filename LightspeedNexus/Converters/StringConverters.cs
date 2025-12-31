@@ -10,3 +10,12 @@ public class StringsAreEqualConverter : IValueConverter
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) => value;
 }
+
+public class UppercaseConverter : IValueConverter
+{
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        value?.ToString()?.ToUpper(culture) ?? value;
+
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        value;
+}

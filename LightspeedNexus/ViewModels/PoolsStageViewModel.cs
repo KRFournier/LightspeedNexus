@@ -17,6 +17,10 @@ public partial class PoolsStageViewModel : StageViewModel
 
     public ObservableCollection<PoolViewModel> Pools { get; set; } = [];
 
+    public bool IsStarted => Pools.Any(p => p.MatchGroup.IsStarted);
+
+    public bool IsCompleted => Pools.All(p => p.MatchGroup.IsCompleted);
+
     #endregion
 
     #region Commands
@@ -42,21 +46,41 @@ public partial class PoolsStageViewModel : StageViewModel
     {
     }
 
+    protected PoolsStageViewModel(PoolsStage model) : this()
+    {
+        foreach (var pool in model.Pools)
+            AddPool(PoolViewModel.FromModel(pool));
+    }
+
+    protected PoolsStageViewModel(IEnumerable<SquadronViewModel> sqaudrons) : this()
+    {
+        foreach (var squadron in sqaudrons)
+            AddPool(PoolViewModel.FromSquadron(squadron));
+    }
+
     public override PoolsStage ToModel() => new()
     {
         Pools = [..Pools.Select(p => p.ToModel())],
         Next = Next?.ToModel()
     };
 
-    public static PoolsStageViewModel FromModel(PoolsStage model) => new()
-    {
-        Pools = [.. model.Pools.Select(p => PoolViewModel.FromModel(p))]
-    };
+    public static PoolsStageViewModel FromModel(PoolsStage model) => new(model);
 
-    public static PoolsStageViewModel FromSquadrons(IEnumerable<SquadronViewModel> sqaudrons) => new()
+    public static PoolsStageViewModel FromSquadrons(IEnumerable<SquadronViewModel> sqaudrons) => new(sqaudrons);
+
+    protected void AddPool(PoolViewModel pool)
     {
-        Pools = [.. sqaudrons.Select(s => PoolViewModel.FromSquadron(s))]
-    };
+        Pools.Add(pool);
+        pool.MatchGroup.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(MatchGroupViewModel.IsStarted))
+                OnPropertyChanged(nameof(IsStarted));
+            else if (e.PropertyName == nameof(MatchGroupViewModel.IsCompleted))
+                OnPropertyChanged(nameof(IsCompleted));
+        };
+        OnPropertyChanged(nameof(IsStarted));
+        OnPropertyChanged(nameof(IsCompleted));
+    }
 
     public override void OnTournamentSaved()
     {

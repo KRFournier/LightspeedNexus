@@ -139,12 +139,12 @@ public partial class SquadronsStageViewModel : StageViewModel,
     /// <summary>
     /// Loads settings from a model
     /// </summary>
-    public static SquadronsStageViewModel FromModel(SquadronsStage model)
+    public static SquadronsStageViewModel FromModel(SquadronsStage model, bool showWeapons)
     {
         SquadronsStageViewModel vm = new()
         {
             IsAutoAssigned = model.IsAutoAssigned,
-            Participants = [.. model.Participants.Select(p => ParticipantViewModel.FromModel(p))],
+            Participants = [.. model.Participants.Select(p => ParticipantViewModel.FromModel(p, showWeapons))],
         };
 
         int i = 0;
@@ -157,7 +157,7 @@ public partial class SquadronsStageViewModel : StageViewModel,
         })];
 
         // must do this last to avoid issues with references
-        vm.Next = StageViewModel.FromModel(model.Next);
+        vm.Next = FromModel(model.Next, showWeapons);
 
         return vm;
     }
