@@ -10,6 +10,7 @@
 			<ResourceDictionary.MergedDictionaries>
 				<MergeResourceInclude Source="avares://LightspeedNexus/Styles/ButtonTemplate.axaml"/>
 				<MergeResourceInclude Source="avares://LightspeedNexus/Styles/ToggleButtonTemplate.axaml"/>
+				<MergeResourceInclude Source="avares://LightspeedNexus/Styles/HoldButtonTemplate.axaml"/>
 				<MergeResourceInclude Source="avares://LightspeedNexus/Styles/CheckBoxTemplate.axaml"/>
 				<MergeResourceInclude Source="avares://LightspeedNexus/Styles/RadioButtonTemplate.axaml"/>
 				<MergeResourceInclude Source="avares://LightspeedNexus/Styles/TextBoxTemplate.axaml"/>
@@ -40,6 +41,7 @@
 		<StyleInclude Source="avares://LightspeedNexus/Styles/SimpleLightspeedBorderStyles.axaml" />
 		<StyleInclude Source="avares://LightspeedNexus/Styles/ChevronBorderStyles.axaml" />
 		<StyleInclude Source="avares://LightspeedNexus/Styles/ButtonStyles.axaml" />
+		<!--<StyleInclude Source="avares://LightspeedNexus/Styles/HoldButtonStyles.axaml" />-->
 		<StyleInclude Source="avares://LightspeedNexus/Styles/TextBlockStyles.axaml" />
 		<StyleInclude Source="avares://LightspeedNexus/Styles/TextBoxStyles.axaml" />
 	</Application.Styles>

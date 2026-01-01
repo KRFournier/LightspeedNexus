@@ -35,32 +35,35 @@
 			</Button>
 
 			<!--Dengerous! Back Button-->
-			<RepeatButton Classes="red"
-					HorizontalAlignment="Stretch"
-					VerticalAlignment="Stretch"
-					HorizontalContentAlignment="Center"
-					VerticalContentAlignment="Center"
-					IsVisible="{Binding IsStarted}"
-					Command="{Binding GoBackCommand}">
+			<c:HoldButton Classes="red"
+						  x:Name="WarningBackButton"
+						  HorizontalAlignment="Stretch"
+						  VerticalAlignment="Stretch"
+						  HorizontalContentAlignment="Center"
+						  VerticalContentAlignment="Center"
+						  IsVisible="{Binding IsStarted}"
+						  Command="{Binding GoBackCommand}">
 				<StackPanel>
 					<StackPanel>
 						<StackPanel Orientation="Horizontal"
+									HorizontalAlignment="Center"
 									Spacing="10">
 							<PathIcon Data="{StaticResource arrow_left_regular}"/>
 							<TextBlock Classes="large" Text="Squadrons"/>
 						</StackPanel>
 						<StackPanel Orientation="Horizontal"
+									HorizontalAlignment="Center"
 									Spacing="2">
-							<PathIcon Data="{StaticResource warning_regular}"
+							<PathIcon Data="{StaticResource warning_regular}"									  
 									  VerticalAlignment="Center"
 									  Height="12"/>
 							<TextBlock Classes="info"
-									   VerticalAlignment="Center"
-									   Text="Matches will be reset"/>
+									   HorizontalAlignment="Center"
+									   Text="Hold to reset matches"/>
 						</StackPanel>
 					</StackPanel>
 				</StackPanel>
-			</RepeatButton>
+			</c:HoldButton>
 			
 			<TextBlock Classes="giant"
 					   Grid.Column="2"

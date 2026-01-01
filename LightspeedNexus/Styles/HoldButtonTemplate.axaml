@@ -5,16 +5,16 @@
 	<Design.PreviewWith>
 		<Border Padding="20">
 			<StackPanel Spacing="20">
-				<Button Content="Click Me!" />
-				<Button IsEnabled="False" Content="Click Me!" />
+				<c:HoldButton Content="Click Me!" />
+				<c:HoldButton IsEnabled="False" Content="Click Me!" />
 			</StackPanel>
 		</Border>
 	</Design.PreviewWith>
 
-	<ControlTheme x:Key="{x:Type Button}" TargetType="Button">
-		<Setter Property="Background" Value="{StaticResource BlueBackground}" />
+	<ControlTheme x:Key="{x:Type c:HoldButton}" TargetType="c:HoldButton">
+		<Setter Property="Background" Value="{StaticResource RedBackground}" />
 		<Setter Property="Foreground" Value="{StaticResource White}" />
-		<Setter Property="BorderBrush" Value="{StaticResource Blue}"/>
+		<Setter Property="BorderBrush" Value="{StaticResource Red}"/>
 		<Setter Property="BorderThickness" Value="{DynamicResource ButtonBorderThemeThickness}" />
 		<Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
 		<Setter Property="Padding" Value="10,5.5,10,5"/>
@@ -36,9 +36,13 @@
 									BorderBrush="{TemplateBinding BorderBrush}"
 								    BorderThickness="{TemplateBinding BorderThickness}"
 					                ProgressBrush="{TemplateBinding Background}"
+									Progress="{TemplateBinding Progress}"
 								    Padding="{TemplateBinding Padding}"
 									CornerThickness="6,6,4,8"
 									CornerGap="0">
+					<!--<c:LightspeedBorder.Transitions>
+						<DoubleTransition Property="Progress" Duration="{TemplateBinding Delay}"/>
+					</c:LightspeedBorder.Transitions>-->
 					<ContentPresenter x:Name="PART_ContentPresenter"
 									  Background="Transparent"
 									  BorderBrush="Transparent"

@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Utilities;
+using System;
 
 namespace LightspeedNexus.Controls;
 
@@ -77,6 +78,18 @@ public class LightspeedBorder : Decorator
     public static readonly StyledProperty<double> BottomRightOpacityProperty =
         AvaloniaProperty.Register<Border, double>(nameof(BottomRightOpacity), 1.0);
 
+    /// <summary>
+    /// Defines the <see cref="ProgressBrush"/> property.
+    /// </summary>
+    public static readonly StyledProperty<IBrush?> ProgressBrushProperty =
+        AvaloniaProperty.Register<Border, IBrush?>(nameof(ProgressBrush), null);
+
+    /// <summary>
+    /// Defines the <see cref="Progress"/> property.
+    /// </summary>
+    public static readonly StyledProperty<double> ProgressProperty =
+        AvaloniaProperty.Register<Border, double>(nameof(Progress), 0.0);
+
     private Thickness? _layoutThickness;
     private double _scale;
 
@@ -96,7 +109,9 @@ public class LightspeedBorder : Decorator
             TopLeftOpacityProperty,
             BottomRightBorderBrushProperty,
             BottomRightBackgroundProperty,
-            BottomRightOpacityProperty
+            BottomRightOpacityProperty,
+            ProgressBrushProperty,
+            ProgressProperty
             );
         AffectsMeasure<LightspeedBorder>(
             CornerThicknessProperty,
@@ -219,6 +234,24 @@ public class LightspeedBorder : Decorator
         set => SetValue(BottomRightOpacityProperty, value);
     }
 
+    /// <summary>
+    /// Gets or sets the brush used to paint the progress
+    /// </summary>
+    public IBrush? ProgressBrush
+    {
+        get => GetValue(ProgressBrushProperty);
+        set => SetValue(ProgressBrushProperty, value);
+    }
+
+    /// <summary>
+    /// Gets or sets the progress value (0.0 to 1.0).
+    /// </summary>
+    public double Progress
+    {
+        get => GetValue(ProgressProperty);
+        set => SetValue(ProgressProperty, value);
+    }
+
     protected Thickness LayoutThickness
     {
         get
@@ -273,6 +306,13 @@ public class LightspeedBorder : Decorator
             ctx.EndFigure(true);
         }
         context.DrawGeometry(Background, new Pen(BorderBrush, thickness), g);
+
+        if (Progress > 0.0 && ProgressBrush != null)
+        {
+            Rect progressRect = new(rect.Left, rect.Top, rect.Width * Progress, rect.Height);
+            using var clip = context.PushClip(progressRect);
+            context.DrawGeometry(ProgressBrush, null, g);
+        }
 
         PathGeometry gTopLeft = new();
         using (var ctx = gTopLeft.Open())

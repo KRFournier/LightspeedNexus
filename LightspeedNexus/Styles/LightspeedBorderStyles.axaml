@@ -5,10 +5,10 @@
     <Design.PreviewWith>
 		<Border Padding="20" Background="#1f1f1f">
 			<StackPanel Spacing="20">
-				<c:LightspeedBorder Classes="item error">
+				<c:LightspeedBorder Classes="item error" Progress="0.3">
 					<TextBlock>Hello, World!</TextBlock>
 				</c:LightspeedBorder>
-				<c:LightspeedBorder Classes="small color">
+				<c:LightspeedBorder Classes="small color" Progress="0.7">
 					<TextBlock>Hello, World!</TextBlock>
 				</c:LightspeedBorder>
 			</StackPanel>
@@ -22,6 +22,7 @@
 		<Setter Property="BorderBrush" Value="{StaticResource Gray}"/>
 		<Setter Property="TopLeftBorderBrush" Value="{StaticResource Gray}"/>
 		<Setter Property="BottomRightBorderBrush" Value="{StaticResource Gray}"/>
+		<Setter Property="ProgressBrush" Value="{StaticResource GrayBackground}"/>
 		<Setter Property="Padding" Value="12"/>
 		<Setter Property="CornerThickness" Value="20,20,20,30"/>
 		<Setter Property="CornerGap" Value="4,4,4,6"/>
@@ -131,6 +132,7 @@
 		<Setter Property="BorderBrush" Value="{StaticResource Red}"/>
 		<Setter Property="TopLeftBorderBrush" Value="{StaticResource RedBrush}"/>
 		<Setter Property="BottomRightBorderBrush" Value="{StaticResource RedBrush}"/>
+		<Setter Property="ProgressBrush" Value="{StaticResource RedBackground}"/>
 		<Style Selector="^:pointerover">
 			<Setter Property="TopLeftBackground" Value="{StaticResource RedBrush}"/>
 			<Setter Property="TopLeftOpacity" Value="1.0"/>
