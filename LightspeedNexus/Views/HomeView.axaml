@@ -50,9 +50,23 @@
 												<TextBlock Classes="medium"
 														   IsHitTestVisible="False"
 														   Text="{Binding SetupStage.Title}"/>
-												<c:DeleteButton Grid.Column="2"
+												<!--<c:DeleteButton Grid.Column="2"
 																Command="{Binding $parent[ItemsControl].((vm:HomeViewModel)DataContext).DeleteTournamentCommand}"
-																CommandParameter="{Binding .}"/>
+																CommandParameter="{Binding .}"/>-->
+												<c:HoldButton Classes="delete reveal-button"
+															  Grid.Column="2"
+															  Command="{Binding $parent[ItemsControl].((vm:HomeViewModel)DataContext).DeleteTournamentCommand}"
+															  CommandParameter="{Binding .}">
+													<StackPanel Orientation="Horizontal"
+																Spacing="8"
+																VerticalAlignment="Center"
+																HorizontalAlignment="Center">
+														<TextBlock Classes="reveal-text tiny info"
+																   VerticalAlignment="Center"
+																   Text="(Hold to Delete)"/>
+														<PathIcon Data="{StaticResource delete_regular}"/>
+													</StackPanel>
+												</c:HoldButton>
 											</Grid>
 											<Grid ColumnDefinitions="*,10,Auto,4,Auto,15">
 												<TextBlock Classes="info"

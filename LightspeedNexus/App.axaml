@@ -41,7 +41,7 @@
 		<StyleInclude Source="avares://LightspeedNexus/Styles/SimpleLightspeedBorderStyles.axaml" />
 		<StyleInclude Source="avares://LightspeedNexus/Styles/ChevronBorderStyles.axaml" />
 		<StyleInclude Source="avares://LightspeedNexus/Styles/ButtonStyles.axaml" />
-		<!--<StyleInclude Source="avares://LightspeedNexus/Styles/HoldButtonStyles.axaml" />-->
+		<StyleInclude Source="avares://LightspeedNexus/Styles/HoldButtonStyles.axaml" />
 		<StyleInclude Source="avares://LightspeedNexus/Styles/TextBlockStyles.axaml" />
 		<StyleInclude Source="avares://LightspeedNexus/Styles/TextBoxStyles.axaml" />
 	</Application.Styles>
