@@ -68,7 +68,8 @@ public abstract partial class StageViewModel(string name) : ViewModelBase, IDisp
         {
             SetupStage ss => SetupStageViewModel.FromModel(ss),
             SquadronsStage sqs => SquadronsStageViewModel.FromModel(sqs, showWeapons),
-            PoolsStage ps => PoolsStageViewModel.FromModel(ps),
+            PoolsStage ps => PoolsStageViewModel.FromModel(ps, showWeapons),
+            SeedingStage sds => SeedingStageViewModel.FromModel(sds, showWeapons),
             null => null,
             _ => throw new NotSupportedException("Unsupported stage type"),
         };

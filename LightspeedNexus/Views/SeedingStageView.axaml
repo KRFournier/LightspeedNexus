@@ -1,0 +1,128 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:LightspeedNexus.ViewModels"
+			 xmlns:m="clr-namespace:LightspeedNexus.Models"
+			 xmlns:v="clr-namespace:LightspeedNexus.Views"
+			 xmlns:c="clr-namespace:LightspeedNexus.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 ClipToBounds="False"
+             x:Class="LightspeedNexus.Views.SeedingStageView"
+			 x:DataType="vm:SeedingStageViewModel">
+
+	<Design.DataContext>
+		<vm:SeedingStageViewModel/>
+	</Design.DataContext>
+
+	<Grid x:Name="Root" RowDefinitions="Auto,10,Auto,10,*">
+
+		<!--Header-->
+		<Grid ColumnDefinitions="260,10,*,10,260">
+
+			<Button HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					HorizontalContentAlignment="Center"
+					VerticalContentAlignment="Center"
+					Command="{Binding GoBackCommand}">
+				<StackPanel>
+					<StackPanel>
+						<StackPanel Orientation="Horizontal"
+									Spacing="10">
+							<PathIcon Data="{StaticResource arrow_left_regular}"/>
+							<TextBlock Classes="large" Text="Pools"/>
+						</StackPanel>
+					</StackPanel>
+				</StackPanel>
+			</Button>
+
+			<TextBlock Classes="giant"
+					   Grid.Column="2"
+					   HorizontalAlignment="Center"
+					   VerticalAlignment="Center"
+					   Text="{Binding Title, StringFormat='{}{0} Rankings'}"/>
+			
+			<Button Grid.Column="4"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					HorizontalContentAlignment="Center"
+					VerticalContentAlignment="Center">
+				<StackPanel>
+					<StackPanel Orientation="Horizontal"
+								Spacing="10">
+						<TextBlock Classes="large" Text="Bracket"/>
+						<PathIcon Data="{StaticResource arrow_right_regular}"/>
+					</StackPanel>
+				</StackPanel>
+			</Button>
+		</Grid>
+
+		<!--Options-->
+		<c:LightspeedBorder Classes="small nocorners"
+							Grid.Row="2">		
+			
+		</c:LightspeedBorder>
+		
+		<!--Rankings-->
+		<Grid Grid.Row="4" RowDefinitions="Auto,10,Auto,10,*">
+		
+			<!--<TextBlock Classes="giant"
+						VerticalAlignment="Center"
+						Text="Rankings"/>-->
+
+			<Grid ColumnDefinitions="50,10,*,10,100,10,100,10,150"
+				  Margin="12,0"
+				  Grid.Row="2">
+				<TextBlock Grid.ColumnSpan="2">Name</TextBlock>
+				<TextBlock Grid.Column="4" HorizontalAlignment="Center">Wins</TextBlock>
+				<TextBlock Grid.Column="6" HorizontalAlignment="Center">Losses</TextBlock>
+				<TextBlock Grid.Column="8" HorizontalAlignment="Center">Score</TextBlock>
+			</Grid>
+			
+			<!-- Players -->
+			<ScrollViewer Grid.Row="4">
+				<ItemsControl ItemsSource="{Binding Seeds}">
+					<ItemsControl.ItemsPanel>
+						<ItemsPanelTemplate>
+							<StackPanel Spacing="10"/>
+						</ItemsPanelTemplate>
+					</ItemsControl.ItemsPanel>
+					<ItemsControl.ItemTemplate>
+						<DataTemplate DataType="vm:SeedViewModel">
+							<c:LightspeedBorder Classes="item">
+								<Grid ColumnDefinitions="50,10,*,10,100,10,100,10,150">
+									<TextBlock Grid.Column="0"
+											   Classes="large"
+											   Text="{Binding Place, StringFormat='{}{0}.'}"
+											   HorizontalAlignment="Right"
+											   VerticalAlignment="Center"/>
+									<TextBlock Grid.Column="2"
+											   Classes="large"
+											   Text="{Binding Participant.Name}"
+											   VerticalAlignment="Center"/>
+									<TextBlock Grid.Column="4"
+											   Classes="large"
+											   Text="{Binding Wins}"
+											   HorizontalAlignment="Center"
+											   VerticalAlignment="Center"/>
+									<TextBlock Grid.Column="6"
+											   Classes="large"
+											   Text="{Binding Losses}"
+											   HorizontalAlignment="Center"
+											   VerticalAlignment="Center"/>
+									<TextBlock Grid.Column="8"
+											   Classes="large"
+											   Text="{Binding Score, StringFormat='F1'}"
+											   HorizontalAlignment="Center"
+											   VerticalAlignment="Center"/>
+								</Grid>
+							</c:LightspeedBorder>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+			</ScrollViewer>
+
+		</Grid>
+		
+	</Grid>
+</UserControl>

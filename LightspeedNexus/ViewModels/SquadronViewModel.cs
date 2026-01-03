@@ -54,7 +54,7 @@ public partial class SquadronViewModel : ViewModelBase
     public Squadron ToModel() => new()
     {
         Guid = Guid,
-        Players = [.. Participants.Select(p => p.Guid)],
+        Participants = [.. Participants.Select(p => p.Guid)],
         Weight = Weight,
         MatchSettings = Settings.ToModel()
     };
@@ -65,7 +65,7 @@ public partial class SquadronViewModel : ViewModelBase
     public static SquadronViewModel FromModel(Squadron squadron) => new()
     {
         Guid = squadron.Guid,
-        Participants = [.. squadron.Players.Select(id => StrongReferenceMessenger.Default.Send(new RequestParticipant(id)))],
+        Participants = [.. squadron.Participants.Select(id => StrongReferenceMessenger.Default.Send(new RequestParticipant(id)))],
         Weight = squadron.Weight,
         Settings = MatchSettingsViewModel.FromModel(squadron.MatchSettings)
     };

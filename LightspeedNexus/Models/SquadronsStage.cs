@@ -8,7 +8,7 @@ namespace LightspeedNexus.Models;
 public sealed class Squadron
 {
     public Guid Guid { get; set; } = Guid.NewGuid();
-    public Guid[] Players { get; set; } = [];
+    public Guid[] Participants { get; set; } = [];
     public int Weight { get; set; } = 0;
     public MatchSettings MatchSettings { get; set; } = new();
 }
