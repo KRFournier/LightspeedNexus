@@ -26,21 +26,6 @@ public partial class PoolsStageViewModel : StageViewModel
 
     #region Commands
 
-    [RelayCommand]
-    private async static Task EditMatch(MatchViewModel match)
-    {
-        try
-        {
-            var result = await DialogBox(match.GetEditViewModel(), "Set Final Match Score");
-            if (result.IsOk)
-                match.UpdateMatch(result.Item);
-        }
-        catch (Exception e)
-        {
-            Debug.WriteLine($"Unexpected error editing a match: {e}");
-        }
-    }
-
     /// <summary>
     /// Go to the Pools Stage
     /// </summary>
@@ -60,12 +45,12 @@ public partial class PoolsStageViewModel : StageViewModel
         Next = Next?.ToModel()
     };
 
-    public static PoolsStageViewModel FromModel(PoolsStage model, bool showWeapons)
+    public static PoolsStageViewModel FromModel(PoolsStage model)
     {
         var stage = new PoolsStageViewModel();
         foreach (var pool in model.Pools)
             stage.AddPool(PoolViewModel.FromModel(pool));
-        stage.Next = FromModel(model.Next, showWeapons);
+        stage.Next = FromModel(model.Next);
         return stage;
     }
 

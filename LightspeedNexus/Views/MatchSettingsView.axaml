@@ -11,7 +11,7 @@
 			 x:DataType="vm:MatchSettingsViewModel">
 	
 	<Design.DataContext>
-		<vm:MatchSettingsViewModel IsLocked="True"/>
+		<vm:MatchSettingsViewModel IsLocked="False"/>
 	</Design.DataContext>
 
 	<UserControl.Styles>
@@ -86,7 +86,7 @@
 					CornerRadius="0"
 					IsVisible="{Binding !IsLocked}"
 					Command="{Binding DecreaseAllCommand}">
-				<PathIcon Width="24" Height="24" Data="{StaticResource arrow_previous_regular}"/>
+				<PathIcon Width="24" Height="24" Data="{StaticResource chevron_left_regular}"/>
 			</Button>
 			
 			<!--Score-->
@@ -172,7 +172,7 @@
 					HorizontalAlignment="Stretch"
 					IsVisible="{Binding !IsLocked}"
 					Command="{Binding IncreaseAllCommand}">
-				<PathIcon Width="24" Height="24" Data="{StaticResource arrow_next_regular}"/>
+				<PathIcon Width="24" Height="24" Data="{StaticResource chevron_right_regular}"/>
 			</Button>
 			
 		</Grid>

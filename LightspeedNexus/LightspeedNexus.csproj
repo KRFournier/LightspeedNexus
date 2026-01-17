@@ -52,7 +52,6 @@
     <Compile Remove="ViewModels\CompetitionViewModel.cs" />
     <Compile Remove="ViewModels\EventViewModel.cs" />
     <Compile Remove="ViewModels\LocalMatchSettingsViewModel.cs" />
-    <Compile Remove="ViewModels\ParticipantViewModel.cs" />
     <Compile Remove="ViewModels\PoolMatchViewModel.cs" />
     <Compile Remove="ViewModels\RosterViewModel.cs" />
     <Compile Remove="ViewModels\SettingsViewModel.cs" />
@@ -68,18 +67,18 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="11.3.6" />
-    <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.3.6" />
+    <PackageReference Include="Avalonia" Version="11.3.11" />
+    <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.3.11" />
     <PackageReference Include="Avalonia.Controls.ItemsRepeater" Version="11.1.5" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.6" />
-    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.6" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.11" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.11" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.3.6" />
+    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.3.11" />
     <PackageReference Include="LiteDB" Version="5.0.21" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9" />
-    <PackageReference Include="RestSharp" Version="112.1.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.2" />
+    <PackageReference Include="RestSharp" Version="113.1.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -94,6 +93,15 @@
     </Compile>
     <Compile Update="Views\MatchNotFoundView.axaml.cs">
       <DependentUpon>MatchNotFoundView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\BracketStageView.axaml.cs">
+      <DependentUpon>BracketStageView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\BracketMatchView.axaml.cs">
+      <DependentUpon>BracketMatchView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\ByeView.axaml.cs">
+      <DependentUpon>ByeView.axaml</DependentUpon>
     </Compile>
     <Compile Update="Views\SeedingStageView.axaml.cs">
       <DependentUpon>SeedingStageView.axaml</DependentUpon>

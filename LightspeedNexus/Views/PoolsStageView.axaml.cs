@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using LightspeedNexus.Controls;
 using LightspeedNexus.ViewModels;
@@ -29,12 +30,12 @@ public partial class PoolsStageView : UserControl
         }
     }
 
-    public void Match_DoubleTapped(object? sender, RoutedEventArgs e)
+    public void Match_DoubleTapped(object? sender, TappedEventArgs e)
     {
-        if (sender is Decorator border && border.DataContext is MatchViewModel match && this.DataContext is PoolsStageViewModel vm)
+        if (sender is Decorator border && border.DataContext is MatchViewModel match)
         {
-            if (vm.EditMatchCommand.CanExecute(match))
-                vm.EditMatchCommand.Execute(match);
+            if (match.EditMatchCommand.CanExecute(null))
+                match.EditMatchCommand.Execute(null);
         }
     }
 }

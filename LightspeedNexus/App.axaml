@@ -37,6 +37,7 @@
 		<StyleInclude Source="avares://LightspeedNexus/Styles/Icons.axaml" />
 		<StyleInclude Source="avares://LightspeedNexus/Styles/Graphics.axaml" />
 		<StyleInclude Source="avares://LightspeedNexus/Styles/Animations.axaml" />
+		<StyleInclude Source="avares://LightspeedNexus/Styles/BracketLinesStyles.axaml" />
 		<StyleInclude Source="avares://LightspeedNexus/Styles/LightspeedBorderStyles.axaml" />
 		<StyleInclude Source="avares://LightspeedNexus/Styles/SimpleLightspeedBorderStyles.axaml" />
 		<StyleInclude Source="avares://LightspeedNexus/Styles/ChevronBorderStyles.axaml" />

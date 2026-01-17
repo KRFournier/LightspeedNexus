@@ -1,0 +1,37 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:vm="clr-namespace:LightspeedNexus.ViewModels"
+			 xmlns:c="clr-namespace:LightspeedNexus.Controls"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="150"
+			 Width="300" Height="100" Margin="5"
+			 ClipToBounds="False"
+             x:Class="LightspeedNexus.Views.BracketMatchView"
+			 x:DataType="vm:MatchViewModel">
+
+	<Design.DataContext>
+		<vm:StandardMatchViewModel>
+			<vm:StandardMatchViewModel.IsMatchStarted>false</vm:StandardMatchViewModel.IsMatchStarted>
+			<vm:StandardMatchViewModel.Number>7</vm:StandardMatchViewModel.Number>
+			<vm:StandardMatchViewModel.IsLive>false</vm:StandardMatchViewModel.IsLive>
+		</vm:StandardMatchViewModel>
+	</Design.DataContext>
+	
+	<c:LightspeedBorder Classes="color item"
+					 Padding="0"
+					 ClipToBounds="False"
+					 BorderBrush="{StaticResource BlueRed}"
+					 DoubleTapped="Match_DoubleTapped"
+					 Opacity="{Binding IsMatchCompleted, Converter={StaticResource TrueToFaded}}">
+		<Panel>
+			<Image Source="/Assets/LightspeedStarbat.png"
+				Opacity=".15"
+				Width="64"
+				Height="64"
+				IsVisible="{Binding IsEmpty}"/>
+			<ContentControl Content="{Binding .}" ClipToBounds="False"/>
+		</Panel>
+	</c:LightspeedBorder>
+
+</UserControl>

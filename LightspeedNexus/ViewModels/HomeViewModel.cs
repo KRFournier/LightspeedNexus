@@ -1,12 +1,10 @@
 ﻿using Avalonia.Controls;
-using Avalonia.Input;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using LightspeedNexus.Messages;
 using LightspeedNexus.Models;
 using LightspeedNexus.Services;
 using System.Collections.ObjectModel;
-using System.Linq;
 
 namespace LightspeedNexus.ViewModels;
 

@@ -18,7 +18,7 @@ public sealed class Squadron
 /// </summary>
 public sealed class SquadronsStage : Stage
 {
-    public Participant[] Participants { get; set; } = [];
+    public IParticipant[] Participants { get; set; } = [];
     public bool IsAutoAssigned { get; set; } = true;
     public Squadron[] Squadrons { get; set; } = [];
 }

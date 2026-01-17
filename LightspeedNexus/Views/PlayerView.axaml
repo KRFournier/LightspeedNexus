@@ -13,13 +13,12 @@
 			 IsHitTestVisible="False">
 	
 	<Design.DataContext>
-		<vm:PlayerViewModel Name="Jayne Doe"
-							ShowWeapons="True"
-							WeaponOfChoice="Ren"/>
+		<vm:PlayerViewModel/>
 	</Design.DataContext>
 	
 	<Grid ColumnDefinitions="30,1,*"
-		  IsHitTestVisible="False">
+		  IsHitTestVisible="False"
+		  IsVisible="{Binding !IsBye}">
 
 		<Panel IsVisible="{Binding ShowWeapons}">
 			

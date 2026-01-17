@@ -24,12 +24,23 @@ namespace LightspeedNexus.ViewModels;
 /// </summary>
 public class RosterChangedMessage() { }
 
+/// <summary>
+/// Requests the current count of registrees
+/// </summary>
+public class RequestRegistreeCount() : RequestMessage<int> { }
+
+/// <summary>
+/// Requests to know if multiple weapon choices are available,
+/// which affects whether or not we display chosen weapons
+/// </summary>
+public class RequestHasChoice : RequestMessage<bool> { }
+
 #endregion
 
 /// <summary>
 /// The tournament settings
 /// </summary>
-public partial class SetupStageViewModel : StageViewModel, IComparer
+public partial class SetupStageViewModel : StageViewModel, IComparer, IRecipient<RequestRegistreeCount>, IRecipient<RequestHasChoice>
 {
     #region Properties
 
@@ -84,10 +95,12 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Title))]
+    [NotifyPropertyChangedFor(nameof(HasChoice))]
     public partial bool ReyAllowed { get; set; } = true;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Title))]
+    [NotifyPropertyChangedFor(nameof(HasChoice))]
     public partial bool RenAllowed { get; set; } = false;
 
     [ObservableProperty]
@@ -146,8 +159,7 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
     [RelayCommand(CanExecute = nameof(CanBegin))]
     private void Begin()
     {
-        bool hasChoice = HasChoice;
-        var players = Registrees.Select(r => PlayerViewModel.FromRegistree(r, $"{r.FirstName} {r.LastName}", hasChoice));
+        var players = Registrees.Select(r => PlayerViewModel.FromRegistree(r, $"{r.FirstName} {r.LastName}"));
         Next = new SquadronsStageViewModel(players);
     }
 
@@ -170,6 +182,14 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
 
     #endregion
 
+    #region Message Handlers
+
+    public void Receive(RequestRegistreeCount message) => message.Reply(Registrees.Count);
+
+    public void Receive(RequestHasChoice message) => message.Reply(HasChoice);
+
+    #endregion
+
     /// <summary>
     /// Creates brand new settings
     /// </summary>
@@ -178,6 +198,8 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
         LoadFighters();
         SortedPlayers = new(Registrees);
         SortedPlayers.SortDescriptions.Add(new DataGridComparerSortDescription(this, ListSortDirection.Ascending));
+
+        StrongReferenceMessenger.Default.RegisterAll(this);
 
         Registrees.CollectionChanged += (s, e) =>
         {
@@ -246,7 +268,7 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
 
         vm.ValidateRoster();
 
-        vm.Next = FromModel(model.Next, vm.HasChoice);
+        vm.Next = FromModel(model.Next);
 
         return vm;
     }

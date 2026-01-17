@@ -1,0 +1,403 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:LightspeedNexus.ViewModels"
+			 xmlns:m="clr-namespace:LightspeedNexus.Models"
+			 xmlns:v="clr-namespace:LightspeedNexus.Views"
+			 xmlns:c="clr-namespace:LightspeedNexus.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 ClipToBounds="False"
+             x:Class="LightspeedNexus.Views.BracketStageView"
+			 x:DataType="vm:BracketStageViewModel">
+
+	<Design.DataContext>
+		<vm:BracketStageViewModel/>
+	</Design.DataContext>
+
+	<Grid x:Name="Root" RowDefinitions="Auto,10,*">
+
+		<!--Header-->
+		<Grid ColumnDefinitions="260,10,*,10,260">
+
+			<!--Safe Back Button-->
+			<Button HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					HorizontalContentAlignment="Center"
+					VerticalContentAlignment="Center"
+					IsVisible="{Binding !IsStarted}"
+					Command="{Binding GoBackCommand}">
+				<StackPanel>
+					<StackPanel>
+						<StackPanel Orientation="Horizontal"
+									Spacing="10">
+							<PathIcon Data="{StaticResource arrow_left_regular}"/>
+							<TextBlock Classes="large" Text="Seeds"/>
+						</StackPanel>
+					</StackPanel>
+				</StackPanel>
+			</Button>
+
+			<!--Dangerous! Back Button-->
+			<c:HoldButton Classes="red"
+						  x:Name="WarningBackButton"
+						  HorizontalAlignment="Stretch"
+						  VerticalAlignment="Stretch"
+						  HorizontalContentAlignment="Center"
+						  VerticalContentAlignment="Center"
+						  IsVisible="{Binding IsStarted}"
+						  Command="{Binding GoBackCommand}">
+				<StackPanel>
+					<StackPanel>
+						<StackPanel Orientation="Horizontal"
+									HorizontalAlignment="Center"
+									Spacing="10">
+							<PathIcon Data="{StaticResource arrow_left_regular}"/>
+							<TextBlock Classes="large" Text="Seeds"/>
+						</StackPanel>
+						<StackPanel Orientation="Horizontal"
+									HorizontalAlignment="Center"
+									Spacing="2">
+							<PathIcon Data="{StaticResource warning_regular}"
+									  VerticalAlignment="Center"
+									  Height="12"/>
+							<TextBlock Classes="info"
+									   HorizontalAlignment="Center"
+									   Text="Hold to reset matches"/>
+						</StackPanel>
+					</StackPanel>
+				</StackPanel>
+			</c:HoldButton>
+
+			<TextBlock Classes="giant"
+					   Grid.Column="2"
+					   HorizontalAlignment="Center"
+					   VerticalAlignment="Center"
+					   Text="{Binding Title}"/>
+
+			<Button Grid.Column="4"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					HorizontalContentAlignment="Center"
+					VerticalContentAlignment="Center"
+					Command="{Binding GoToResultsCommand}">
+				<StackPanel>
+					<StackPanel Orientation="Horizontal"
+								Spacing="10">
+						<TextBlock Classes="large" Text="Results"/>
+						<PathIcon Data="{StaticResource arrow_right_regular}"/>
+					</StackPanel>
+				</StackPanel>
+			</Button>
+
+		</Grid>
+
+		<Grid Grid.Row="2"
+			  ClipToBounds="False"
+			  Grid.IsSharedSizeScope="True"
+			  RowDefinitions="Auto,10,*">
+
+			<!--Headers-->
+			<Viewbox Stretch="Uniform"
+					StretchDirection="DownOnly"
+					Margin="16 0"
+					ClipToBounds="False">
+				<Grid RowDefinitions="Auto,Auto,Auto,Auto"
+					  ClipToBounds="False">
+
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition SharedSizeGroup="Top64"/>
+						<ColumnDefinition SharedSizeGroup="Top64Lines"/>
+						<ColumnDefinition SharedSizeGroup="Top32"/>
+						<ColumnDefinition SharedSizeGroup="Top32Lines"/>
+						<ColumnDefinition SharedSizeGroup="Top16"/>
+						<ColumnDefinition SharedSizeGroup="Top16Lines"/>
+						<ColumnDefinition SharedSizeGroup="Top8"/>
+						<ColumnDefinition SharedSizeGroup="Top8Lines"/>
+						<ColumnDefinition SharedSizeGroup="Top4"/>
+						<ColumnDefinition SharedSizeGroup="Top4Lines"/>
+						<ColumnDefinition SharedSizeGroup="Final"/>
+						<ColumnDefinition Width="100"/>
+						<ColumnDefinition SharedSizeGroup="Third"/>
+					</Grid.ColumnDefinitions>
+
+					<!--Rank Indicators-->
+					<Grid ColumnDefinitions="2,*,10,Auto,10,*,2" Margin="50,10"
+						Grid.Column="3" Grid.ColumnSpan="9" Grid.Row="3"
+						IsVisible="{Binding IsTop16Ranked}">
+						<c:Divider Grid.Column="0" LineBrush="{StaticResource Gray}" LineThickness="2"/>
+						<c:Divider Grid.Column="1" Orientation="Horizontal" LineBrush="{StaticResource Gray}" LineThickness="2"/>
+						<TextBlock Classes="medium info" Grid.Column="3" Text="Ranked" Foreground="{StaticResource Gray}"/>
+						<c:Divider Grid.Column="5" Orientation="Horizontal" LineBrush="{StaticResource Gray}" LineThickness="2"/>
+						<c:Divider Grid.Column="6" LineBrush="{StaticResource Gray}" LineThickness="2"/>
+					</Grid>
+					<Grid ColumnDefinitions="2,*,10,Auto,10,*,2" Margin="50,10"
+						Grid.Column="5" Grid.ColumnSpan="7" Grid.Row="3"
+						IsVisible="{Binding IsTop8Ranked}">
+						<c:Divider Grid.Column="0" LineBrush="{StaticResource Gray}" LineThickness="2"/>
+						<c:Divider Grid.Column="1" Orientation="Horizontal" LineBrush="{StaticResource Gray}" LineThickness="2"/>
+						<TextBlock Classes="medium info" Grid.Column="3" Text="Ranked" Foreground="{StaticResource Gray}"/>
+						<c:Divider Grid.Column="5" Orientation="Horizontal" LineBrush="{StaticResource Gray}" LineThickness="2"/>
+						<c:Divider Grid.Column="6" LineBrush="{StaticResource Gray}" LineThickness="2"/>
+					</Grid>
+					<Grid ColumnDefinitions="2,*,10,Auto,10,*,2" Margin="50,10"
+						Grid.Column="7" Grid.ColumnSpan="5" Grid.Row="3"
+						IsVisible="{Binding IsTop4Ranked}">
+						<c:Divider Grid.Column="0" LineBrush="{StaticResource Gray}" LineThickness="2"/>
+						<c:Divider Grid.Column="1" Orientation="Horizontal" LineBrush="{StaticResource Gray}" LineThickness="2"/>
+						<TextBlock Classes="medium info" Grid.Column="3" Text="Ranked" Foreground="{StaticResource Gray}"/>
+						<c:Divider Grid.Column="5" Orientation="Horizontal" LineBrush="{StaticResource Gray}" LineThickness="2"/>
+						<c:Divider Grid.Column="6" LineBrush="{StaticResource Gray}" LineThickness="2"/>
+					</Grid>
+					<Grid ColumnDefinitions="2,*,10,Auto,10,*,2" Margin="50,10"
+						Grid.Column="9" Grid.ColumnSpan="3" Grid.Row="3"
+						IsVisible="{Binding IsTop2Ranked}">
+						<c:Divider Grid.Column="0" LineBrush="{StaticResource Gray}" LineThickness="2"/>
+						<c:Divider Grid.Column="1" Orientation="Horizontal" LineBrush="{StaticResource Gray}" LineThickness="2"/>
+						<TextBlock Classes="medium info" Grid.Column="3" Text="Ranked" Foreground="{StaticResource Gray}"/>
+						<c:Divider Grid.Column="5" Orientation="Horizontal" LineBrush="{StaticResource Gray}" LineThickness="2"/>
+						<c:Divider Grid.Column="6" LineBrush="{StaticResource Gray}" LineThickness="2"/>
+					</Grid>
+
+					<!--Top64-->
+					<Viewbox Grid.Column="0" Grid.Row="1" StretchDirection="DownOnly" Stretch="Uniform" HorizontalAlignment="Center"
+							 IsVisible="{Binding !Top64.IsEmpty}">
+						<StackPanel	Spacing="10">
+							<TextBlock Classes="large" HorizontalAlignment="Center" VerticalAlignment="Center">Round 1</TextBlock>
+							<v:MatchSettingsView Grid.Column="2" DataContext="{Binding Top64.Settings}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+						</StackPanel>
+					</Viewbox>
+
+					<!--Top32-->
+					<Viewbox Grid.Column="2" Grid.Row="1" StretchDirection="DownOnly" Stretch="Uniform" HorizontalAlignment="Center"
+							 IsVisible="{Binding !Top32.IsEmpty}">
+						<StackPanel	Spacing="10">
+							<TextBlock Classes="large" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding Top32Title}"/>
+							<v:MatchSettingsView Grid.Column="2" DataContext="{Binding Top32.Settings}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+						</StackPanel>
+					</Viewbox>
+
+					<!--Top16-->
+					<Viewbox Grid.Column="4" Grid.Row="1" StretchDirection="DownOnly" Stretch="Uniform" HorizontalAlignment="Center"
+							 IsVisible="{Binding !Top16.IsEmpty}">
+						<StackPanel	Spacing="10">
+							<TextBlock Classes="large" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding Top16Title}"/>
+							<v:MatchSettingsView Grid.Column="2" DataContext="{Binding Top16.Settings}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+						</StackPanel>
+					</Viewbox>
+
+					<!--Quarterfinals-->
+					<Viewbox Grid.Column="6" Grid.Row="1" StretchDirection="DownOnly" Stretch="Uniform" HorizontalAlignment="Center"
+							 IsVisible="{Binding !Quarterfinals.IsEmpty}">
+						<StackPanel	Spacing="10">
+							<TextBlock Classes="large" HorizontalAlignment="Center" VerticalAlignment="Center">Quarterfinals</TextBlock>
+							<v:MatchSettingsView Grid.Column="2" DataContext="{Binding Quarterfinals.Settings}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+						</StackPanel>
+					</Viewbox>
+
+					<!--Semifinals-->
+					<Viewbox Grid.Column="8" Grid.Row="1" StretchDirection="DownOnly" Stretch="Uniform" HorizontalAlignment="Center">
+						<StackPanel	Spacing="10">
+							<TextBlock Classes="large" HorizontalAlignment="Center" VerticalAlignment="Center">Semifinals</TextBlock>
+							<v:MatchSettingsView Grid.Column="2" DataContext="{Binding Semifinals.Settings}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+						</StackPanel>
+					</Viewbox>
+
+					<!--Final-->
+					<Viewbox Grid.Column="10" Grid.Row="1" StretchDirection="DownOnly" Stretch="Uniform" HorizontalAlignment="Center">
+						<StackPanel	Spacing="10">
+							<TextBlock Classes="large" HorizontalAlignment="Center" VerticalAlignment="Center">Finals</TextBlock>
+							<v:MatchSettingsView Grid.Column="2" DataContext="{Binding Final.Settings}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+						</StackPanel>
+					</Viewbox>
+
+					<!--Third-->
+					<Viewbox Grid.Column="12" Grid.Row="1" StretchDirection="DownOnly" Stretch="Uniform" HorizontalAlignment="Center">
+						<StackPanel	Spacing="10">
+							<TextBlock Classes="large" HorizontalAlignment="Center" VerticalAlignment="Center">Third</TextBlock>
+							<v:MatchSettingsView Grid.Column="2" DataContext="{Binding Third.Settings}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+						</StackPanel>
+					</Viewbox>
+
+				</Grid>
+			</Viewbox>
+		
+			<!--Brackets-->
+			<ScrollViewer Grid.Row="2"
+						  ClipToBounds="False">
+				<Viewbox Stretch="Uniform"
+						 StretchDirection="DownOnly"
+						 Margin="16 0"
+						 ClipToBounds="False">
+					<Grid ClipToBounds="False">
+					
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition SharedSizeGroup="Top64"/>
+							<ColumnDefinition SharedSizeGroup="Top64Lines"/>
+							<ColumnDefinition SharedSizeGroup="Top32"/>
+							<ColumnDefinition SharedSizeGroup="Top32Lines"/>
+							<ColumnDefinition SharedSizeGroup="Top16"/>
+							<ColumnDefinition SharedSizeGroup="Top16Lines"/>
+							<ColumnDefinition SharedSizeGroup="Top8"/>
+							<ColumnDefinition SharedSizeGroup="Top8Lines"/>
+							<ColumnDefinition SharedSizeGroup="Top4"/>
+							<ColumnDefinition SharedSizeGroup="Top4Lines"/>
+							<ColumnDefinition SharedSizeGroup="Final"/>
+							<ColumnDefinition Width="100"/>
+							<ColumnDefinition SharedSizeGroup="Third"/>
+						</Grid.ColumnDefinitions>
+
+						<!--Top64-->
+						<Grid Grid.Column="0" x:Name="Top64Panel" MinHeight="3200"
+							  RowDefinitions="*,*,*,*,*,*,*,*,*,*,*,*,*,*,*,*,*,*,*,*,*,*,*,*,*,*,*,*,*,*,*,*"
+							  IsVisible="{Binding !Top64.IsEmpty}">
+							<v:BracketMatchView Grid.Row="0"  DataContext="{Binding Top64[0]}" />
+							<v:BracketMatchView Grid.Row="1"  DataContext="{Binding Top64[1]}" />
+							<v:BracketMatchView Grid.Row="2"  DataContext="{Binding Top64[2]}" />
+							<v:BracketMatchView Grid.Row="3"  DataContext="{Binding Top64[3]}" />
+							<v:BracketMatchView Grid.Row="4"  DataContext="{Binding Top64[4]}" />
+							<v:BracketMatchView Grid.Row="5"  DataContext="{Binding Top64[5]}" />
+							<v:BracketMatchView Grid.Row="6"  DataContext="{Binding Top64[6]}" />
+							<v:BracketMatchView Grid.Row="7"  DataContext="{Binding Top64[7]}" />
+							<v:BracketMatchView Grid.Row="8"  DataContext="{Binding Top64[8]}" />
+							<v:BracketMatchView Grid.Row="9"  DataContext="{Binding Top64[9]}" />
+							<v:BracketMatchView Grid.Row="10" DataContext="{Binding Top64[10]}"/>
+							<v:BracketMatchView Grid.Row="11" DataContext="{Binding Top64[11]}"/>
+							<v:BracketMatchView Grid.Row="12" DataContext="{Binding Top64[12]}"/>
+							<v:BracketMatchView Grid.Row="13" DataContext="{Binding Top64[13]}"/>
+							<v:BracketMatchView Grid.Row="14" DataContext="{Binding Top64[14]}"/>
+							<v:BracketMatchView Grid.Row="15" DataContext="{Binding Top64[15]}"/>
+							<v:BracketMatchView Grid.Row="16" DataContext="{Binding Top64[16]}" />
+							<v:BracketMatchView Grid.Row="17" DataContext="{Binding Top64[17]}" />
+							<v:BracketMatchView Grid.Row="18" DataContext="{Binding Top64[18]}" />
+							<v:BracketMatchView Grid.Row="19" DataContext="{Binding Top64[19]}" />
+							<v:BracketMatchView Grid.Row="20" DataContext="{Binding Top64[20]}" />
+							<v:BracketMatchView Grid.Row="21" DataContext="{Binding Top64[21]}" />
+							<v:BracketMatchView Grid.Row="22" DataContext="{Binding Top64[22]}" />
+							<v:BracketMatchView Grid.Row="23" DataContext="{Binding Top64[23]}" />
+							<v:BracketMatchView Grid.Row="24" DataContext="{Binding Top64[24]}" />
+							<v:BracketMatchView Grid.Row="25" DataContext="{Binding Top64[25]}" />
+							<v:BracketMatchView Grid.Row="26" DataContext="{Binding Top64[26]}"/>
+							<v:BracketMatchView Grid.Row="27" DataContext="{Binding Top64[27]}"/>
+							<v:BracketMatchView Grid.Row="28" DataContext="{Binding Top64[28]}"/>
+							<v:BracketMatchView Grid.Row="29" DataContext="{Binding Top64[29]}"/>
+							<v:BracketMatchView Grid.Row="30" DataContext="{Binding Top64[30]}"/>
+							<v:BracketMatchView Grid.Row="31" DataContext="{Binding Top64[31]}"/>
+						</Grid>
+						<Grid Grid.Column="1" Width="100" RowDefinitions="*,*,*,*,*,*,*,*,*,*,*,*,*,*,*,*"
+							   IsVisible="{Binding !Top64.IsEmpty}">
+							<c:BracketLines Grid.Row="0"  IsTopVisible="{Binding !Top64[0].HasBye}"  IsBottomVisible="{Binding !Top64[1].HasBye}" />
+							<c:BracketLines Grid.Row="1"  IsTopVisible="{Binding !Top64[2].HasBye}"  IsBottomVisible="{Binding !Top64[3].HasBye}" />
+							<c:BracketLines Grid.Row="2"  IsTopVisible="{Binding !Top64[4].HasBye}"  IsBottomVisible="{Binding !Top64[5].HasBye}" />
+							<c:BracketLines Grid.Row="3"  IsTopVisible="{Binding !Top64[6].HasBye}"  IsBottomVisible="{Binding !Top64[7].HasBye}" />
+							<c:BracketLines Grid.Row="4"  IsTopVisible="{Binding !Top64[8].HasBye}"  IsBottomVisible="{Binding !Top64[9].HasBye}" />
+							<c:BracketLines Grid.Row="5"  IsTopVisible="{Binding !Top64[10].HasBye}" IsBottomVisible="{Binding !Top64[11].HasBye}"/>
+							<c:BracketLines Grid.Row="6"  IsTopVisible="{Binding !Top64[12].HasBye}" IsBottomVisible="{Binding !Top64[13].HasBye}"/>
+							<c:BracketLines Grid.Row="7"  IsTopVisible="{Binding !Top64[14].HasBye}" IsBottomVisible="{Binding !Top64[15].HasBye}"/>
+							<c:BracketLines Grid.Row="8"  IsTopVisible="{Binding !Top64[16].HasBye}" IsBottomVisible="{Binding !Top64[17].HasBye}"/>
+							<c:BracketLines Grid.Row="9"  IsTopVisible="{Binding !Top64[18].HasBye}" IsBottomVisible="{Binding !Top64[19].HasBye}"/>
+							<c:BracketLines Grid.Row="10" IsTopVisible="{Binding !Top64[20].HasBye}" IsBottomVisible="{Binding !Top64[21].HasBye}"/>
+							<c:BracketLines Grid.Row="11" IsTopVisible="{Binding !Top64[22].HasBye}" IsBottomVisible="{Binding !Top64[23].HasBye}"/>
+							<c:BracketLines Grid.Row="12" IsTopVisible="{Binding !Top64[24].HasBye}" IsBottomVisible="{Binding !Top64[25].HasBye}"/>
+							<c:BracketLines Grid.Row="13" IsTopVisible="{Binding !Top64[26].HasBye}" IsBottomVisible="{Binding !Top64[27].HasBye}"/>
+							<c:BracketLines Grid.Row="14" IsTopVisible="{Binding !Top64[28].HasBye}" IsBottomVisible="{Binding !Top64[29].HasBye}"/>
+							<c:BracketLines Grid.Row="15" IsTopVisible="{Binding !Top64[30].HasBye}" IsBottomVisible="{Binding !Top64[31].HasBye}"/>
+						</Grid>
+					
+						<!--Top32-->
+						<Grid Grid.Column="2" MinHeight="1600" RowDefinitions="*,*,*,*,*,*,*,*,*,*,*,*,*,*,*,*"
+							   ClipToBounds="False"
+							   IsVisible="{Binding !Top32.IsEmpty}">
+							<v:BracketMatchView Grid.Row="0"  DataContext="{Binding Top32[0]}" />
+							<v:BracketMatchView Grid.Row="1"  DataContext="{Binding Top32[1]}" />
+							<v:BracketMatchView Grid.Row="2"  DataContext="{Binding Top32[2]}" />
+							<v:BracketMatchView Grid.Row="3"  DataContext="{Binding Top32[3]}" />
+							<v:BracketMatchView Grid.Row="4"  DataContext="{Binding Top32[4]}" />
+							<v:BracketMatchView Grid.Row="5"  DataContext="{Binding Top32[5]}" />
+							<v:BracketMatchView Grid.Row="6"  DataContext="{Binding Top32[6]}" />
+							<v:BracketMatchView Grid.Row="7"  DataContext="{Binding Top32[7]}" />
+							<v:BracketMatchView Grid.Row="8"  DataContext="{Binding Top32[8]}" />
+							<v:BracketMatchView Grid.Row="9"  DataContext="{Binding Top32[9]}" />
+							<v:BracketMatchView Grid.Row="10" DataContext="{Binding Top32[10]}"/>
+							<v:BracketMatchView Grid.Row="11" DataContext="{Binding Top32[11]}"/>
+							<v:BracketMatchView Grid.Row="12" DataContext="{Binding Top32[12]}"/>
+							<v:BracketMatchView Grid.Row="13" DataContext="{Binding Top32[13]}"/>
+							<v:BracketMatchView Grid.Row="14" DataContext="{Binding Top32[14]}"/>
+							<v:BracketMatchView Grid.Row="15" DataContext="{Binding Top32[15]}"/>
+						</Grid>
+						<Grid Grid.Column="3" Width="100" RowDefinitions="*,*,*,*,*,*,*,*"
+							   IsVisible="{Binding !Top32.IsEmpty}">
+							<c:BracketLines Grid.Row="0" IsTopVisible="{Binding !Top32[0].HasBye}"  IsBottomVisible="{Binding !Top32[1].HasBye}" />
+							<c:BracketLines Grid.Row="1" IsTopVisible="{Binding !Top32[2].HasBye}"  IsBottomVisible="{Binding !Top32[3].HasBye}" />
+							<c:BracketLines Grid.Row="2" IsTopVisible="{Binding !Top32[4].HasBye}"  IsBottomVisible="{Binding !Top32[5].HasBye}" />
+							<c:BracketLines Grid.Row="3" IsTopVisible="{Binding !Top32[6].HasBye}"  IsBottomVisible="{Binding !Top32[7].HasBye}" />
+							<c:BracketLines Grid.Row="4" IsTopVisible="{Binding !Top32[8].HasBye}"  IsBottomVisible="{Binding !Top32[9].HasBye}" />
+							<c:BracketLines Grid.Row="5" IsTopVisible="{Binding !Top32[10].HasBye}" IsBottomVisible="{Binding !Top32[11].HasBye}"/>
+							<c:BracketLines Grid.Row="6" IsTopVisible="{Binding !Top32[12].HasBye}" IsBottomVisible="{Binding !Top32[13].HasBye}"/>
+							<c:BracketLines Grid.Row="7" IsTopVisible="{Binding !Top32[14].HasBye}" IsBottomVisible="{Binding !Top32[15].HasBye}"/>
+						</Grid>
+					
+						<!--Top16-->
+						<Grid Grid.Column="4" MinHeight="800" RowDefinitions="*,*,*,*,*,*,*,*"
+							   ClipToBounds="False"
+							   IsVisible="{Binding !Top16.IsEmpty}">
+							<v:BracketMatchView Grid.Row="0" DataContext="{Binding Top16[0]}" IsVisible="{Binding !HasBye}"/>
+							<v:BracketMatchView Grid.Row="1" DataContext="{Binding Top16[1]}" IsVisible="{Binding !HasBye}"/>
+							<v:BracketMatchView Grid.Row="2" DataContext="{Binding Top16[2]}" IsVisible="{Binding !HasBye}"/>
+							<v:BracketMatchView Grid.Row="3" DataContext="{Binding Top16[3]}" IsVisible="{Binding !HasBye}"/>
+							<v:BracketMatchView Grid.Row="4" DataContext="{Binding Top16[4]}" IsVisible="{Binding !HasBye}"/>
+							<v:BracketMatchView Grid.Row="5" DataContext="{Binding Top16[5]}" IsVisible="{Binding !HasBye}"/>
+							<v:BracketMatchView Grid.Row="6" DataContext="{Binding Top16[6]}" IsVisible="{Binding !HasBye}"/>
+							<v:BracketMatchView Grid.Row="7" DataContext="{Binding Top16[7]}" IsVisible="{Binding !HasBye}"/>
+						</Grid>
+						<Grid Grid.Column="5" Width="100" RowDefinitions="*,*,*,*"
+							   IsVisible="{Binding !Top16.IsEmpty}">
+							<c:BracketLines Grid.Row="0" IsTopVisible="{Binding !Top16[0].HasBye}" IsBottomVisible="{Binding !Top16[1].HasBye}"/>
+							<c:BracketLines Grid.Row="1" IsTopVisible="{Binding !Top16[2].HasBye}" IsBottomVisible="{Binding !Top16[3].HasBye}"/>
+							<c:BracketLines Grid.Row="2" IsTopVisible="{Binding !Top16[4].HasBye}" IsBottomVisible="{Binding !Top16[5].HasBye}"/>
+							<c:BracketLines Grid.Row="3" IsTopVisible="{Binding !Top16[6].HasBye}" IsBottomVisible="{Binding !Top16[7].HasBye}"/>
+						</Grid>
+
+						<!--Quarterfinals-->
+						<Grid Grid.Column="6" Grid.Row="2" MinHeight="400" RowDefinitions="*,*,*,*"
+							   ClipToBounds="False"
+							   IsVisible="{Binding !Quarterfinals.IsEmpty}">
+							<v:BracketMatchView Grid.Row="0" DataContext="{Binding Quarterfinals[0]}" Opacity="{Binding HasBye, Converter={StaticResource TrueToInvis}}"/>
+							<v:BracketMatchView Grid.Row="1" DataContext="{Binding Quarterfinals[1]}" Opacity="{Binding HasBye, Converter={StaticResource TrueToInvis}}"/>
+							<v:BracketMatchView Grid.Row="2" DataContext="{Binding Quarterfinals[2]}" Opacity="{Binding HasBye, Converter={StaticResource TrueToInvis}}"/>
+							<v:BracketMatchView Grid.Row="3" DataContext="{Binding Quarterfinals[3]}" Opacity="{Binding HasBye, Converter={StaticResource TrueToInvis}}"/>
+						</Grid>
+						<Grid Grid.Column="7" Grid.Row="2" Width="100" RowDefinitions="*,*"
+							   IsVisible="{Binding !Quarterfinals.IsEmpty}">
+							<c:BracketLines Grid.Row="0" IsTopVisible="{Binding !Quarterfinals[0].HasBye}" IsBottomVisible="{Binding !Quarterfinals[1].HasBye}"/>
+							<c:BracketLines Grid.Row="1" IsTopVisible="{Binding !Quarterfinals[2].HasBye}" IsBottomVisible="{Binding !Quarterfinals[3].HasBye}"/>
+						</Grid>
+
+						<!--Semifinals-->
+						<Grid Grid.Column="8" Grid.Row="2" MinHeight="400" RowDefinitions="*,*"
+							   ClipToBounds="False">
+							<v:BracketMatchView Grid.Row="0" DataContext="{Binding Semifinals[0]}"/>
+							<v:BracketMatchView Grid.Row="1" DataContext="{Binding Semifinals[1]}"/>
+						</Grid>
+						<c:BracketLines Grid.Column="9" Grid.Row="2" Width="100"/>
+
+						<!--Final-->
+						<v:BracketMatchView Grid.Column="10" Grid.Row="2" DataContext="{Binding Final[0]}"
+									 ClipToBounds="False" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+
+						<!--Third-->
+						<v:BracketMatchView Grid.Column="12"
+											Grid.Row="2"
+											ClipToBounds="False"
+											DataContext="{Binding Third[0]}"
+											VerticalAlignment="Center"
+											HorizontalAlignment="Left"/>
+					
+					</Grid>
+				</Viewbox>
+			</ScrollViewer>
+		
+	</Grid>
+
+	</Grid>
+</UserControl>

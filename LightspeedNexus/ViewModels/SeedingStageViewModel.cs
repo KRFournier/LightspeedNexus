@@ -57,39 +57,34 @@ public partial class SeedingStageViewModel : StageViewModel
 
     public ObservableCollection<SeedViewModel> Seeds { get; set; } = [];
 
+    [ObservableProperty]
+    public partial bool IsFullAdvancement { get; set; } = true;
+
     #endregion
 
     #region Commands
 
     [RelayCommand]
-    private async static Task EditMatch(MatchViewModel match)
-    {
-        try
-        {
-            var result = await DialogBox(match.GetEditViewModel(), "Set Final Match Score");
-            if (result.IsOk)
-                match.UpdateMatch(result.Item);
-        }
-        catch (Exception e)
-        {
-            Debug.WriteLine($"Unexpected error editing a match: {e}");
-        }
-    }
+    private void GoToBracket() => Next = BracketStageViewModel.FromRankedList(Seeds.Select(s => s.Participant), IsFullAdvancement);
 
     #endregion
 
-    public SeedingStageViewModel() : base("Results")
+    public SeedingStageViewModel() : base("Seeds")
     {
     }
 
     public override SeedingStage ToModel() => new()
     {
-        Seeds = [.. Seeds.Select(s => s.ToModel())]
+        IsFullAdvancement = IsFullAdvancement,
+        Seeds = [.. Seeds.Select(s => s.ToModel())],
+        Next = Next?.ToModel()
     };
 
-    public static SeedingStageViewModel FromModel(SeedingStage model, bool showWeapons) => new()
+    public static SeedingStageViewModel FromModel(SeedingStage model) => new()
     {
-        Seeds = [.. model.Seeds.Select(s => SeedViewModel.FromModel(s))]
+        IsFullAdvancement = model.IsFullAdvancement,
+        Seeds = [.. model.Seeds.Select(s => SeedViewModel.FromModel(s))],
+        Next = FromModel(model.Next)
     };
 
     public static SeedingStageViewModel FromPools(PoolsStageViewModel poolsStage)

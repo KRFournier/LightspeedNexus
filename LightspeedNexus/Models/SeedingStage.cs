@@ -13,5 +13,6 @@ public class Seed
 
 public sealed class SeedingStage : Stage
 {
+    public bool IsFullAdvancement { get; set; } = true;
     public Seed[] Seeds { get; set; } = [];
 }

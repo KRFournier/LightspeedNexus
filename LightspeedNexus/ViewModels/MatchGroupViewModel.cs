@@ -2,6 +2,8 @@
 using LightspeedNexus.Models;
 using LightspeedNexus.Services;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
@@ -10,8 +12,10 @@ namespace LightspeedNexus.ViewModels;
 /// <summary>
 /// A group of matches sharing similar settings
 /// </summary>
-public partial class MatchGroupViewModel : ViewModelBase
+public partial class MatchGroupViewModel : ViewModelBase, IReadOnlyList<MatchViewModel>
 {
+    #region Properties
+
     /// <summary>
     /// The settings for this group
     /// </summary>
@@ -34,6 +38,25 @@ public partial class MatchGroupViewModel : ViewModelBase
     public ObservableCollection<MatchViewModel> Matches { get; private set; } = [];
 
     /// <summary>
+    /// Determines if this group has no matches
+    /// </summary>
+    public bool IsEmpty => Matches.Count == 0;
+
+    #endregion
+
+    #region List implementation
+
+    public MatchViewModel this[int index] => index >= 0 && index < Matches.Count ? Matches[index] : new MatchNotFoundViewModel();
+
+    public int Count => Matches.Count;
+
+    public IEnumerator<MatchViewModel> GetEnumerator() => Matches.GetEnumerator();
+
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    #endregion
+
+    /// <summary>
     /// Gets the record representation of this view model
     /// </summary>
     public MatchGroup ToModel() => new()
@@ -53,12 +76,10 @@ public partial class MatchGroupViewModel : ViewModelBase
         };
 
         // load matches
-        int i = 1;
         vm.Matches = [.. model.Matches.Select(id =>
         {
             var newmatch = MatchViewModel.FromModel(StorageService.GetMatch(id));
             newmatch.Settings = vm.Settings;
-            newmatch.Number = i++;
             vm.AddMatchListeners(newmatch);
             return newmatch;
         })];
@@ -70,11 +91,47 @@ public partial class MatchGroupViewModel : ViewModelBase
     /// Adds a new match to the group, setting the <see cref="MatchViewModel.Settings"/> and orignal number
     /// and returns it
     /// </summary>
-    public T NewMatch<T>() where T : MatchViewModel, new() =>
+    public T NewMatch<T>(ParticipantViewModel first, ParticipantViewModel second, int? number = null) where T : MatchViewModel, new() =>
         Add(new T()
         {
             Settings = Settings,
-            Number = Matches.Count + 1
+            Number = number,
+            First = new ScoreViewModel(first),
+            Second = new ScoreViewModel(second)
+        });
+
+    /// <summary>
+    /// Adds a new match to the group, setting the <see cref="MatchViewModel.Settings"/> and orignal number
+    /// and returns it
+    /// </summary>
+    public T NewMatch<T>(ParticipantViewModel? first, int firstSeed, ParticipantViewModel? second, int secondSeed) where T : MatchViewModel, new() =>
+        Add(new T()
+        {
+            Settings = Settings,
+            First = first is not null ? new ScoreViewModel(first) { Seed = firstSeed } : new ScoreViewModel(ParticipantViewModel.Bye),
+            Second = second is not null ? new ScoreViewModel(second) { Seed = secondSeed } : new ScoreViewModel(ParticipantViewModel.Bye)
+        });
+
+    /// <summary>
+    /// Adds a new match to the group that will be bound to the winners of the given matches
+    /// </summary>
+    public T NewMatchFromWinnersOf<T>(MatchViewModel parent1, MatchViewModel parent2) where T : MatchViewModel, new() =>
+        Add(new T()
+        {
+            Settings = Settings,
+            First = ScoreViewModel.WinnerOf(parent1),
+            Second = ScoreViewModel.WinnerOf(parent2)
+        });
+
+    /// <summary>
+    /// Adds a new match to the group that will be bound to the losers of the given matches
+    /// </summary>
+    public T NewMatchFromLosersOf<T>(MatchViewModel parent1, MatchViewModel parent2) where T : MatchViewModel, new() =>
+        Add(new T()
+        {
+            Settings = Settings,
+            First = ScoreViewModel.LoserOf(parent1),
+            Second = ScoreViewModel.LoserOf(parent2)
         });
 
     /// <summary>
@@ -119,5 +176,7 @@ public partial class MatchGroupViewModel : ViewModelBase
     /// <summary>
     /// Saves all the matches
     /// </summary>
-    public void Save() => StorageService.WriteMatches(Matches.Select(m => m.ToModel()));
+    public void Save() => StorageService.WriteMatches(Matches
+        .Select(m => m.ToModel())
+        );
 }

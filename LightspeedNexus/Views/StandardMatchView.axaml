@@ -7,100 +7,114 @@
 			 xmlns:v="clr-namespace:LightspeedNexus.Views"
 			 xmlns:c="clr-namespace:LightspeedNexus.Controls"
 			 xmlns:cv="clr-namespace:LightspeedNexus.Converters"
-             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="100"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="150"
 			 Width="300" Height="100"
 			 IsHitTestVisible="False"
+			 ClipToBounds="False"
              x:Class="LightspeedNexus.Views.StandardMatchView"
 			 x:DataType="vm:StandardMatchViewModel">
 	
 	<Design.DataContext>
 		<vm:StandardMatchViewModel>
-			<vm:StandardMatchViewModel.First>
-				<vm:ScoreViewModel Points="99">
-					<vm:ScoreViewModel.Participant>
-						<vm:PlayerViewModel Name="Tony Zaldua, Jr."/>
-					</vm:ScoreViewModel.Participant>
-				</vm:ScoreViewModel>
-			</vm:StandardMatchViewModel.First>
-			<vm:StandardMatchViewModel.Second>
-				<vm:ScoreViewModel Points="-99">
-					<vm:ScoreViewModel.Participant>
-						<vm:PlayerViewModel Name="Nate McCroskey-Izzet"/>
-					</vm:ScoreViewModel.Participant>
-				</vm:ScoreViewModel>
-			</vm:StandardMatchViewModel.Second>
 			<vm:StandardMatchViewModel.IsMatchStarted>false</vm:StandardMatchViewModel.IsMatchStarted>
 			<vm:StandardMatchViewModel.Number>7</vm:StandardMatchViewModel.Number>
 			<vm:StandardMatchViewModel.IsLive>false</vm:StandardMatchViewModel.IsLive>
 		</vm:StandardMatchViewModel>
 	</Design.DataContext>
 
-	<Grid ColumnDefinitions="*,10,Auto"
-		  RowDefinitions="Auto,*,*"
-		  Margin="15,0">
+	<Panel>
 
-		<TextBlock FontSize="64" LineHeight="64" FontWeight="Bold"
-				   Opacity="0.1"
-				   Grid.ColumnSpan="3"
-				   Grid.Row="0"
-				   Grid.RowSpan="4"
-				   Text="{Binding Number}"
-				   HorizontalAlignment="Right"
-				   VerticalAlignment="Center"
-				   IsVisible="{Binding !IsMatchStarted}"/>
+		<Grid ColumnDefinitions="*,10,Auto"
+			  RowDefinitions="Auto,*,*"
+			  Margin="15,0"
+			  IsVisible="{Binding !IsEmpty}">
 
-		<Border CornerRadius="0,0,4,4"
-				Width="80"
-				Height="16"
-				Grid.ColumnSpan="3"
-				HorizontalAlignment="Center"
-				IsVisible="{Binding IsLive}"
-				Background="{StaticResource HilightBrush}">
-			<StackPanel Orientation="Horizontal"
-						HorizontalAlignment="Center"
-						Spacing="4">
-				<PathIcon Data="{StaticResource video_regular}"
-						  Foreground="Black"
-						  Height="12"
-						  VerticalAlignment="Center"/>
-				<TextBlock Classes="info tiny"
-						   LineHeight="12"
-						   Foreground="Black"
+			<TextBlock FontSize="64" LineHeight="64" FontWeight="Bold"
+					   Opacity="0.1"
+					   Grid.ColumnSpan="3"
+					   Grid.Row="0"
+					   Grid.RowSpan="4"
+					   Text="{Binding Number}"
+					   HorizontalAlignment="Right"
+					   VerticalAlignment="Center"
+					   IsVisible="{Binding !IsMatchStarted}"/>
+
+			<Border CornerRadius="0,0,4,4"
+					Width="80"
+					Height="16"
+					Grid.ColumnSpan="3"
+					HorizontalAlignment="Center"
+					IsVisible="{Binding IsLive}"
+					Background="{StaticResource HilightBrush}">
+				<StackPanel Orientation="Horizontal"
+							HorizontalAlignment="Center"
+							Spacing="4">
+					<PathIcon Data="{StaticResource video_regular}"
+							  Foreground="Black"
+							  Height="12"
+							  VerticalAlignment="Center"/>
+					<TextBlock Classes="info tiny"
+							   LineHeight="12"
+							   Foreground="Black"
+							   VerticalAlignment="Center"
+							   Text="{Binding Clock.Timer, StringFormat='m\\:ss'}"/>
+				</StackPanel>
+			</Border>
+
+			<Grid Grid.Column="0"
+				  Grid.Row="1"
+				  IsVisible="{Binding !First.Participant.IsEmpty}"
+				  Margin="-45,0,0,0"
+				  ColumnDefinitions="20,25,*">
+				<TextBlock Classes="info"						   
+						   Grid.Column="0"
 						   VerticalAlignment="Center"
-						   Text="{Binding Clock.Timer, StringFormat='m\\:ss'}"/>
-			</StackPanel>
-		</Border>
+						   HorizontalAlignment="Right"
+						   Opacity="0.6"
+						   Text="{Binding First.Seed}"/>
+				<ContentControl Grid.Column="2"
+					Content="{Binding First.Participant}"/>
+			</Grid>
+
+			<Grid Grid.Column="0"
+				  Grid.Row="4"
+				  IsVisible="{Binding !Second.Participant.IsEmpty}"
+				  Margin="-45,0,0,0"
+				  ColumnDefinitions="20,25,*">
+				<TextBlock Classes="info"
+						   Grid.Column="0"
+						   VerticalAlignment="Center"
+						   HorizontalAlignment="Right"
+						   Opacity="0.6"
+						   Text="{Binding Second.Seed}"/>
+				<ContentControl Grid.Column="2"
+					Content="{Binding Second.Participant}"/>
+			</Grid>
+			
+			<TextBlock Classes="large"
+					   Grid.Column="3"
+					   Grid.Row="1"
+					   HorizontalAlignment="Right"
+					   VerticalAlignment="Center"
+					   IsVisible="{Binding IsMatchStarted}"
+					   Text="{Binding First.Points}"
+					   Opacity="{Binding IsSecondWinner,
+							Converter={StaticResource TrueToFaded},
+							ConverterParameter=0.2}"/>
+
+			<TextBlock Classes="large"
+					   Grid.Column="3"
+					   Grid.Row="4"
+					   HorizontalAlignment="Right"
+					   VerticalAlignment="Center"
+					   IsVisible="{Binding IsMatchStarted}"
+					   Text="{Binding Second.Points}"
+					   Opacity="{Binding IsFirstWinner,
+							Converter={StaticResource TrueToFaded},
+							ConverterParameter=0.2}"/>
 		
-		<v:PlayerView Grid.Column="0"
-					  Grid.Row="1"
-					  DataContext="{Binding First.Participant}"/>
+		</Grid>
 
-		<v:PlayerView Grid.Column="0"
-					  Grid.Row="4"
-					  DataContext="{Binding Second.Participant}"/>
-
-		<TextBlock Classes="large"
-				   Grid.Column="3"
-				   Grid.Row="1"
-				   HorizontalAlignment="Right"
-				   VerticalAlignment="Center"
-				   IsVisible="{Binding IsMatchStarted}"
-				   Text="{Binding First.Points}"
-				   Opacity="{Binding IsSecondWinner,
-						Converter={StaticResource TrueToFaded}
-						ConverterParameter=0.2}"/>
-
-		<TextBlock Classes="large"
-				   Grid.Column="3"
-				   Grid.Row="4"
-				   HorizontalAlignment="Right"
-				   VerticalAlignment="Center"
-				   IsVisible="{Binding IsMatchStarted}"
-				   Text="{Binding Second.Points}"
-				   Opacity="{Binding IsFirstWinner,
-						Converter={StaticResource TrueToFaded}
-						ConverterParameter=0.2}"/>
-		
-	</Grid>
+	</Panel>
 	
 </UserControl>

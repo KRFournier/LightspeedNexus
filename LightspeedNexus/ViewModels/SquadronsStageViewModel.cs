@@ -92,9 +92,16 @@ public partial class SquadronsStageViewModel : StageViewModel,
 
     public void Receive(RequestParticipant message)
     {
-        var participant = Participants.FirstOrDefault(p => p.Guid == message.Id)
-            ?? throw new InvalidOperationException($"Participant with ID {message.Id} not found.");
-        message.Reply(participant);
+        if (message.Id == Guid.Empty)
+            message.Reply(ParticipantViewModel.Empty);
+        else if (message.Id == ByeParticipant.ByeGuid)
+            message.Reply(ParticipantViewModel.Bye);
+        else
+        {
+            var participant = Participants.FirstOrDefault(p => p.Guid == message.Id)
+                ?? throw new InvalidOperationException($"Participant with ID {message.Id} not found.");
+            message.Reply(participant);
+        }
     }
 
     public void Receive(RequestSquadron message)
@@ -139,12 +146,12 @@ public partial class SquadronsStageViewModel : StageViewModel,
     /// <summary>
     /// Loads settings from a model
     /// </summary>
-    public static SquadronsStageViewModel FromModel(SquadronsStage model, bool showWeapons)
+    public static SquadronsStageViewModel FromModel(SquadronsStage model)
     {
         SquadronsStageViewModel vm = new()
         {
             IsAutoAssigned = model.IsAutoAssigned,
-            Participants = [.. model.Participants.Select(p => ParticipantViewModel.FromModel(p, showWeapons))],
+            Participants = [.. model.Participants.Select(p => ParticipantViewModel.FromModel(p))],
         };
 
         int i = 0;
@@ -157,7 +164,7 @@ public partial class SquadronsStageViewModel : StageViewModel,
         })];
 
         // must do this last to avoid issues with references
-        vm.Next = FromModel(model.Next, showWeapons);
+        vm.Next = FromModel(model.Next);
 
         return vm;
     }

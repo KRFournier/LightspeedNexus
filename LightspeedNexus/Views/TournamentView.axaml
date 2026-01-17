@@ -40,8 +40,9 @@
 				</c:ChevronBorder>
 			</StackPanel>
 			
-			<StackPanel Spacing="10"
-						Grid.Row="2">
+			<StackPanel Spacing="10" Grid.Row="2">
+
+				<!--Value-->
 				<c:LightspeedBorder Classes="small color"
 									IsVisible="{Binding IsRanked}">
 					<StackPanel>
@@ -49,6 +50,8 @@
 						<TextBlock Classes="large" HorizontalAlignment="Center" Text="{Binding Value}"/>
 					</StackPanel>
 				</c:LightspeedBorder>
+
+				<!--Initial Rating-->
 				<c:LightspeedBorder Classes="small color"
 									IsVisible="{Binding IsRanked}">
 					<StackPanel>
@@ -56,6 +59,22 @@
 						<TextBlock Classes="large" HorizontalAlignment="Center" Text="{Binding InitialRank}"/>
 					</StackPanel>
 				</c:LightspeedBorder>
+
+				<!--Final Rating-->
+				<c:LightspeedBorder Classes="small color"
+									IsVisible="{Binding IsRanked}">
+					<StackPanel>
+						<TextBlock Classes="small" HorizontalAlignment="Center">Final Rating</TextBlock>
+						<Panel>
+							<TextBlock Classes="large" HorizontalAlignment="Center" Text="{Binding TopRanked}" Foreground="{StaticResource Gray}"
+								IsVisible="{Binding FinalRank, Converter={x:Static StringConverters.IsNullOrEmpty}}"/>
+							<TextBlock Classes="large" HorizontalAlignment="Center" Text="{Binding FinalRank}"
+								IsVisible="{Binding FinalRank, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+						</Panel>
+					</StackPanel>
+				</c:LightspeedBorder>
+
+				<!--Save-->
 				<Button Classes="clear focus"
 						HorizontalAlignment="Stretch"
 						Command="{Binding GoHomeCommand}">
@@ -66,6 +85,7 @@
 						<TextBlock Text="Save &amp; Close"/>
 					</StackPanel>
 				</Button>
+
 			</StackPanel>
 			
 		</Grid>

@@ -35,7 +35,7 @@ public partial class SquadronsStageView : UserControl
 
             SquadronsStageViewModel.DraggingParticipant = viewModel;
             GhostItem.IsVisible = true;
-            await DragDrop.DoDragDrop(e, new DataObject(), DragDropEffects.Move);
+            await DragDrop.DoDragDropAsync(e, new DataTransfer(), DragDropEffects.Move);
             GhostItem.IsVisible = false;
             GhostItem.RenderTransform = new TranslateTransform(0, 0);
             SquadronsStageViewModel.DraggingParticipant = null;

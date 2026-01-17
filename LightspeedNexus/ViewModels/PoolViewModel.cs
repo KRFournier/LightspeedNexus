@@ -60,12 +60,13 @@ public partial class PoolViewModel : ViewModelBase
         // find the match arrangements for the number of participants, and create matches accordingly
         if (squadron.Participants.Count > 1 && squadron.Participants.Count <= poolArrangements.Length)
         {
+            int i = 1;
             foreach (var arrangement in poolArrangements[squadron.Participants.Count])
-            {
-                var match = vm.MatchGroup.NewMatch<StandardMatchViewModel>();
-                match.First = new ScoreViewModel() { Participant = vm.Squadron.Participants[arrangement[0] - 1] };
-                match.Second = new ScoreViewModel() { Participant = vm.Squadron.Participants[arrangement[1] - 1] };
-            }
+                vm.MatchGroup.NewMatch<StandardMatchViewModel>(
+                    vm.Squadron.Participants[arrangement[0] - 1],
+                    vm.Squadron.Participants[arrangement[1] - 1],
+                    i++
+                );
         }
 
         return vm;
@@ -156,7 +157,7 @@ public partial class PoolViewModel : ViewModelBase
             .Select(p => new KeyValuePair<ParticipantViewModel, ParticipantStatistics>(p, new(p)))]);
         foreach (var match in MatchGroup.Matches .Where(m => m.IsMatchCompleted))
         {
-            if (match is StandardMatchViewModel stdMatch)
+            if (match is StandardMatchViewModel stdMatch && stdMatch.First is not null && stdMatch.Second is not null)
             {
                 stats[stdMatch.First.Participant].Matches.Add(
                     new(stdMatch.Second.Participant, stdMatch.First.Points, stdMatch.Second.Points, stdMatch.IsFirstWinner));

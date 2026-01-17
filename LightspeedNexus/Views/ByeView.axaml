@@ -1,0 +1,43 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:LightspeedNexus.ViewModels"
+			 xmlns:m="clr-namespace:LightspeedNexus.Models"
+			 xmlns:v="clr-namespace:LightspeedNexus.Views"
+			 xmlns:c="clr-namespace:LightspeedNexus.Controls"
+			 xmlns:cv="clr-namespace:LightspeedNexus.Converters"
+             mc:Ignorable="d" d:DesignWidth="250" d:DesignHeight="50"
+             x:Class="LightspeedNexus.Views.ByeView"
+			 x:DataType="vm:ByeViewModel"
+			 IsHitTestVisible="False">
+	
+	<Design.DataContext>
+		<vm:ByeViewModel/>
+	</Design.DataContext>
+	
+	<Grid ColumnDefinitions="30,1,*"
+		  IsHitTestVisible="False">
+
+		<!--Rank-->
+		<TextBlock Classes="medium"
+				   Foreground="{StaticResource Gray}"
+				   VerticalAlignment="Center"
+				   HorizontalAlignment="Center"
+				   IsHitTestVisible="False"
+				   FontWeight="UltraBold"
+				   Text="-"/>
+		
+		<!--Name-->
+		<TextBlock Classes="medium"
+				   Grid.Column="2"
+				   Foreground="{StaticResource Gray}"
+				   IsHitTestVisible="False"
+				   HorizontalAlignment="Left"
+				   VerticalAlignment="Center"
+				   TextTrimming="CharacterEllipsis"
+				   Text="BYE"/>
+		
+	</Grid>
+	
+</UserControl>
