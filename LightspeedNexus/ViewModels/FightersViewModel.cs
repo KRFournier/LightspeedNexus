@@ -87,7 +87,10 @@ public partial class FightersViewModel : ViewModelBase, IComparer
     [RelayCommand]
     private async Task ImportFighters()
     {
+        BeginWait("Importing Fighters...");
         (var success, var message, var fighters) = await SaberSportsService.GetAllFighters();
+        EndWait();
+
         if (success)
         {
             List<Fighter> fightersToAdd = [];
@@ -99,13 +102,9 @@ public partial class FightersViewModel : ViewModelBase, IComparer
                     (string.Compare(f.FirstName, fighter.FirstName, true) == 0 &&
                      string.Compare(f.LastName, fighter.LastName, true) == 0)
                     );
+
                 if (existing is not null)
-                {
-                    existing.Club = string.IsNullOrEmpty(existing.Club) ? fighter.Club : existing.Club;
-                    existing.ReyRank = fighter.Rey > existing.ReyRank ? fighter.Rey : existing.ReyRank;
-                    existing.RenRank = fighter.Ren > existing.RenRank ? fighter.Ren : existing.RenRank;
-                    existing.TanoRank = fighter.Tano > existing.TanoRank ? fighter.Tano : existing.TanoRank;
-                }
+                    existing.UpdateFromImported(fighter);
                 else
                 {
                     StorageService.Write(fighter);
@@ -115,7 +114,7 @@ public partial class FightersViewModel : ViewModelBase, IComparer
 
             // we add new fighters at the end so the above loop doesn't have to search new additions
             foreach (var fighter in fightersToAdd)
-                Fighters.Add(FighterViewModel.FromModel(fighter));
+                Fighters.Add(FighterViewModel.NewFromImported(fighter));
         }
         else
             MessageBox(message);
@@ -136,6 +135,7 @@ public partial class FightersViewModel : ViewModelBase, IComparer
             if (item is FighterViewModel fvm)
             {
                 return string.IsNullOrWhiteSpace(SearchText) ||
+                       SearchText.CompareTo("NEW", StringComparison.OrdinalIgnoreCase) == 0 && fvm.HasNew ||
                        fvm.FirstName.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
                        fvm.LastName.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
                        fvm.OnlineId?.ToString().Contains(SearchText, StringComparison.OrdinalIgnoreCase) == true ||

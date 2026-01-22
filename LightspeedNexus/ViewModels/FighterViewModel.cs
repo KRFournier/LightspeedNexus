@@ -143,4 +143,62 @@ public partial class FighterViewModel : ViewModelBase, IComparable<FighterViewMo
         TanoRank = fighter.TanoRank;
     }
 
+    #region Import Update Data
+
+    [ObservableProperty]
+    public partial bool IsNew { get; set; } = false;
+
+    [ObservableProperty]
+    public partial bool HasNewClub { get; set; } = false;
+
+    [ObservableProperty]
+    public partial bool HasNewReyRank { get; set; } = false;
+
+    [ObservableProperty]
+    public partial bool HasNewRenRank { get; set; } = false;
+
+    [ObservableProperty]
+    public partial bool HasNewTanoRank { get; set; } = false;
+
+    public bool HasNew => IsNew;
+
+    public void UpdateFromImported(Fighter fighter)
+    {
+        if (string.IsNullOrEmpty(Club))
+        {
+            Club = fighter.Club;
+            HasNewClub = true;
+        }
+
+        if (fighter.Rey > ReyRank)
+        {
+            ReyRank = fighter.Rey;
+            HasNewReyRank = true;
+        }
+
+        if (fighter.Ren > RenRank)
+        {
+            RenRank = fighter.Ren;
+            HasNewRenRank = true;
+        }
+
+        if (fighter.Tano > TanoRank)
+        {
+            TanoRank = fighter.Tano;
+            HasNewTanoRank = true;
+        }
+    }
+
+    public static FighterViewModel NewFromImported(Fighter fighter)
+    {
+        var vm = FromModel(fighter);
+        vm.IsNew = true;
+        vm.HasNewClub = true;
+        vm.HasNewReyRank = true;
+        vm.HasNewRenRank = true;
+        vm.HasNewTanoRank = true;
+        return vm;
+    }
+
+    #endregion
 }

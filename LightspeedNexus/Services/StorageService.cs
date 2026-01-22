@@ -165,6 +165,16 @@ public static class StorageService
     #endregion
 
     /// <summary>
+    /// Counts a type of collection
+    /// </summary>
+    public static int Count<T>() where T : CollectionObject
+    {
+        using var db = GetDatabase();
+        var collection = db.GetCollection<T>(GetCollectionName<T>());
+        return collection.Query().Count();
+    }
+
+    /// <summary>
     /// Saves an item
     /// </summary>
     public static void Write<T>(T item) where T : CollectionObject

@@ -87,3 +87,15 @@ public class CloseDialogMessage()
 public class MessageBoxMessage(string msg) : ValueChangedMessage<string>(msg)
 {
 }
+
+/// <summary>
+/// Notifies the main view that the given wait message should be displayed
+/// </summary>
+public class BeginWaitMessage(string msg) : ValueChangedMessage<string>(msg)
+{
+}
+
+/// <summary>
+/// Notifies the main view that the given wait message should be hidden
+/// </summary>
+public class EndWaitMessage() { }

@@ -10,10 +10,15 @@ using System.Threading.Tasks;
 
 namespace LightspeedNexus.ViewModels;
 
-public partial class MainViewModel : ViewModelBase, IRecipient<NavigatePageMessage>, IRecipient<NavigateHomeMessage>
+public partial class MainViewModel : ViewModelBase,
+    IRecipient<NavigatePageMessage>, IRecipient<NavigateHomeMessage>,
+    IRecipient<BeginWaitMessage>, IRecipient<EndWaitMessage>
 {
     [ObservableProperty]
     public partial ViewModelBase CurrentPage { get; set; } = new HomeViewModel();
+
+    [ObservableProperty]
+    public partial string? WaitMessage { get; set; }
 
     public MainViewModel()
     {
@@ -37,6 +42,10 @@ public partial class MainViewModel : ViewModelBase, IRecipient<NavigatePageMessa
 
         CurrentPage = new HomeViewModel();
     }
+
+    public void Receive(BeginWaitMessage message) => WaitMessage = message.Value;
+
+    public void Receive(EndWaitMessage message) => WaitMessage = null;
 
     #endregion
 

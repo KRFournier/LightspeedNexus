@@ -61,6 +61,16 @@ public class ViewModelBase : ObservableObject
     /// </summary>
     protected static void CloseDialog()
     {
-        WeakReferenceMessenger.Default.Send(new CloseDialogMessage());
+        WeakReferenceMessenger.Default.Send<CloseDialogMessage>();
+    }
+
+    protected static void BeginWait(string msg)
+    {
+        WeakReferenceMessenger.Default.Send(new BeginWaitMessage(msg));
+    }
+
+    protected static void EndWait()
+    {
+        WeakReferenceMessenger.Default.Send<EndWaitMessage>();
     }
 }

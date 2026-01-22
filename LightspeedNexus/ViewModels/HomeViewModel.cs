@@ -4,7 +4,9 @@ using CommunityToolkit.Mvvm.Messaging;
 using LightspeedNexus.Messages;
 using LightspeedNexus.Models;
 using LightspeedNexus.Services;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace LightspeedNexus.ViewModels;
 
@@ -43,5 +45,21 @@ public partial class HomeViewModel : ViewModelBase
     {
         RecentTournaments.Remove(tournament);
         StorageService.Delete<Tournament>(tournament.Id);
+    }
+
+    [RelayCommand]
+    private async Task ImportFightersFirstTime()
+    {
+        BeginWait("Importing Fighters from saber-sport.com...");
+        (var success, var message, var fighters) = await SaberSportsService.GetAllFighters();
+        EndWait();
+
+        if (success)
+        {
+            foreach (var fighter in fighters)
+                StorageService.Write(fighter);
+        }
+        else
+            MessageBox(message);
     }
 }

@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using LightspeedNexus.Messages;
 using LightspeedNexus.Models;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -157,10 +156,7 @@ public partial class ResultsStageViewModel : StageViewModel
     /// Go to the Final Results Stage
     /// </summary>
     [RelayCommand]
-    private static void Close()
-    {
-        StrongReferenceMessenger.Default.Send<SaveAndCloseMessage>();
-    }
+    private static void Close() => StrongReferenceMessenger.Default.Send<SaveAndCloseMessage>();
 
     #endregion
 

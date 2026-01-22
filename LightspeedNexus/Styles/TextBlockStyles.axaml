@@ -9,7 +9,7 @@
 				<TextBlock Classes="medium error">Medium</TextBlock>
 				<TextBlock Classes="large">Large</TextBlock>
 				<TextBlock Classes="giant">Giant</TextBlock>
-				<TextBlock Classes="enourmous">Enourmous</TextBlock>
+				<TextBlock Classes="enourmous gold">Enourmous</TextBlock>
 				<TextBlock Classes="info">Subtext</TextBlock>
 			</StackPanel>
 		</Border>
@@ -39,6 +39,9 @@
 		</Style>
 		<Style Selector="^.error">
 			<Setter Property="Foreground" Value="{StaticResource Red}"/>
+		</Style>
+		<Style Selector="^.gold">
+			<Setter Property="Foreground" Value="{StaticResource ShinyGold}"/>
 		</Style>
 	</Style>
 	

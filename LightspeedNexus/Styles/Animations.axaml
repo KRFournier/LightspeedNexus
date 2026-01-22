@@ -5,7 +5,7 @@
 		<Border Padding="20" Width="128" Height="128">
 			<!--<Image Classes="nexusbat" Grid.Column="1" Grid.Row="1"
 			   Source="{StaticResource di_NexusBat}"/>-->
-			<Panel Classes="slide_up">
+			<Panel Classes="rotate_left">
 				<Button HorizontalAlignment="Center">OK</Button>
 			</Panel>
 		</Border>
@@ -67,6 +67,19 @@
 				<KeyFrame Cue="100%">
 					<Setter Property="Opacity" Value="1.0"/>
 					<Setter Property="TranslateTransform.X" Value="0.0"/>
+				</KeyFrame>
+			</Animation>
+		</Style.Animations>
+	</Style>
+
+	<Style Selector="Image.rotate_left">
+		<Style.Animations>
+			<Animation IterationCount="INFINITE" Duration="0:0:2">
+				<KeyFrame Cue="0%">
+					<Setter Property="RotateTransform.Angle" Value="0.0"/>
+				</KeyFrame>
+				<KeyFrame Cue="100%">
+					<Setter Property="RotateTransform.Angle" Value="-360.0"/>
 				</KeyFrame>
 			</Animation>
 		</Style.Animations>

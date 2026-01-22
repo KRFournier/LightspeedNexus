@@ -15,6 +15,11 @@
 				<vm:FighterViewModel OnlineId="123"
 									 FirstName="John"
 									 LastName="Doe"
+									 IsNew="true"
+									 HasNewClub="true"
+									 HasNewReyRank="true"
+									 HasNewRenRank="true"
+									 HasNewTanoRank="true"
 									 Club="Super Boys"/>
 				<vm:FighterViewModel OnlineId="456"
 									 FirstName="Jane"
@@ -86,6 +91,7 @@
 				<ItemsControl.ItemTemplate>
 					<DataTemplate DataType="vm:FighterViewModel">
 						<c:LightspeedBorder Classes="item"
+						                    Classes.gold="{Binding IsNew}"
 											Padding="0"
 											Width="300"
 											DoubleTapped="LightspeedBorder_DoubleTapped">
@@ -93,11 +99,13 @@
 
 								<Grid ColumnDefinitions="*,Auto">
 									<TextBlock Classes="medium"
+					                           Classes.gold="{Binding IsNew}"
 												Text="{Binding FullName}"
 												VerticalAlignment="Center"
 												TextTrimming="CharacterEllipsis"/>
 
 									<TextBlock Classes="info tiny"
+					                           Classes.gold="{Binding IsNew}"
 												Grid.Column="1"
 												VerticalAlignment="Center"
 												IsVisible="{Binding OnlineId, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
@@ -105,6 +113,7 @@
 								</Grid>
 
 								<TextBlock Classes="info"
+				                           Classes.gold="{Binding HasNewClub}"
 										   FontStyle="Italic"
 										   Margin="0,5"
 										   Text="{Binding Club}"/>
@@ -115,20 +124,20 @@
 									<WrapPanel Orientation="Horizontal"
 											   Width="60"
 											   ItemSpacing="5">
-										<TextBlock Classes="info" Text="Rey"/>
-										<TextBlock Text="{Binding ReyRank}"/>
+										<TextBlock Classes="info" Classes.gold="{Binding HasNewReyRank}" Text="Rey"/>
+										<TextBlock Classes.gold="{Binding HasNewReyRank}" Text="{Binding ReyRank}"/>
 									</WrapPanel>
 									<WrapPanel Orientation="Horizontal"
 											   Width="60"
 											   ItemSpacing="5">
-										<TextBlock Classes="info" Text="Ren"/>
-										<TextBlock Text="{Binding RenRank}"/>
+										<TextBlock Classes="info" Classes.gold="{Binding HasNewRenRank}" Text="Ren"/>
+										<TextBlock Classes.gold="{Binding HasNewRenRank}" Text="{Binding RenRank}"/>
 									</WrapPanel>
 									<WrapPanel Orientation="Horizontal"
 											   Width="60"
 											   ItemSpacing="5">
-										<TextBlock Classes="info" Text="Tano"/>
-										<TextBlock Text="{Binding TanoRank}"/>
+										<TextBlock Classes="info" Classes.gold="{Binding HasNewTanoRank}" Text="Tano"/>
+										<TextBlock Classes.gold="{Binding HasNewTanoRank}" Text="{Binding TanoRank}"/>
 									</WrapPanel>
 								</WrapPanel>
 								
