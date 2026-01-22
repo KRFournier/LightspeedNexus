@@ -3,7 +3,7 @@
 	
 	<Design.PreviewWith>
 		<Border Padding="20"
-				Background="{StaticResource Teal}"
+				Background="{StaticResource ShinyGold}"
 				BorderBrush="{StaticResource BlueRed}">
 		</Border>
 	</Design.PreviewWith>
@@ -71,6 +71,33 @@
 				<GradientStop Color="{StaticResource Blue}" Offset="0.0"/>
 				<GradientStop Color="{StaticResource Red}" Offset="1.0"/>
 			</LinearGradientBrush>
+
+			<LinearGradientBrush x:Key="ShinyGold">
+				<LinearGradientBrush.GradientStops>
+					<GradientStop Color="#bda022" Offset="0.0"/>
+					<GradientStop Color="White" Offset="0.5"/>
+					<GradientStop Color="#bda022" Offset="1.0"/>
+				</LinearGradientBrush.GradientStops>
+			</LinearGradientBrush>
+			<SolidColorBrush x:Key="Gold" Color="#bda022" Opacity="0.7"/>
+
+			<LinearGradientBrush x:Key="ShinySilver">
+				<LinearGradientBrush.GradientStops>
+					<GradientStop Color="#8C8C8C" Offset="0.0"/>
+					<GradientStop Color="White" Offset="0.5"/>
+					<GradientStop Color="#8C8C8C" Offset="1.0"/>
+				</LinearGradientBrush.GradientStops>
+			</LinearGradientBrush>
+			<SolidColorBrush x:Key="Silver" Color="#8C8C8C" Opacity="0.7"/>
+
+			<LinearGradientBrush x:Key="ShinyBronze">
+				<LinearGradientBrush.GradientStops>
+					<GradientStop Color="#8c5820" Offset="0.0"/>
+					<GradientStop Color="White" Offset="0.5"/>
+					<GradientStop Color="#8c5820" Offset="1.0"/>
+				</LinearGradientBrush.GradientStops>
+			</LinearGradientBrush>
+			<SolidColorBrush x:Key="Bronze" Color="#8c5820" Opacity="0.7"/>
 
 			<Color x:Key="SaberSportGreen">#194f11</Color>			
 			

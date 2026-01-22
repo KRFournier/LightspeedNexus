@@ -1,18 +1,20 @@
 ﻿using CommunityToolkit.Mvvm.Input;
-using LightspeedNexus.Messages;
+using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging.Messages;
 using LightspeedNexus.Models;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace LightspeedNexus.ViewModels;
 
-public partial class PoolsStageViewModel : StageViewModel
+#region Messages
+
+public sealed class RequestPoolsStageMessage : RequestMessage<PoolsStageViewModel> { }
+
+#endregion
+
+public partial class PoolsStageViewModel : StageViewModel, IRecipient<RequestPoolsStageMessage>
 {
     #region Properties
 
@@ -35,13 +37,20 @@ public partial class PoolsStageViewModel : StageViewModel
 
     #endregion
 
+    #region Message Handlers
+
+    public void Receive(RequestPoolsStageMessage message) => message.Reply(this);
+
+    #endregion
+
     public PoolsStageViewModel() : base("Pools")
     {
+        StrongReferenceMessenger.Default.RegisterAll(this);
     }
 
     public override PoolsStage ToModel() => new()
     {
-        Pools = [..Pools.Select(p => p.ToModel())],
+        Pools = [.. Pools.Select(p => p.ToModel())],
         Next = Next?.ToModel()
     };
 

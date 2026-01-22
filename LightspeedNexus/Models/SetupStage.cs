@@ -39,6 +39,7 @@ public enum SkillLevel
 /// </summary>
 public sealed class SetupStage : Stage
 {
+    public string? Event { get; set; }
     public DateTime? Date { get; set; }
     public GameMode GameMode { get; set; } = GameMode.Standard;
     public Demographic Demographic { get; set; } = Demographic.All;

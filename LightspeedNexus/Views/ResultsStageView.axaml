@@ -8,14 +8,14 @@
 			 xmlns:c="clr-namespace:LightspeedNexus.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			 ClipToBounds="False"
-             x:Class="LightspeedNexus.Views.SeedingStageView"
-			 x:DataType="vm:SeedingStageViewModel">
+             x:Class="LightspeedNexus.Views.ResultsStageView"
+			 x:DataType="vm:ResultsStageViewModel">
 
 	<Design.DataContext>
-		<vm:SeedingStageViewModel/>
+		<vm:ResultsStageViewModel/>
 	</Design.DataContext>
 
-	<Grid x:Name="Root" RowDefinitions="Auto,10,Auto,10,*">
+	<Grid x:Name="Root" RowDefinitions="Auto,10,*">
 
 		<!--Header-->
 		<Grid ColumnDefinitions="260,10,*,10,260">
@@ -30,7 +30,7 @@
 						<StackPanel Orientation="Horizontal"
 									Spacing="10">
 							<PathIcon Data="{StaticResource arrow_left_regular}"/>
-							<TextBlock Classes="large" Text="Pools"/>
+							<TextBlock Classes="large" Text="Bracket"/>
 						</StackPanel>
 					</StackPanel>
 				</StackPanel>
@@ -45,78 +45,82 @@
 						   HorizontalAlignment="Center"
 						   Text="{Binding Title}"/>
 			</StackPanel>
-
+			
 			<Button Grid.Column="4"
 					HorizontalAlignment="Stretch"
 					VerticalAlignment="Stretch"
 					HorizontalContentAlignment="Center"
 					VerticalContentAlignment="Center"
-					Command="{Binding GoToBracketCommand}">
+					Command="{Binding GoToFinishCommand}">
 				<StackPanel>
 					<StackPanel Orientation="Horizontal"
 								Spacing="10">
-						<TextBlock Classes="large" Text="Bracket"/>
+						<TextBlock Classes="large" Text="Finish"/>
 						<PathIcon Data="{StaticResource arrow_right_regular}"/>
 					</StackPanel>
 				</StackPanel>
 			</Button>
-		</Grid>
 
-		<!--Options-->
-		<c:LightspeedBorder Classes="small nocorners"
-							Grid.Row="2">
-			<CheckBox HorizontalAlignment="Center"
-					  IsChecked="{Binding IsFullAdvancement}">
-				<TextBlock Classes="medium">100% Advancement</TextBlock>
-			</CheckBox>
-		</c:LightspeedBorder>
+		</Grid>
 		
 		<!--Rankings-->
-		<Grid Grid.Row="4" RowDefinitions="Auto,10,Auto,10,*">
+		<Grid Grid.Row="2" RowDefinitions="Auto,10,Auto,10,*">
 		
-			<Grid ColumnDefinitions="50,10,*,10,100,10,100,10,150"
+			<Grid ColumnDefinitions="50,10,*,10,100,10,100,10,100,10,100"
 				  Margin="12,0"
 				  Grid.Row="2">
-				<TextBlock Grid.ColumnSpan="2">Name</TextBlock>
-				<TextBlock Grid.Column="4" HorizontalAlignment="Center">Wins</TextBlock>
-				<TextBlock Grid.Column="6" HorizontalAlignment="Center">Losses</TextBlock>
-				<TextBlock Grid.Column="8" HorizontalAlignment="Center">Score</TextBlock>
+				<TextBlock Grid.Column="0" HorizontalAlignment="Center">Place</TextBlock>
+				<TextBlock Grid.Column="2">Name</TextBlock>
+				<TextBlock Grid.Column="4" HorizontalAlignment="Center">Overall Wins</TextBlock>
+				<TextBlock Grid.Column="6" HorizontalAlignment="Center">Points</TextBlock>
+				<TextBlock Grid.Column="8" HorizontalAlignment="Center">Current Rank</TextBlock>
+				<TextBlock Grid.Column="10" HorizontalAlignment="Center">Promotion</TextBlock>
 			</Grid>
 			
 			<!-- Players -->
 			<ScrollViewer Grid.Row="4">
-				<ItemsControl ItemsSource="{Binding Seeds}">
+				<ItemsControl ItemsSource="{Binding Placements}">
 					<ItemsControl.ItemsPanel>
 						<ItemsPanelTemplate>
 							<StackPanel Spacing="10"/>
 						</ItemsPanelTemplate>
 					</ItemsControl.ItemsPanel>
 					<ItemsControl.ItemTemplate>
-						<DataTemplate DataType="vm:SeedViewModel">
-							<c:LightspeedBorder Classes="item">
-								<Grid ColumnDefinitions="50,10,*,10,100,10,100,10,150">
+						<DataTemplate DataType="vm:StatisticsViewModel">
+							<c:LightspeedBorder Classes="item"
+								Classes.gold="{Binding IsGold}"
+								Classes.silver="{Binding IsSilver}"
+								Classes.bronze="{Binding IsBronze}">
+								<Grid ColumnDefinitions="50,10,*,10,100,10,100,10,100,10,100">
 									<TextBlock Grid.Column="0"
-											   Classes="large"
-											   Text="{Binding Place, StringFormat='{}{0}.'}"
-											   HorizontalAlignment="Right"
+											   Classes="medium"
+											   Text="{Binding Place}"
+											   HorizontalAlignment="Center"
 											   VerticalAlignment="Center"/>
 									<TextBlock Grid.Column="2"
 											   Classes="large"
 											   Text="{Binding Participant.Name}"
 											   VerticalAlignment="Center"/>
 									<TextBlock Grid.Column="4"
-											   Classes="large"
+											   Classes="medium"
 											   Text="{Binding Wins}"
 											   HorizontalAlignment="Center"
 											   VerticalAlignment="Center"/>
 									<TextBlock Grid.Column="6"
-											   Classes="large"
-											   Text="{Binding Losses}"
+											   Classes="medium"
+											   Text="{Binding Points}"
 											   HorizontalAlignment="Center"
 											   VerticalAlignment="Center"/>
 									<TextBlock Grid.Column="8"
 											   Classes="large"
-											   Text="{Binding Score, StringFormat='F1'}"
+											   Text="{Binding OldRank}"
+											   Foreground="{StaticResource GrayBrush}"
+											   HorizontalAlignment="Center"
+											   VerticalAlignment="Center"/>
+									<TextBlock Grid.Column="10"
+											   Classes="large"
+											   IsVisible="{Binding IsPromoted}"
+											   Text="{Binding NewRank}"
 											   HorizontalAlignment="Center"
 											   VerticalAlignment="Center"/>
 								</Grid>

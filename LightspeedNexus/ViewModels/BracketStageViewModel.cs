@@ -130,7 +130,7 @@ public partial class BracketStageViewModel : StageViewModel, IRecipient<RequestB
     /// Go to the Final Results Stage
     /// </summary>
     [RelayCommand(CanExecute = nameof(CanGoToResults))]
-    private void GoToResults() { }
+    private void GoToResults() => Next = ResultsStageViewModel.FromBracket(this);
     public bool CanGoToResults() => IsCompleted;
 
     #endregion
@@ -289,7 +289,7 @@ public partial class BracketStageViewModel : StageViewModel, IRecipient<RequestB
             group = vm.SetNextRoundFor(group);
         vm.Final.NewMatchFromWinnersOf<StandardMatchViewModel>(vm.Semifinals.Matches[0], vm.Semifinals.Matches[1]);
         vm.Third.NewMatchFromLosersOf<StandardMatchViewModel>(vm.Semifinals.Matches[0], vm.Semifinals.Matches[1]);
-        vm.IsRanked = StrongReferenceMessenger.Default.Send<RequestIsRankedMessage>().Response ?? false;
+        vm.IsRanked = StrongReferenceMessenger.Default.Send<RequestIsRanked>().Response ?? false;
 
         return vm;
     }
@@ -355,6 +355,8 @@ public partial class BracketStageViewModel : StageViewModel, IRecipient<RequestB
 
     #endregion
 
+    #region Match Enumeration and Lookup
+
     /// <summary>
     /// Enumerates through all the match groups. Some groups might be empty because they
     /// are not in use, but they are never null.
@@ -373,6 +375,26 @@ public partial class BracketStageViewModel : StageViewModel, IRecipient<RequestB
             yield return Semifinals;
         yield return Third;
         yield return Final;
+    }
+
+
+    /// <summary>
+    /// Enumerates through all the bracket matches from the earliest to the latest
+    /// </summary>
+    public IEnumerable<MatchViewModel> EnumerateMatches()
+    {
+        foreach (var match in Top64)
+            yield return match;
+        foreach (var match in Top32)
+            yield return match;
+        foreach (var match in Top16)
+            yield return match;
+        foreach (var match in Quarterfinals)
+            yield return match;
+        foreach (var match in Semifinals)
+            yield return match;
+        yield return Third[0];
+        yield return Final[0];
     }
 
     /// <summary>
@@ -407,6 +429,31 @@ public partial class BracketStageViewModel : StageViewModel, IRecipient<RequestB
             yield return match.Second.Participant;
         }
     }
+
+    /// <summary>
+    /// Gets a participant's final placing in the bracket
+    /// </summary>
+    public int GetPlace(ParticipantViewModel participant)
+    {
+        if (participant == Final[0].Winner?.Participant)
+            return 1;
+        else if (participant == Final[0].Loser?.Participant)
+            return 2;
+        else if ( (Third[0].Winner is not null && participant == Third[0].Winner!.Participant) ||
+                  (Third[0].Winner is null && Third[0].Contains(participant)))
+            return 3;
+        else if (Third[0].Loser is not null && participant == Third[0].Loser!.Participant)
+            return 4;
+        else if (Quarterfinals.Contains(participant))
+            return 5;
+        else if (Top16.Contains(participant))
+            return 9;
+        else if (Top32.Contains(participant))
+            return 17;
+        else return 33;
+    }
+
+    #endregion
 
     public override void OnTournamentSaved()
     {

@@ -49,6 +49,11 @@ public abstract partial class StageViewModel(string name) : ViewModelBase, IDisp
     /// <summary>
     /// Gets the title of the tournament from the previous stage
     /// </summary>
+    public virtual string? Event => Previous?.Event;
+
+    /// <summary>
+    /// Gets the title of the tournament from the previous stage
+    /// </summary>
     public virtual string Title => Previous?.Title ?? string.Empty;
 
     #endregion
@@ -70,6 +75,7 @@ public abstract partial class StageViewModel(string name) : ViewModelBase, IDisp
             PoolsStage ps => PoolsStageViewModel.FromModel(ps),
             SeedingStage sds => SeedingStageViewModel.FromModel(sds),
             BracketStage bs => BracketStageViewModel.FromModel(bs),
+            ResultsStage rs => ResultsStageViewModel.FromModel(rs),
             null => null,
             _ => throw new NotSupportedException("Unsupported stage type"),
         };

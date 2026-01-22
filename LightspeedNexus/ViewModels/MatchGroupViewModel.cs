@@ -179,4 +179,9 @@ public partial class MatchGroupViewModel : ViewModelBase, IReadOnlyList<MatchVie
     public void Save() => StorageService.WriteMatches(Matches
         .Select(m => m.ToModel())
         );
+
+    /// <summary>
+    /// Determines if the given participant is in any of the matches in this group
+    /// </summary>
+    public bool Contains(ParticipantViewModel participant) => Matches.Any(m => m.Contains(participant));
 }

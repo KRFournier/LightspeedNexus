@@ -13,14 +13,19 @@ namespace LightspeedNexus.ViewModels;
 
 #region Messages
 
-public sealed class RequestIsRankedMessage : RequestMessage<bool?> { }
+public sealed class RequestIsRanked : RequestMessage<bool?> { }
+
+public sealed class RequestFinalGrading : RequestMessage<Grading?> { }
+
+public sealed class RequestTournamentValue : RequestMessage<int> { }
 
 #endregion
 
 public partial class TournamentViewModel : ViewModelBase, IDisposable,
     IRecipient<NextStageMessage>, IRecipient<PreviousStageMessage>,
     IRecipient<RosterChangedMessage>, IRecipient<BracketRoundCompleted>,
-    IRecipient<RequestIsRankedMessage>
+    IRecipient<RequestIsRanked>, IRecipient<RequestFinalGrading>,
+    IRecipient<RequestTournamentValue>
 {
     #region Properties
 
@@ -133,9 +138,19 @@ public partial class TournamentViewModel : ViewModelBase, IDisposable,
         OnPropertyChanged(nameof(FinalRank));
     }
 
-    public void Receive(RequestIsRankedMessage message)
+    public void Receive(RequestIsRanked message)
     {
         message.Reply(IsRanked);
+    }
+
+    public void Receive(RequestFinalGrading message)
+    {
+        message.Reply(GetFinalGrading());
+    }
+
+    public void Receive(RequestTournamentValue message)
+    {
+        message.Reply(Value);
     }
 
     #endregion
@@ -238,24 +253,7 @@ public partial class TournamentViewModel : ViewModelBase, IDisposable,
         {
             if (!IsRanked)
                 return "Unranked";
-
-            int topX = GradingsChart.GetTopX(SetupStage.Registrees.Count);
-            if (topX > 0)
-            {
-                var topPlayers = FindStage<BracketStageViewModel>()?.GetTopXParticipants(topX);
-                if (topPlayers is not null)
-                {
-                    var grading = GradingsChart.FindFinal(
-                        SetupStage.Registrees.Select(r => r.Rank),
-                        topPlayers.OfType<PlayerViewModel>().Select(p => p.Rank)
-                        );
-
-                    if (grading is not null)
-                        return grading.Rating;
-                }
-            }
-
-            return null;
+            return GetFinalGrading()?.Rating;
         }
     }
 
@@ -263,6 +261,31 @@ public partial class TournamentViewModel : ViewModelBase, IDisposable,
     /// Calculates the value of the tournament based on the registrees' ranks
     /// </summary>
     public int Value => SetupStage.Registrees.Select(r => r.Rank.Power).Sum();
+
+    /// <summary>
+    /// Finds the grading that corresponds to the tournament's final rank, or null if it can't be determined
+    /// </summary>
+    /// <returns></returns>
+    protected Grading? GetFinalGrading()
+    {
+        int topX = GradingsChart.GetTopX(SetupStage.Registrees.Count);
+        if (topX > 0)
+        {
+            var topPlayers = FindStage<BracketStageViewModel>()?.GetTopXParticipants(topX);
+            if (topPlayers is not null)
+            {
+                var grading = GradingsChart.FindFinal(
+                    SetupStage.Registrees.Select(r => r.Rank),
+                    topPlayers.OfType<PlayerViewModel>().Select(p => p.Rank)
+                    );
+
+                if (grading is not null)
+                    return grading;
+            }
+        }
+
+        return null;
+    }
 
     #endregion
 }

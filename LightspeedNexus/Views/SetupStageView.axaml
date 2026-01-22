@@ -19,9 +19,14 @@
 
 		<!--Header-->
 		<Grid ColumnDefinitions="*,10,200">
-			<TextBlock Classes="giant"
-					   VerticalAlignment="Center"
-					   Text="{Binding Title}"/>
+			<StackPanel>
+				<TextBlock Classes="small info"
+			               Text="{Binding EventName}"
+						   IsVisible="{Binding EventName, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+				<TextBlock Classes="giant"
+						   VerticalAlignment="Center"
+						   Text="{Binding Title}"/>
+			</StackPanel>
 			<Button Grid.Column="2"
 					HorizontalAlignment="Stretch"
 					VerticalAlignment="Stretch"
@@ -169,20 +174,28 @@
 				</Viewbox>
 			
 				<!--Additional Info-->
-				<Grid ColumnDefinitions="Auto,10,Auto,10,Auto,10,*">
+				<Grid ColumnDefinitions="Auto,10,*,10,Auto,10,Auto,10,Auto,10,Auto,10,*">
 									
-					<!--Date-->
+					<!--Subtitle-->
 					<TextBlock Grid.Column="0"
 							   VerticalAlignment="Center"
+							   Text="Event"/>
+					<TextBox Grid.Column="2"
+							 VerticalContentAlignment="Center"
+							 Text="{Binding EventName}"/>
+
+					<!--Date-->
+					<TextBlock Grid.Column="4"
+							   VerticalAlignment="Center"
 							   Text="When"/>
-					<CalendarDatePicker Grid.Column="2"
+					<CalendarDatePicker Grid.Column="6"
 										SelectedDate="{Binding Date}"/>
 					
 					<!--Subtitle-->
-					<TextBlock Grid.Column="4"
+					<TextBlock Grid.Column="8"
 							   VerticalAlignment="Center"
 							   Text="Tagline"/>
-					<TextBox Grid.Column="6"
+					<TextBox Grid.Column="10"
 							 VerticalContentAlignment="Center"
 							 Watermark="Additional Description"
 							 Text="{Binding SubTitle}"/>

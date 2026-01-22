@@ -140,6 +140,11 @@ public abstract partial class MatchViewModel : ViewModelBase
         }
     }
 
+    /// <summary>
+    /// Determines if the given participant is in in this match
+    /// </summary>
+    public bool Contains(ParticipantViewModel participant) => First.Participant == participant || Second.Participant == participant;
+
     #region Winner
 
     /// <summary>

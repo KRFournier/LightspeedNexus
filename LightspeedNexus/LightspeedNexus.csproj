@@ -103,6 +103,9 @@
     <Compile Update="Views\ByeView.axaml.cs">
       <DependentUpon>ByeView.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\ResultsStageView.axaml.cs">
+      <DependentUpon>ResultsStageView.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\SeedingStageView.axaml.cs">
       <DependentUpon>SeedingStageView.axaml</DependentUpon>
     </Compile>

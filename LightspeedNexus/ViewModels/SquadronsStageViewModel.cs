@@ -17,15 +17,19 @@ namespace LightspeedNexus.ViewModels;
 /// <summary>
 /// Requests the participant with the given ID
 /// </summary>
-public class RequestParticipant(Guid id) : RequestMessage<ParticipantViewModel>
+public sealed class RequestParticipant(Guid id) : RequestMessage<ParticipantViewModel>
 {
     public Guid Id { get; set; } = id;
+}
+
+public sealed class RequestParticipants : RequestMessage<IEnumerable<ParticipantViewModel>>
+{
 }
 
 /// <summary>
 /// Requests the squadron with the given ID
 /// </summary>
-public class RequestSquadron(Guid id) : RequestMessage<SquadronViewModel>
+public sealed class RequestSquadron(Guid id) : RequestMessage<SquadronViewModel>
 {
     public Guid Id { get; set; } = id;
 }
@@ -36,7 +40,8 @@ public class RequestSquadron(Guid id) : RequestMessage<SquadronViewModel>
 /// The tournament settings
 /// </summary>
 public partial class SquadronsStageViewModel : StageViewModel,
-    IRecipient<RequestParticipant>, IRecipient<RequestSquadron>
+    IRecipient<RequestParticipant>, IRecipient<RequestSquadron>,
+    IRecipient<RequestParticipants>
 {
     #region Properties
 
@@ -109,6 +114,11 @@ public partial class SquadronsStageViewModel : StageViewModel,
         var squadron = Squadrons.FirstOrDefault(s => s.Guid == message.Id)
             ?? throw new InvalidOperationException($"Squadron with ID {message.Id} not found.");
         message.Reply(squadron);
+    }
+
+    public void Receive(RequestParticipants message)
+    {
+        message.Reply(Participants);
     }
 
     #endregion

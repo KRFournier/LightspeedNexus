@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using LightspeedNexus.Controls;
 using LightspeedNexus.ViewModels;
@@ -12,7 +13,7 @@ public partial class SetupStageView : UserControl
         InitializeComponent();
     }
 
-    public void Player_DoubleTapped(object? sender, RoutedEventArgs e)
+    public void Player_DoubleTapped(object? sender, TappedEventArgs e)
     {
         if (sender is LightspeedBorder border && border.DataContext is RegistreeViewModel registree)
         {

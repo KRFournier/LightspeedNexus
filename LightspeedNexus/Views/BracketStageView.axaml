@@ -69,11 +69,15 @@
 				</StackPanel>
 			</c:HoldButton>
 
-			<TextBlock Classes="giant"
-					   Grid.Column="2"
-					   HorizontalAlignment="Center"
-					   VerticalAlignment="Center"
-					   Text="{Binding Title}"/>
+			<StackPanel Grid.Column="2" VerticalAlignment="Center">
+				<TextBlock Classes="small info"						   
+						   HorizontalAlignment="Center"
+						   Text="{Binding Event}"
+						   IsVisible="{Binding Event, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+				<TextBlock Classes="giant"
+						   HorizontalAlignment="Center"
+						   Text="{Binding Title}"/>
+			</StackPanel>
 
 			<Button Grid.Column="4"
 					HorizontalAlignment="Stretch"

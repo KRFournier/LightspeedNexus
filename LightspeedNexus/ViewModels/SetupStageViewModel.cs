@@ -35,12 +35,19 @@ public class RequestRegistreeCount() : RequestMessage<int> { }
 /// </summary>
 public class RequestHasChoice : RequestMessage<bool> { }
 
+/// <summary>
+/// Requests the current roster of registrees
+/// </summary>
+public class RequestRoster : RequestMessage<IEnumerable<RegistreeViewModel>> { }
+
 #endregion
 
 /// <summary>
 /// The tournament settings
 /// </summary>
-public partial class SetupStageViewModel : StageViewModel, IComparer, IRecipient<RequestRegistreeCount>, IRecipient<RequestHasChoice>
+public partial class SetupStageViewModel : StageViewModel, IComparer,
+    IRecipient<RequestRegistreeCount>, IRecipient<RequestHasChoice>,
+    IRecipient<RequestRoster>
 {
     #region Properties
 
@@ -109,6 +116,10 @@ public partial class SetupStageViewModel : StageViewModel, IComparer, IRecipient
     public partial bool TanoAllowed { get; set; } = false;
 
     public bool HasChoice => new bool[] { ReyAllowed, RenAllowed, TanoAllowed }.Count(b => b) > 1;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(Title))]
+    public partial string? EventName { get; set; } = null;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Title))]
@@ -188,6 +199,8 @@ public partial class SetupStageViewModel : StageViewModel, IComparer, IRecipient
 
     public void Receive(RequestHasChoice message) => message.Reply(HasChoice);
 
+    public void Receive(RequestRoster message) => message.Reply(Registrees);
+
     #endregion
 
     /// <summary>
@@ -229,6 +242,7 @@ public partial class SetupStageViewModel : StageViewModel, IComparer, IRecipient
         ReyAllowed = ReyAllowed,
         RenAllowed = RenAllowed,
         TanoAllowed = TanoAllowed,
+        Event = EventName,
         SubTitle = SubTitle,
         Registrees = [.. Registrees.Select(r => r.ToModel())],
         AllowARanks = AllowARanks,
@@ -254,6 +268,7 @@ public partial class SetupStageViewModel : StageViewModel, IComparer, IRecipient
             ReyAllowed = model.ReyAllowed,
             RenAllowed = model.RenAllowed,
             TanoAllowed = model.TanoAllowed,
+            EventName = model.Event,
             SubTitle = model.SubTitle,
             AllowARanks = model.AllowARanks,
             AllowBRanks = model.AllowBRanks,
@@ -272,6 +287,11 @@ public partial class SetupStageViewModel : StageViewModel, IComparer, IRecipient
 
         return vm;
     }
+
+    /// <summary>
+    /// The name of the event in which the tournament is held
+    /// </summary>
+    public override string? Event => base.Event;
 
     /// <summary>
     /// The name of the tournament, e.g., Open Rey
