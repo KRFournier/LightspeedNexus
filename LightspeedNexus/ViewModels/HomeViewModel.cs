@@ -12,10 +12,15 @@ public partial class HomeViewModel : ViewModelBase
 {
     public ObservableCollection<Tournament> RecentTournaments { get; set; } = [];
 
+    public bool HasTournaments { get; set; } = false;
+
     public HomeViewModel()
     {
         if (!Design.IsDesignMode)
+        {
+            HasTournaments = StorageService.CountTournaments() > 0;
             RecentTournaments = [.. StorageService.ReadRecentTournaments()];
+        }
     }
 
     [RelayCommand]
@@ -29,6 +34,9 @@ public partial class HomeViewModel : ViewModelBase
 
     [RelayCommand]
     private static void GotoFighters() => WeakReferenceMessenger.Default.Send(new NavigatePageMessage(new FightersViewModel()));
+
+    [RelayCommand]
+    private static void GotoAllTournaments() => WeakReferenceMessenger.Default.Send(new NavigatePageMessage(new TournamentsViewModel()));
 
     [RelayCommand]
     private void DeleteTournament(Tournament tournament)

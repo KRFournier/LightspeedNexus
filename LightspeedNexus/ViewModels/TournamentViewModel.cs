@@ -19,13 +19,15 @@ public sealed class RequestFinalGrading : RequestMessage<Grading?> { }
 
 public sealed class RequestTournamentValue : RequestMessage<int> { }
 
+public sealed class SaveAndCloseMessage { }
+
 #endregion
 
 public partial class TournamentViewModel : ViewModelBase, IDisposable,
     IRecipient<NextStageMessage>, IRecipient<PreviousStageMessage>,
     IRecipient<RosterChangedMessage>, IRecipient<BracketRoundCompleted>,
     IRecipient<RequestIsRanked>, IRecipient<RequestFinalGrading>,
-    IRecipient<RequestTournamentValue>
+    IRecipient<RequestTournamentValue>, IRecipient<SaveAndCloseMessage>
 {
     #region Properties
 
@@ -153,9 +155,14 @@ public partial class TournamentViewModel : ViewModelBase, IDisposable,
         message.Reply(Value);
     }
 
+    public void Receive(SaveAndCloseMessage message)
+    {
+        GoHome();
+    }
+
     #endregion
 
-    private bool _loading = true;
+    private readonly bool _loading = true;
 
     /// <summary>
     /// Creates a brand new tournament

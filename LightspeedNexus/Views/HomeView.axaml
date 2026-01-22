@@ -35,7 +35,7 @@
 		<Panel Classes="slide_up"
 			   Grid.Row="2">			
 			
-				<Grid ColumnDefinitions="*,10,Auto,10,*">
+				<Grid ColumnDefinitions="*,20,Auto,20,*">
 
 					<!--Recent Tournaments-->
 					<ScrollViewer>
@@ -94,7 +94,7 @@
 					<!--Buttons-->
 					<Grid x:Name="ButtonGrid"
 						  Grid.Column="2"
-						  RowDefinitions="100,20,60,20,75"
+						  RowDefinitions="100,20,60,20,60"
 						  VerticalAlignment="Top">
 						<!--<Button Grid.Row="0"
 								HorizontalAlignment="Stretch"
@@ -132,6 +132,22 @@
 							<TextBlock Classes="large"
 									   HorizontalAlignment="Center"
 									   Text="Fighters"/>
+						</Button>
+						<Button Grid.Row="4"
+								HorizontalAlignment="Stretch"
+								VerticalAlignment="Stretch"
+								HorizontalContentAlignment="Center"
+								VerticalContentAlignment="Center"
+								IsVisible="{Binding HasTournaments}"
+								Command="{Binding GotoAllTournamentsCommand}">
+							<Button.Background>
+								<ImageBrush Source="/Assets/bracket.png"
+											Stretch="UniformToFill"
+											Opacity=".5"/>
+							</Button.Background>
+							<TextBlock Classes="large"
+									   HorizontalAlignment="Center"
+									   Text="Tournaments"/>
 						</Button>
 					</Grid>
 				

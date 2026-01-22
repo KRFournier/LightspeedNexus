@@ -8,7 +8,7 @@
 				<c:LightspeedBorder Classes="item" Progress="0.3">
 					<TextBlock>Hello, World!</TextBlock>
 				</c:LightspeedBorder>
-				<c:LightspeedBorder Classes="item bronze">
+				<c:LightspeedBorder Classes="item">
 					<TextBlock>Hello, World!</TextBlock>
 				</c:LightspeedBorder>
 			</StackPanel>

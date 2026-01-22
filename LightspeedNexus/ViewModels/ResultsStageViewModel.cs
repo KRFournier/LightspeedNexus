@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using LightspeedNexus.Messages;
 using LightspeedNexus.Models;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -143,6 +144,11 @@ public partial class ResultsStageViewModel : StageViewModel
 
     public ObservableCollection<StatisticsViewModel> Placements { get; set; } = [];
 
+    /// <summary>
+    /// When a stage represents the final stage of a tournament, this will be true
+    /// </summary>
+    public override bool IsTournamentCompleted => true;
+
     #endregion
 
     #region Commands
@@ -151,7 +157,10 @@ public partial class ResultsStageViewModel : StageViewModel
     /// Go to the Final Results Stage
     /// </summary>
     [RelayCommand]
-    private void GoToFinish() { }
+    private static void Close()
+    {
+        StrongReferenceMessenger.Default.Send<SaveAndCloseMessage>();
+    }
 
     #endregion
 

@@ -51,14 +51,8 @@
 					VerticalAlignment="Stretch"
 					HorizontalContentAlignment="Center"
 					VerticalContentAlignment="Center"
-					Command="{Binding GoToFinishCommand}">
-				<StackPanel>
-					<StackPanel Orientation="Horizontal"
-								Spacing="10">
-						<TextBlock Classes="large" Text="Finish"/>
-						<PathIcon Data="{StaticResource arrow_right_regular}"/>
-					</StackPanel>
-				</StackPanel>
+					Command="{Binding CloseCommand}">
+				<TextBlock Classes="large" Text="Close"/>
 			</Button>
 
 		</Grid>

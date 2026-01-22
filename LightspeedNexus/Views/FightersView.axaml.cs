@@ -1,7 +1,8 @@
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
-using LightspeedNexus.ViewModels;
 using LightspeedNexus.Controls;
+using LightspeedNexus.ViewModels;
 
 namespace LightspeedNexus.Views;
 
@@ -12,7 +13,7 @@ public partial class FightersView : UserControl
         InitializeComponent();
     }
 
-    public void LightspeedBorder_DoubleTapped(object? sender, RoutedEventArgs e)
+    public void LightspeedBorder_DoubleTapped(object? sender, TappedEventArgs e)
     {
         if (sender is LightspeedBorder border && border.DataContext is FighterViewModel fighter)
         {

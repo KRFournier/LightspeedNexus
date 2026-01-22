@@ -117,6 +117,13 @@ public static class StorageService
             .ToArray();
     }
 
+    public static int CountTournaments()
+    {
+        using var db = GetDatabase();
+        var collection = db.GetCollection<Tournament>(GetCollectionName<Tournament>());
+        return collection.Query().Count();
+    }
+
     #endregion
 
     #region Matches
