@@ -8,6 +8,8 @@ public class Seed
     public Guid Participant { get; set; }
     public int Wins { get; set; } = 0;
     public int Losses { get; set; } = 0;
+    public int Points { get; set; } = 0;
+    public int PointsAgainst { get; set; } = 0;
     public double Score { get; set; } = 0.0;
 }
 

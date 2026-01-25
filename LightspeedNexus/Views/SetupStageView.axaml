@@ -174,7 +174,7 @@
 				</Viewbox>
 			
 				<!--Additional Info-->
-				<Grid ColumnDefinitions="Auto,10,*,10,Auto,10,Auto,10,Auto,10,Auto,10,*">
+				<Grid ColumnDefinitions="Auto,10,*,10,Auto,10,Auto,10,Auto,10,*">
 									
 					<!--Subtitle-->
 					<TextBlock Grid.Column="0"

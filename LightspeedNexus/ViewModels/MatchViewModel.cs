@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using LightspeedNexus.Models;
 using LightspeedNexus.Services;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -90,8 +91,8 @@ public abstract partial class MatchViewModel : ViewModelBase
     {
         if (Design.IsDesignMode)
         {
-            First = new ScoreViewModel(new PlayerViewModel("Player 1")) { Points = 99, Seed = 1 };
-            Second = new ScoreViewModel(new PlayerViewModel("Player With Long Name")) { Points = -99, Seed = 64 };
+            First = new ScoreViewModel(new PlayerViewModel("Player", "1")) { Points = 99, Seed = 1 };
+            Second = new ScoreViewModel(new PlayerViewModel("Player", "With Long Name")) { Points = -99, Seed = 64 };
         }
     }
 

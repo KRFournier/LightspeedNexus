@@ -1,10 +1,13 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Avalonia.Controls;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using LightspeedNexus.Models;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text.Json.Nodes;
 
 namespace LightspeedNexus.ViewModels;
 
@@ -135,6 +138,18 @@ public partial class StatisticsViewModel : ViewModelBase
         }
         Value = Points / _possiblePoints * value;
     }
+
+    #region Saber Sport
+
+    public JsonNode ToSaberSportsSubmission()
+    {
+        PlayerViewModel player = Participant as PlayerViewModel ?? throw new InvalidOperationException("Participant must be a player to submit to Saber Sport");
+        var node = player.ToSaberSportsSubmission();
+        node["place"] = Place;
+        return node;
+    }
+
+    #endregion
 }
 
 public partial class ResultsStageViewModel : StageViewModel
@@ -148,6 +163,9 @@ public partial class ResultsStageViewModel : StageViewModel
     /// </summary>
     public override bool IsTournamentCompleted => true;
 
+    [ObservableProperty]
+    public partial bool CanSubmit { get; set; } = false;
+
     #endregion
 
     #region Commands
@@ -158,21 +176,34 @@ public partial class ResultsStageViewModel : StageViewModel
     [RelayCommand]
     private static void Close() => StrongReferenceMessenger.Default.Send<SaveAndCloseMessage>();
 
+    [RelayCommand]
+    private void Submit()
+    {
+        if (CanSubmit)
+        {
+            string json = StrongReferenceMessenger.Default.Send<RequestSaberScoreJson>();
+        }
+    }
+
     #endregion
 
     public ResultsStageViewModel() : base("Results")
     {
+        if (!Design.IsDesignMode)
+            CanSubmit = StrongReferenceMessenger.Default.Send<RequestSubmittable>();
     }
 
     public override ResultsStage ToModel() => new()
     {
         Placements = [.. Placements.Select(s => s.ToModel())],
+        CanSubmit = CanSubmit,
         Next = Next?.ToModel()
     };
 
     public static ResultsStageViewModel FromModel(ResultsStage model) => new()
     {
         Placements = [.. model.Placements.Select(s => new StatisticsViewModel(s))],
+        CanSubmit = model.CanSubmit,
         Next = FromModel(model.Next)
     };
 
@@ -184,6 +215,8 @@ public partial class ResultsStageViewModel : StageViewModel
         var grades = StrongReferenceMessenger.Default.Send<RequestFinalGrading>().Response;
         var roster = StrongReferenceMessenger.Default.Send<RequestParticipants>().Response;
         var value = StrongReferenceMessenger.Default.Send<RequestTournamentValue>().Response;
+
+        stage.CanSubmit = StrongReferenceMessenger.Default.Send<RequestSubmittable>();
 
         // initialize the dictionary with each player
         Dictionary<ParticipantViewModel, StatisticsViewModel> stats = [];

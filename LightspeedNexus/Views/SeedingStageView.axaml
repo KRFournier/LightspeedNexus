@@ -74,13 +74,16 @@
 		<!--Rankings-->
 		<Grid Grid.Row="4" RowDefinitions="Auto,10,Auto,10,*">
 		
-			<Grid ColumnDefinitions="50,10,*,10,100,10,100,10,150"
+			<Grid ColumnDefinitions="50,10,7*,10,3*,10,100,10,100,10,100,10,150"
 				  Margin="12,0"
 				  Grid.Row="2">
-				<TextBlock Grid.ColumnSpan="2">Name</TextBlock>
-				<TextBlock Grid.Column="4" HorizontalAlignment="Center">Wins</TextBlock>
-				<TextBlock Grid.Column="6" HorizontalAlignment="Center">Losses</TextBlock>
-				<TextBlock Grid.Column="8" HorizontalAlignment="Center">Score</TextBlock>
+				<TextBlock Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Bottom">Seed</TextBlock>
+				<TextBlock Grid.Column="2" VerticalAlignment="Bottom">Name</TextBlock>
+				<TextBlock Grid.Column="4" VerticalAlignment="Bottom">Club</TextBlock>
+				<TextBlock Grid.Column="6" HorizontalAlignment="Center" VerticalAlignment="Bottom">Wins</TextBlock>
+				<TextBlock Grid.Column="8" HorizontalAlignment="Center" TextAlignment="Center">Points<LineBreak/>Won</TextBlock>
+				<TextBlock Grid.Column="10" HorizontalAlignment="Center" TextAlignment="Center">Points<LineBreak/>Lost</TextBlock>
+				<TextBlock Grid.Column="12" HorizontalAlignment="Center" TextAlignment="Center">Performance<LineBreak/>Score</TextBlock>
 			</Grid>
 			
 			<!-- Players -->
@@ -94,28 +97,37 @@
 					<ItemsControl.ItemTemplate>
 						<DataTemplate DataType="vm:SeedViewModel">
 							<c:LightspeedBorder Classes="item">
-								<Grid ColumnDefinitions="50,10,*,10,100,10,100,10,150">
+								<Grid ColumnDefinitions="50,10,7*,10,3*,10,100,10,100,10,100,10,150">
 									<TextBlock Grid.Column="0"
-											   Classes="large"
-											   Text="{Binding Place, StringFormat='{}{0}.'}"
-											   HorizontalAlignment="Right"
+											   Classes="medium"
+											   Text="{Binding Place}"
+											   HorizontalAlignment="Center"
 											   VerticalAlignment="Center"/>
 									<TextBlock Grid.Column="2"
 											   Classes="large"
 											   Text="{Binding Participant.Name}"
 											   VerticalAlignment="Center"/>
 									<TextBlock Grid.Column="4"
+											   Classes="medium"
+											   VerticalAlignment="Center"
+											   Text="{Binding Participant.Subtitle}"/>
+									<TextBlock Grid.Column="6"
 											   Classes="large"
 											   Text="{Binding Wins}"
 											   HorizontalAlignment="Center"
 											   VerticalAlignment="Center"/>
-									<TextBlock Grid.Column="6"
-											   Classes="large"
-											   Text="{Binding Losses}"
+									<TextBlock Grid.Column="8"
+											   Classes="medium"
+											   Text="{Binding Points}"
 											   HorizontalAlignment="Center"
 											   VerticalAlignment="Center"/>
-									<TextBlock Grid.Column="8"
-											   Classes="large"
+									<TextBlock Grid.Column="10"
+											   Classes="medium"
+											   Text="{Binding PointsAgainst}"
+											   HorizontalAlignment="Center"
+											   VerticalAlignment="Center"/>
+									<TextBlock Grid.Column="12"
+											   Classes="medium"
 											   Text="{Binding Score, StringFormat='F1'}"
 											   HorizontalAlignment="Center"
 											   VerticalAlignment="Center"/>

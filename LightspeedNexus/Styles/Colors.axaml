@@ -3,105 +3,113 @@
 	
 	<Design.PreviewWith>
 		<Border Padding="20"
-				Background="{StaticResource ShinyGold}"
+				Background="{StaticResource SaberSportBackground}"
 				BorderBrush="{StaticResource BlueRed}">
 		</Border>
 	</Design.PreviewWith>
 
-	<Style>
-		<Style.Resources>
-			<Color x:Key="Red">#b52d25</Color>
-			<Color x:Key="Orange">#b56d24</Color>
-			<Color x:Key="Yellow">#b5b524</Color>
-			<Color x:Key="Lime">#6db524</Color>
-			<Color x:Key="Green">#218d21</Color>
-			<Color x:Key="Teal">#24b5b5</Color>
-			<Color x:Key="Blue">#21458d</Color>
-			<Color x:Key="Purple">#44208c</Color>
-			<Color x:Key="Violet">#8c208c</Color>
-			<Color x:Key="Magenta">#8c2044</Color>
-			<Color x:Key="Gray">#4c4c4c</Color>
-			<Color x:Key="White">#dfdfdf</Color>
+	<Styles.Resources>
+		<Color x:Key="Red">#b52d25</Color>
+		<Color x:Key="Orange">#b56d24</Color>
+		<Color x:Key="Yellow">#b5b524</Color>
+		<Color x:Key="Lime">#6db524</Color>
+		<Color x:Key="Green">#218d21</Color>
+		<Color x:Key="Teal">#24b5b5</Color>
+		<Color x:Key="Blue">#21458d</Color>
+		<Color x:Key="Purple">#44208c</Color>
+		<Color x:Key="Violet">#8c208c</Color>
+		<Color x:Key="Magenta">#8c2044</Color>
+		<Color x:Key="Gray">#4c4c4c</Color>
+		<Color x:Key="White">#dfdfdf</Color>
 			
-			<SolidColorBrush x:Key="RedBrush" Color="{StaticResource Red}"/>
-			<SolidColorBrush x:Key="OrangeBrush" Color="{StaticResource Orange}"/>
-			<SolidColorBrush x:Key="YellowBrush" Color="{StaticResource Yellow}"/>
-			<SolidColorBrush x:Key="LimeBrush" Color="{StaticResource Lime}"/>
-			<SolidColorBrush x:Key="GreenBrush" Color="{StaticResource Green}"/>
-			<SolidColorBrush x:Key="TealBrush" Color="{StaticResource Teal}"/>
-			<SolidColorBrush x:Key="BlueBrush" Color="{StaticResource Blue}"/>
-			<SolidColorBrush x:Key="PurpleBrush" Color="{StaticResource Purple}"/>
-			<SolidColorBrush x:Key="VioletBrush" Color="{StaticResource Violet}"/>
-			<SolidColorBrush x:Key="MagentaBrush" Color="{StaticResource Magenta}"/>
-			<SolidColorBrush x:Key="GrayBrush" Color="{StaticResource Gray}"/>
-			<SolidColorBrush x:Key="WhiteBrush" Color="{StaticResource White}"/>
+		<SolidColorBrush x:Key="RedBrush" Color="{StaticResource Red}"/>
+		<SolidColorBrush x:Key="OrangeBrush" Color="{StaticResource Orange}"/>
+		<SolidColorBrush x:Key="YellowBrush" Color="{StaticResource Yellow}"/>
+		<SolidColorBrush x:Key="LimeBrush" Color="{StaticResource Lime}"/>
+		<SolidColorBrush x:Key="GreenBrush" Color="{StaticResource Green}"/>
+		<SolidColorBrush x:Key="TealBrush" Color="{StaticResource Teal}"/>
+		<SolidColorBrush x:Key="BlueBrush" Color="{StaticResource Blue}"/>
+		<SolidColorBrush x:Key="PurpleBrush" Color="{StaticResource Purple}"/>
+		<SolidColorBrush x:Key="VioletBrush" Color="{StaticResource Violet}"/>
+		<SolidColorBrush x:Key="MagentaBrush" Color="{StaticResource Magenta}"/>
+		<SolidColorBrush x:Key="GrayBrush" Color="{StaticResource Gray}"/>
+		<SolidColorBrush x:Key="WhiteBrush" Color="{StaticResource White}"/>
 			
-			<SolidColorBrush x:Key="RedBackground" Color="{StaticResource Red}" Opacity="0.4"/>
-			<SolidColorBrush x:Key="OrangeBackground" Color="{StaticResource Orange}" Opacity="0.4"/>
-			<SolidColorBrush x:Key="YellowBackground" Color="{StaticResource Yellow}" Opacity="0.4"/>
-			<SolidColorBrush x:Key="LimeBackground" Color="{StaticResource Lime}" Opacity="0.4"/>
-			<SolidColorBrush x:Key="GreenBackground" Color="{StaticResource Green}" Opacity="0.4"/>
-			<SolidColorBrush x:Key="TealBackground" Color="{StaticResource Teal}" Opacity="0.4"/>
-			<SolidColorBrush x:Key="BlueBackground" Color="{StaticResource Blue}" Opacity="0.4"/>
-			<SolidColorBrush x:Key="PurpleBackground" Color="{StaticResource Purple}" Opacity="0.4"/>
-			<SolidColorBrush x:Key="VioletBackground" Color="{StaticResource Violet}" Opacity="0.4"/>
-			<SolidColorBrush x:Key="MagentaBackground" Color="{StaticResource Magenta}" Opacity="0.4"/>
-			<SolidColorBrush x:Key="GrayBackground" Color="{StaticResource Gray}" Opacity="0.4"/>
-			<SolidColorBrush x:Key="WhiteBackground" Color="{StaticResource White}" Opacity="0.4"/>
-			<SolidColorBrush x:Key="BlackBackground" Color="Black" Opacity="0.4"/>
+		<SolidColorBrush x:Key="RedBackground" Color="{StaticResource Red}" Opacity="0.4"/>
+		<SolidColorBrush x:Key="OrangeBackground" Color="{StaticResource Orange}" Opacity="0.4"/>
+		<SolidColorBrush x:Key="YellowBackground" Color="{StaticResource Yellow}" Opacity="0.4"/>
+		<SolidColorBrush x:Key="LimeBackground" Color="{StaticResource Lime}" Opacity="0.4"/>
+		<SolidColorBrush x:Key="GreenBackground" Color="{StaticResource Green}" Opacity="0.4"/>
+		<SolidColorBrush x:Key="TealBackground" Color="{StaticResource Teal}" Opacity="0.4"/>
+		<SolidColorBrush x:Key="BlueBackground" Color="{StaticResource Blue}" Opacity="0.4"/>
+		<SolidColorBrush x:Key="PurpleBackground" Color="{StaticResource Purple}" Opacity="0.4"/>
+		<SolidColorBrush x:Key="VioletBackground" Color="{StaticResource Violet}" Opacity="0.4"/>
+		<SolidColorBrush x:Key="MagentaBackground" Color="{StaticResource Magenta}" Opacity="0.4"/>
+		<SolidColorBrush x:Key="GrayBackground" Color="{StaticResource Gray}" Opacity="0.4"/>
+		<SolidColorBrush x:Key="WhiteBackground" Color="{StaticResource White}" Opacity="0.4"/>
+		<SolidColorBrush x:Key="BlackBackground" Color="Black" Opacity="0.4"/>
 
-			<SolidColorBrush x:Key="RedClear" Color="{StaticResource Red}" Opacity="0"/>
-			<SolidColorBrush x:Key="OrangeClear" Color="{StaticResource Orange}" Opacity="0"/>
-			<SolidColorBrush x:Key="YellowClear" Color="{StaticResource Yellow}" Opacity="0"/>
-			<SolidColorBrush x:Key="LimeClear" Color="{StaticResource Lime}" Opacity="0"/>
-			<SolidColorBrush x:Key="GreenClear" Color="{StaticResource Green}" Opacity="0"/>
-			<SolidColorBrush x:Key="TealClear" Color="{StaticResource Teal}" Opacity="0"/>
-			<SolidColorBrush x:Key="BlueClear" Color="{StaticResource Blue}" Opacity="0"/>
-			<SolidColorBrush x:Key="PurpleClear" Color="{StaticResource Purple}" Opacity="0"/>
-			<SolidColorBrush x:Key="VioletClear" Color="{StaticResource Violet}" Opacity="0"/>
-			<SolidColorBrush x:Key="MagentaClear" Color="{StaticResource Magenta}" Opacity="0"/>
-			<SolidColorBrush x:Key="GrayClear" Color="{StaticResource Gray}" Opacity="0"/>
-			<SolidColorBrush x:Key="WhiteClear" Color="{StaticResource White}" Opacity="0"/>
+		<SolidColorBrush x:Key="RedClear" Color="{StaticResource Red}" Opacity="0"/>
+		<SolidColorBrush x:Key="OrangeClear" Color="{StaticResource Orange}" Opacity="0"/>
+		<SolidColorBrush x:Key="YellowClear" Color="{StaticResource Yellow}" Opacity="0"/>
+		<SolidColorBrush x:Key="LimeClear" Color="{StaticResource Lime}" Opacity="0"/>
+		<SolidColorBrush x:Key="GreenClear" Color="{StaticResource Green}" Opacity="0"/>
+		<SolidColorBrush x:Key="TealClear" Color="{StaticResource Teal}" Opacity="0"/>
+		<SolidColorBrush x:Key="BlueClear" Color="{StaticResource Blue}" Opacity="0"/>
+		<SolidColorBrush x:Key="PurpleClear" Color="{StaticResource Purple}" Opacity="0"/>
+		<SolidColorBrush x:Key="VioletClear" Color="{StaticResource Violet}" Opacity="0"/>
+		<SolidColorBrush x:Key="MagentaClear" Color="{StaticResource Magenta}" Opacity="0"/>
+		<SolidColorBrush x:Key="GrayClear" Color="{StaticResource Gray}" Opacity="0"/>
+		<SolidColorBrush x:Key="WhiteClear" Color="{StaticResource White}" Opacity="0"/>
 
-			<Color x:Key="Hilight">#d9d926</Color>
-			<SolidColorBrush x:Key="HilightBrush" Color="{StaticResource Hilight}"/>
-			<SolidColorBrush x:Key="HilightClear" Color="{StaticResource Hilight}" Opacity="0"/>
+		<Color x:Key="Hilight">#d9d926</Color>
+		<SolidColorBrush x:Key="HilightBrush" Color="{StaticResource Hilight}"/>
+		<SolidColorBrush x:Key="HilightClear" Color="{StaticResource Hilight}" Opacity="0"/>
 
-			<LinearGradientBrush x:Key="BlueRed">
-				<GradientStop Color="{StaticResource Blue}" Offset="0.0"/>
-				<GradientStop Color="{StaticResource Red}" Offset="1.0"/>
-			</LinearGradientBrush>
+		<LinearGradientBrush x:Key="BlueRed">
+			<GradientStop Color="{StaticResource Blue}" Offset="0.0"/>
+			<GradientStop Color="{StaticResource Red}" Offset="1.0"/>
+		</LinearGradientBrush>
 
-			<LinearGradientBrush x:Key="ShinyGold">
-				<LinearGradientBrush.GradientStops>
-					<GradientStop Color="#bda022" Offset="0.0"/>
-					<GradientStop Color="White" Offset="0.5"/>
-					<GradientStop Color="#bda022" Offset="1.0"/>
-				</LinearGradientBrush.GradientStops>
-			</LinearGradientBrush>
-			<SolidColorBrush x:Key="Gold" Color="#bda022" Opacity="0.7"/>
+		<Color x:Key="Gold">#bda022</Color>
+		<LinearGradientBrush x:Key="ShinyGold">
+			<LinearGradientBrush.GradientStops>
+				<GradientStop Color="{StaticResource Gold}" Offset="0.0"/>
+				<GradientStop Color="White" Offset="0.5"/>
+				<GradientStop Color="{StaticResource Gold}" Offset="1.0"/>
+			</LinearGradientBrush.GradientStops>
+		</LinearGradientBrush>
+		<SolidColorBrush x:Key="GoldBrush" Color="{StaticResource Gold}"/>
+		<SolidColorBrush x:Key="GoldBackground" Color="{StaticResource Gold}" Opacity="0.1"/>
 
-			<LinearGradientBrush x:Key="ShinySilver">
-				<LinearGradientBrush.GradientStops>
-					<GradientStop Color="#8C8C8C" Offset="0.0"/>
-					<GradientStop Color="White" Offset="0.5"/>
-					<GradientStop Color="#8C8C8C" Offset="1.0"/>
-				</LinearGradientBrush.GradientStops>
-			</LinearGradientBrush>
-			<SolidColorBrush x:Key="Silver" Color="#8C8C8C" Opacity="0.7"/>
+		<Color x:Key="Silver">#8c8c8c</Color>
+		<LinearGradientBrush x:Key="ShinySilver">
+			<LinearGradientBrush.GradientStops>
+				<GradientStop Color="{StaticResource Silver}" Offset="0.0"/>
+				<GradientStop Color="White" Offset="0.5"/>
+				<GradientStop Color="{StaticResource Silver}" Offset="1.0"/>
+			</LinearGradientBrush.GradientStops>
+		</LinearGradientBrush>
+		<SolidColorBrush x:Key="SilverBrush" Color="{StaticResource Silver}"/>
+		<SolidColorBrush x:Key="SilverBackground" Color="{StaticResource Silver}" Opacity="0.1"/>
 
-			<LinearGradientBrush x:Key="ShinyBronze">
-				<LinearGradientBrush.GradientStops>
-					<GradientStop Color="#8c5820" Offset="0.0"/>
-					<GradientStop Color="White" Offset="0.5"/>
-					<GradientStop Color="#8c5820" Offset="1.0"/>
-				</LinearGradientBrush.GradientStops>
-			</LinearGradientBrush>
-			<SolidColorBrush x:Key="Bronze" Color="#8c5820" Opacity="0.7"/>
+		<Color x:Key="Bronze">#8c5820</Color>
+		<LinearGradientBrush x:Key="ShinyBronze">
+			<LinearGradientBrush.GradientStops>
+				<GradientStop Color="{StaticResource Bronze}" Offset="0.0"/>
+				<GradientStop Color="White" Offset="0.5"/>
+				<GradientStop Color="{StaticResource Bronze}" Offset="1.0"/>
+			</LinearGradientBrush.GradientStops>
+		</LinearGradientBrush>
+		<SolidColorBrush x:Key="BronzeBrush" Color="{StaticResource Bronze}"/>
+		<SolidColorBrush x:Key="BronzeBackground" Color="{StaticResource Bronze}" Opacity="0.1"/>
 
-			<Color x:Key="SaberSportGreen">#194f11</Color>			
+		<Color x:Key="SaberSportGreen">#194f11</Color>
+		<RadialGradientBrush x:Key="SaberSportBackground">
+			<GradientStop Color="{StaticResource SaberSportGreen}" Offset="0.0"/>
+			<GradientStop Color="Black" Offset="1.0"/>
+		</RadialGradientBrush>
 			
-		</Style.Resources>
-	</Style>
+	</Styles.Resources>
 	
 </Styles>

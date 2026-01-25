@@ -8,7 +8,7 @@
 				<Button Content="Click Me!" />
 				<Button Classes="delete" Content="Click Me!" />
 				<Button Classes="gray" Content="Click Me!" />
-				<Button Classes="error" Content="Click Me!" />
+				<Button Classes="sabersport" Content="Click Me!" />
 				<Button Classes="noscale" Content="Click Me!" />
 			</StackPanel>
 		</Border>
@@ -82,6 +82,11 @@
 		<Style Selector="^.error">
 			<Setter Property="BorderBrush" Value="{StaticResource RedBrush}"/>
 			<Setter Property="Background" Value="{StaticResource RedBackground}"/>
+		</Style>
+
+		<Style Selector="^.sabersport">
+			<Setter Property="BorderBrush" Value="{StaticResource SaberSportGreen}"/>
+			<Setter Property="Background" Value="{StaticResource SaberSportBackground}"/>
 		</Style>
 		
 	</Style>

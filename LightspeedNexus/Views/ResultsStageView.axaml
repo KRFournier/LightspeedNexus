@@ -15,7 +15,7 @@
 		<vm:ResultsStageViewModel/>
 	</Design.DataContext>
 
-	<Grid x:Name="Root" RowDefinitions="Auto,10,*">
+	<Grid x:Name="Root" RowDefinitions="Auto,10,*,Auto">
 
 		<!--Header-->
 		<Grid ColumnDefinitions="260,10,*,10,260">
@@ -60,15 +60,16 @@
 		<!--Rankings-->
 		<Grid Grid.Row="2" RowDefinitions="Auto,10,Auto,10,*">
 		
-			<Grid ColumnDefinitions="50,10,*,10,100,10,100,10,100,10,100"
+			<Grid ColumnDefinitions="50,10,7*,10,3*,10,100,10,100,10,100,10,100"
 				  Margin="12,0"
 				  Grid.Row="2">
 				<TextBlock Grid.Column="0" HorizontalAlignment="Center">Place</TextBlock>
 				<TextBlock Grid.Column="2">Name</TextBlock>
-				<TextBlock Grid.Column="4" HorizontalAlignment="Center">Overall Wins</TextBlock>
-				<TextBlock Grid.Column="6" HorizontalAlignment="Center">Points</TextBlock>
-				<TextBlock Grid.Column="8" HorizontalAlignment="Center">Current Rank</TextBlock>
-				<TextBlock Grid.Column="10" HorizontalAlignment="Center">Promotion</TextBlock>
+				<TextBlock Grid.Column="4">Club</TextBlock>
+				<TextBlock Grid.Column="6" HorizontalAlignment="Center">Overall Wins</TextBlock>
+				<TextBlock Grid.Column="8" HorizontalAlignment="Center">Points</TextBlock>
+				<TextBlock Grid.Column="10" HorizontalAlignment="Center">Current Rank</TextBlock>
+				<TextBlock Grid.Column="12" HorizontalAlignment="Center">Promotion</TextBlock>
 			</Grid>
 			
 			<!-- Players -->
@@ -85,33 +86,37 @@
 								Classes.gold="{Binding IsGold}"
 								Classes.silver="{Binding IsSilver}"
 								Classes.bronze="{Binding IsBronze}">
-								<Grid ColumnDefinitions="50,10,*,10,100,10,100,10,100,10,100">
+								<Grid ColumnDefinitions="50,10,7*,10,3*,10,100,10,100,10,100,10,100">
 									<TextBlock Grid.Column="0"
 											   Classes="medium"
 											   Text="{Binding Place}"
 											   HorizontalAlignment="Center"
 											   VerticalAlignment="Center"/>
 									<TextBlock Grid.Column="2"
+											   VerticalAlignment="Center"
 											   Classes="large"
-											   Text="{Binding Participant.Name}"
-											   VerticalAlignment="Center"/>
+											   Text="{Binding Participant.Name}"/>
 									<TextBlock Grid.Column="4"
+											   Classes="medium"
+											   VerticalAlignment="Center"
+											   Text="{Binding Participant.Subtitle}"/>
+									<TextBlock Grid.Column="6"
 											   Classes="medium"
 											   Text="{Binding Wins}"
 											   HorizontalAlignment="Center"
 											   VerticalAlignment="Center"/>
-									<TextBlock Grid.Column="6"
+									<TextBlock Grid.Column="8"
 											   Classes="medium"
 											   Text="{Binding Points}"
 											   HorizontalAlignment="Center"
 											   VerticalAlignment="Center"/>
-									<TextBlock Grid.Column="8"
+									<TextBlock Grid.Column="10"
 											   Classes="large"
 											   Text="{Binding OldRank}"
-											   Foreground="{StaticResource GrayBrush}"
+											   Foreground="{StaticResource WhiteBackground}"
 											   HorizontalAlignment="Center"
 											   VerticalAlignment="Center"/>
-									<TextBlock Grid.Column="10"
+									<TextBlock Grid.Column="12"
 											   Classes="large"
 											   IsVisible="{Binding IsPromoted}"
 											   Text="{Binding NewRank}"
@@ -125,6 +130,22 @@
 			</ScrollViewer>
 
 		</Grid>
+
+		<!--SaberSport-->
+		<Button Grid.Row="3"
+				Classes="sabersport"
+				HorizontalAlignment="Center"
+				VerticalAlignment="Center"
+				Padding="20"
+				Margin="0,10,0,0"
+				Command="{Binding SubmitCommand}">
+			<StackPanel Orientation="Horizontal"
+						Spacing="10"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Center">
+				<TextBlock Classes="medium" Text="Submit to Saber-Sport.com"/>
+			</StackPanel>
+		</Button>
 		
 	</Grid>
 </UserControl>

@@ -27,6 +27,7 @@ public partial class MainView : UserControl
             Opacity = 0.80,
             HorizontalAlignment = HorizontalAlignment.Stretch,
             VerticalAlignment = VerticalAlignment.Stretch,
+            IsHitTestVisible = true
         };
 
         StackPanel dialogPanel = new()
@@ -126,7 +127,6 @@ public partial class MainView : UserControl
         dialogBorder.Child = dialog;
         back.Child = dialogPanel;
 
-        ContentControl.IsEnabled = false;
         MainPanel.Children.Add(back);
     }
 
@@ -142,8 +142,5 @@ public partial class MainView : UserControl
 
         if (MainPanel.Children.LastOrDefault() is Border)
             MainPanel.Children.RemoveAt(MainPanel.Children.Count - 1);
-
-        if (MainPanel.Children.LastOrDefault() is TransitioningContentControl)
-            ContentControl.IsEnabled = true;
     }
 }

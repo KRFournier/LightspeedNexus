@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LiteDB;
+using System;
 
 namespace LightspeedNexus.Models;
 
@@ -36,7 +37,8 @@ public sealed class EmptyParticipant : IParticipant
 public sealed class Player : IParticipant
 {
     public Guid Id { get; set; } = Guid.NewGuid();
-    public string Name { get; set; } = string.Empty;
+    public string FirstName { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
 
     public int? OnlineId { get; set; } = null;
     public string? Club { get; set; }
@@ -49,6 +51,9 @@ public sealed class Player : IParticipant
     public WeaponClass WeaponOfChoice { get; set; } = WeaponClass.Rey;
 
     public int StartingLife { get; set; } = 0;
+
+    [BsonIgnore]
+    public string Name => $"{FirstName} {LastName}";
 }
 
 /// <summary>

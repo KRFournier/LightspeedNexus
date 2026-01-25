@@ -17,4 +17,5 @@ public sealed class Statistics
 public sealed class ResultsStage : Stage
 {
     public Statistics[] Placements { get; set; } = [];
+    public bool CanSubmit { get; set; } = false;
 }

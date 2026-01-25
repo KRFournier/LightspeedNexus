@@ -28,6 +28,12 @@ public partial class SeedViewModel : ViewModelBase
     public partial int Losses { get; set; } = 0;
 
     [ObservableProperty]
+    public partial int Points { get; set; } = 0;
+
+    [ObservableProperty]
+    public partial int PointsAgainst { get; set; } = 0;
+
+    [ObservableProperty]
     public partial double Score { get; set; } = 0.0;
 
     #endregion
@@ -38,6 +44,8 @@ public partial class SeedViewModel : ViewModelBase
         Participant = Participant.Guid,
         Wins = Wins,
         Losses = Losses,
+        Points = Points,
+        PointsAgainst = PointsAgainst,
         Score = Score
     };
 
@@ -47,6 +55,8 @@ public partial class SeedViewModel : ViewModelBase
         Participant = StrongReferenceMessenger.Default.Send(new RequestParticipant(model.Participant)),
         Wins = model.Wins,
         Losses = model.Losses,
+        Points = model.Points,
+        PointsAgainst = model.PointsAgainst,
         Score = model.Score
     };
 }
@@ -95,12 +105,14 @@ public partial class SeedingStageViewModel : StageViewModel
 
         var rankings = new List<SeedViewModel>();
         foreach (var pool in poolsStage.Pools)
-            foreach (var ranking in pool.CalculateScores(pool.MatchGroup.Settings.WinningScore, 5))
+            foreach (var ranking in pool.CalculateScores(pool.MatchGroup.Settings.WinningScore, ActionPointValues.Max))
                 rankings.Add(new SeedViewModel
                 {
                     Participant = ranking.Participant,
                     Wins = ranking.Wins,
                     Losses = ranking.Losses,
+                    Points = ranking.Points,
+                    PointsAgainst = ranking.PointsAgainst,
                     Score = ranking.Score
                 });
 

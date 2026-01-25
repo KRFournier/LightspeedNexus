@@ -5,6 +5,7 @@ using LightspeedNexus.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 
 namespace LightspeedNexus.ViewModels;
@@ -113,13 +114,13 @@ public partial class PoolViewModel : ViewModelBase
         public List<PovMatchStatistics> Matches = [];
         public int Wins => Matches.Count(s => s.Winner);
         public int Losses => Matches.Count(s => !s.Winner);
-        public int Points => Matches.Sum(s => s.PlayerScore);
-        public int OpponentPoints => Matches.Sum(s => s.OpponentScore);
+        public int PointsWon => Matches.Sum(s => s.PlayerScore);
+        public int PointsLost => Matches.Sum(s => s.OpponentScore);
         public double Score { get; private set; } = 0.0;
 
         public double ComputeScore(double winValue, double maxScorePerPlayer)
         {
-            Score = (Wins * winValue + (Points - OpponentPoints)) / maxScorePerPlayer * 100.0;
+            Score = (Wins * winValue + (PointsWon - PointsLost)) / maxScorePerPlayer * 100.0;
             return Score;
         }
 
@@ -138,7 +139,7 @@ public partial class PoolViewModel : ViewModelBase
     /// <summary>
     /// Calculates the ranking scores for just this pool
     /// </summary>
-    public List<(ParticipantViewModel Participant, int Wins, int Losses, double Score)> CalculateScores(int matchPoints, int counterattackPoints)
+    public IEnumerable<(ParticipantViewModel Participant, int Wins, int Losses, int Points, int PointsAgainst, double Score)> CalculateScores(int winningScore, int maxSingleActionPoints)
     {
         // This is the furthest from the mean score a player can get before they are
         // removed from the calculation.
@@ -148,9 +149,9 @@ public partial class PoolViewModel : ViewModelBase
         // Each match is given a win value of twice the maximum points possible.
         // The score is ultimately based on the percentage of total points possible.
         double matchesPerPlayer = Squadron.Participants.Count - 1;
-        double maxPointsPerMatch = matchPoints - 1.0 + counterattackPoints;
+        double maxPointsPerMatch = winningScore + maxSingleActionPoints - 1.0;
         double winValue = maxPointsPerMatch * 2.0;
-        double maxScorePerPlayer = (winValue * matchesPerPlayer) + (maxPointsPerMatch * matchesPerPlayer);
+        double maxScorePerPlayer = (winValue + maxPointsPerMatch) * matchesPerPlayer;
 
         // gather statistics for each player
         Dictionary<ParticipantViewModel, ParticipantStatistics> stats = new([.. Squadron.Participants
@@ -160,9 +161,9 @@ public partial class PoolViewModel : ViewModelBase
             if (match is StandardMatchViewModel stdMatch && stdMatch.First is not null && stdMatch.Second is not null)
             {
                 stats[stdMatch.First.Participant].Matches.Add(
-                    new(stdMatch.Second.Participant, stdMatch.First.Points, stdMatch.Second.Points, stdMatch.IsFirstWinner));
+                    new PovMatchStatistics(stdMatch.Second.Participant, stdMatch.First.Points, stdMatch.Second.Points, stdMatch.IsFirstWinner));
                 stats[stdMatch.Second.Participant].Matches.Add(
-                    new(stdMatch.First.Participant, stdMatch.Second.Points, stdMatch.First.Points, stdMatch.IsSecondWinner));
+                    new PovMatchStatistics(stdMatch.First.Participant, stdMatch.Second.Points, stdMatch.First.Points, stdMatch.IsSecondWinner));
             }
         }
 
@@ -181,13 +182,15 @@ public partial class PoolViewModel : ViewModelBase
                 underOutliers.Add(stat.Participant);
         }
 
-        return [.. stats.Values.Select(
+        return stats.Values.Select(
             s => (s.Participant,
                   s.Wins,
                   s.Losses,
+                  s.PointsWon,
+                  s.PointsLost,
                   s.ComputeAdjustedScore(winValue, maxScorePerPlayer, maxPointsPerMatch, overOutliers, underOutliers)
             )
-        )];
+        );
     }
 
     /// <summary>
@@ -210,6 +213,73 @@ public partial class PoolViewModel : ViewModelBase
             stdDev = Math.Sqrt(sum / n);
 
         return (stdDev, mean);
+    }
+
+    #endregion
+
+    #region Saber Sports
+
+    /// <summary>
+    /// Creates the json for submitting the tournament to saber-sports
+    /// </summary>
+    public JsonNode ToSaberSportsSubmission(int index)
+    {
+        JsonArray participantsNode = [];
+        JsonArray scores = [];
+        JsonArray actions = [];
+
+        var players = Squadron.Participants.OfType<PlayerViewModel>().ToList();
+
+        // build the array of participants
+        for (int i = 0; i < players.Count; i++)
+        {
+            participantsNode.Add(new JsonObject
+            {
+                ["uuid"] = players[i].SaberSportId,
+                ["index"] = i
+            });
+            scores.Add(new JsonArray([.. Enumerable.Repeat<string?>(null, players.Count)]));
+        }
+
+        // create a 2D array of scores and populate them from the matches
+        foreach (StandardMatchViewModel match in MatchGroup.Matches.OfType<StandardMatchViewModel>())
+        {
+            int blueIndex = players.IndexOf(match.First.Participant as PlayerViewModel ?? throw new InvalidOperationException("First participant is not a PlayerViewModel"));
+            int redIndex = players.IndexOf(match.Second.Participant as PlayerViewModel ?? throw new InvalidOperationException("Second participant is not a PlayerViewModel"));
+            if (blueIndex >= 0 && redIndex >= 0)
+            {
+                scores[blueIndex]![redIndex] = match.First.Points.ToString();
+                scores[redIndex]![blueIndex] = match.Second.Points.ToString();
+
+                actions.Add(new JsonArray([
+                    new JsonObject
+                    {
+                        ["index"] = blueIndex,
+                        ["actions"] = new JsonArray([.. match.FirstActions.ToSaberScore()]),
+                        ["clock"] = match.Clock.Timer.ToString("m\\:ss")
+                    },
+                    new JsonObject
+                    {
+                        ["index"] = redIndex,
+                        ["actions"] = new JsonArray([.. match.SecondActions.ToSaberScore()]),
+                        ["clock"] = match.Clock.Timer.ToString("m\\:ss")
+                    }
+                ]));
+            }
+        }
+
+        var node = new JsonObject();
+        node["type"] = "pool";
+        node["configuration"] = MatchGroup.Settings.ToSaberSportsSubmission(Squadron.Name, false);
+        node["round"] = new JsonObject
+        {
+            ["index"] = index,
+            ["participants"] = participantsNode,
+            ["scores"] = scores,
+            ["actions"] = actions
+        };
+
+        return node;
     }
 
     #endregion

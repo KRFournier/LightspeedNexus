@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using LightspeedNexus.Models;
 using System;
 using System.ComponentModel;
+using System.Text.Json.Nodes;
 
 namespace LightspeedNexus.ViewModels;
 
@@ -19,6 +20,7 @@ public abstract partial class ParticipantViewModel : ViewModelBase
 
     public abstract Guid Guid { get; }
     public abstract string Name { get; }
+    public virtual string? Subtitle => null;
     public abstract int PowerLevel { get; }
     public abstract bool IsDisqualified { get; }
     public abstract bool IsBye { get; }
@@ -103,8 +105,8 @@ public sealed partial class PlayerViewModel : ParticipantViewModel
     private Guid _guid = Guid.NewGuid();
     public override Guid Guid => _guid;
 
-    private string _name = string.Empty;
-    public override string Name => _name;
+    public override string Name => $"{FirstName} {LastName}";
+    public override string? Subtitle => Club;
 
     public override int PowerLevel => Rank.Weight;
 
@@ -117,6 +119,14 @@ public sealed partial class PlayerViewModel : ParticipantViewModel
 
     [ObservableProperty]
     public partial int? OnlineId { get; set; }
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(Name))]
+    public partial string FirstName { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(Name))]
+    public partial string LastName { get; set; } = string.Empty;
 
     [ObservableProperty]
     public partial string? Club { get; set; }
@@ -167,9 +177,10 @@ public sealed partial class PlayerViewModel : ParticipantViewModel
             ShowWeapons = StrongReferenceMessenger.Default.Send(new RequestHasChoice());
     }
 
-    public PlayerViewModel(string name) : this()
+    public PlayerViewModel(string firstname, string lastname) : this()
     {
-        _name = name;
+        FirstName = firstname;
+        LastName = lastname;
     }
 
     /// <summary>
@@ -178,7 +189,8 @@ public sealed partial class PlayerViewModel : ParticipantViewModel
     public override Player ToModel() => new()
     {
         Id = Guid,
-        Name = Name,
+        FirstName = FirstName,
+        LastName = LastName,
         OnlineId = OnlineId,
         Club = Club,
         Rank = Rank,
@@ -195,7 +207,8 @@ public sealed partial class PlayerViewModel : ParticipantViewModel
     public static PlayerViewModel FromModel(Player player) => new()
     {
         _guid = player.Id,
-        _name = player.Name,
+        FirstName = player.FirstName,
+        LastName = player.LastName,
         OnlineId = player.OnlineId,
         Club = player.Club,
         Rank = player.Rank,
@@ -209,12 +222,44 @@ public sealed partial class PlayerViewModel : ParticipantViewModel
     /// <summary>
     /// Creates a player view model from a registree and a specified name
     /// </summary>
-    public static PlayerViewModel FromRegistree(RegistreeViewModel registree, string name) => new()
+    public static PlayerViewModel FromRegistree(RegistreeViewModel registree) => new()
     {
-        _name = name,
+        FirstName = registree.FirstName,
+        LastName = registree.LastName,
         OnlineId = registree.OnlineId,
         Club = registree.Club,
         Rank = registree.Rank,
         WeaponOfChoice = registree.WeaponOfChoice
     };
+
+    #region Saber Sports
+
+    /// <summary>
+    /// Generates the correct ID for saber-sports submission
+    /// </summary>
+    public string SaberSportId => OnlineId.HasValue ? OnlineId.Value.ToString() : $"local{Guid.GetHashCode()}";
+
+    /// <summary>
+    /// Creates the json for submitting the tournament to saber-sports
+    /// </summary>
+    public JsonNode ToSaberSportsSubmission()
+    {
+        return new JsonObject
+        {
+            ["uuid"] = SaberSportId,
+            ["first_name"] = FirstName,
+            ["last_name"] = LastName,
+            ["rating"] = Rank.ToString(),
+            ["weapon"] = WeaponOfChoice switch
+            {
+                WeaponClass.Rey => "rey",
+                WeaponClass.Ren => "ren",
+                WeaponClass.Tano => "tano",
+                _ => throw new InvalidOperationException("Invalid weapon class for saber-sports submission")
+            },
+            ["honor"] = Honor
+        };
+    }
+
+    #endregion
 }

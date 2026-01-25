@@ -13,6 +13,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 
 namespace LightspeedNexus.ViewModels;
@@ -170,7 +171,7 @@ public partial class SetupStageViewModel : StageViewModel, IComparer,
     [RelayCommand(CanExecute = nameof(CanBegin))]
     private void Begin()
     {
-        var players = Registrees.Select(r => PlayerViewModel.FromRegistree(r, $"{r.FirstName} {r.LastName}"));
+        var players = Registrees.Select(r => PlayerViewModel.FromRegistree(r));
         Next = new SquadronsStageViewModel(players);
     }
 

@@ -7,6 +7,7 @@ using LightspeedNexus.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Nodes;
 
 namespace LightspeedNexus.ViewModels;
 
@@ -164,7 +165,7 @@ public partial class BracketStageViewModel : StageViewModel, IRecipient<RequestB
             {
                 if (i >= 50)
                     return ParticipantViewModel.Bye;
-                return PlayerViewModel.FromRegistree(new RegistreeViewModel(), $"Player {i}");
+                return PlayerViewModel.FromRegistree(new RegistreeViewModel() { FirstName = "Player", LastName = $"{i}" });
             });
             int playerCount = rankings.Count();
             int bracketCount = FindBracketCount(playerCount, true);
@@ -467,4 +468,85 @@ public partial class BracketStageViewModel : StageViewModel, IRecipient<RequestB
         foreach (var group in EnumerateGroups())
             group.PermanentlyDeleteAll();
     }
+
+    #region Saber Sports
+
+    /// <summary>
+    /// Creates the json for submitting the tournament to saber-sports
+    /// </summary>
+    public JsonNode ToSaberSportsSubmission()
+    {
+        int id = 1;
+        var rounds = new JsonArray();
+        TimeSpan duration = TimeSpan.Zero;
+        int score = 0;
+        foreach (var round in EnumerateGroups())
+        {
+            if (round.IsCompleted)
+            {
+                var matches = new JsonArray();
+                for (int i = 0; i < round.Matches.Count; i++)
+                {
+                    StandardMatchViewModel match = round.Matches[i] as StandardMatchViewModel ?? throw new InvalidOperationException("Can only submit standard matches to SaberScore.");
+                    var fencers = new JsonArray();
+                    if (match.First.Participant is PlayerViewModel firstPlayer)
+                    {
+                        fencers.Add(new JsonObject
+                        {
+                            ["uuid"] = firstPlayer.SaberSportId,
+                            ["score"] = match.First.Points,
+                            ["is_winner"] = match.IsFirstWinner,
+                            ["actions"] = new JsonArray([.. match.FirstActions.ToSaberScore()])
+                        });
+                    }
+                    if (match.Second.Participant is PlayerViewModel secondPlayer)
+                    {
+                        fencers.Add(new JsonObject
+                        {
+                            ["uuid"] = secondPlayer.SaberSportId,
+                            ["score"] = match.Second.Points,
+                            ["is_winner"] = match.IsSecondWinner,
+                            ["actions"] = new JsonArray([.. match.SecondActions.ToSaberScore()])
+                        });
+                    }
+
+                    var matchNode = new JsonObject
+                    {
+                        ["id"] = i,
+                        ["fencers"] = fencers
+                    };
+                    matches.Add(matchNode);
+                }
+                rounds.Add(new JsonObject
+                {
+                    ["id"] = id++,
+                    ["matches"] = matches
+                });
+
+                // find longest match and highest score for the configuration
+                if (round.Settings.TimeLimit > duration)
+                    duration = round.Settings.TimeLimit;
+                if (round.Settings.WinningScore > score)
+                    score = round.Settings.WinningScore;
+            }
+        }
+
+        var config = new JsonObject();
+        config["name"] = "Direct Elimination";
+        config["duration"] = duration.ToString("mm\\:ss");
+        config["score"] = score;
+        config["disable_rank_promotion"] = false;
+
+        var node = new JsonObject();
+        node["type"] = "bracket";
+        node["configuration"] = config;
+        node["round"] = new JsonObject
+        {
+            ["rounds"] = rounds
+        };
+
+        return node;
+    }
+
+    #endregion
 }

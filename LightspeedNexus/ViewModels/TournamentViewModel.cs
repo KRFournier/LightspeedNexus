@@ -8,18 +8,18 @@ using LightspeedNexus.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Nodes;
 
 namespace LightspeedNexus.ViewModels;
 
 #region Messages
 
 public sealed class RequestIsRanked : RequestMessage<bool?> { }
-
 public sealed class RequestFinalGrading : RequestMessage<Grading?> { }
-
 public sealed class RequestTournamentValue : RequestMessage<int> { }
-
 public sealed class SaveAndCloseMessage { }
+public sealed class RequestSubmittable : RequestMessage<bool> { }
+public sealed class RequestSaberScoreJson : RequestMessage<string> { }
 
 #endregion
 
@@ -27,7 +27,8 @@ public partial class TournamentViewModel : ViewModelBase, IDisposable,
     IRecipient<NextStageMessage>, IRecipient<PreviousStageMessage>,
     IRecipient<RosterChangedMessage>, IRecipient<BracketRoundCompleted>,
     IRecipient<RequestIsRanked>, IRecipient<RequestFinalGrading>,
-    IRecipient<RequestTournamentValue>, IRecipient<SaveAndCloseMessage>
+    IRecipient<RequestTournamentValue>, IRecipient<SaveAndCloseMessage>,
+    IRecipient<RequestSubmittable>, IRecipient<RequestSaberScoreJson>   
 {
     #region Properties
 
@@ -113,6 +114,9 @@ public partial class TournamentViewModel : ViewModelBase, IDisposable,
     {
         OnPropertyChanged(nameof(PreviousStages));
         OnPropertyChanged(nameof(CurrentStage));
+        OnPropertyChanged(nameof(Value));
+        OnPropertyChanged(nameof(InitialRank));
+        OnPropertyChanged(nameof(FinalRank));
         Save();
     }
 
@@ -133,6 +137,7 @@ public partial class TournamentViewModel : ViewModelBase, IDisposable,
         OnPropertyChanged(nameof(IsRanked));
         OnPropertyChanged(nameof(InitialRank));
         OnPropertyChanged(nameof(Value));
+        OnPropertyChanged(nameof(FinalRank));
     }
 
     public void Receive(BracketRoundCompleted message)
@@ -158,6 +163,18 @@ public partial class TournamentViewModel : ViewModelBase, IDisposable,
     public void Receive(SaveAndCloseMessage message)
     {
         GoHome();
+    }
+
+    public void Receive(RequestSubmittable message)
+    {
+        bool canSubmit = SetupStage is not null && SetupStage.GameMode == GameMode.Standard;
+        message.Reply(canSubmit);
+    }
+
+    public void Receive(RequestSaberScoreJson message)
+    {
+        var node = ToSaberSportsSubmission();
+        message.Reply(node.ToJsonString());
     }
 
     #endregion
@@ -292,6 +309,42 @@ public partial class TournamentViewModel : ViewModelBase, IDisposable,
         }
 
         return null;
+    }
+
+    #endregion
+
+    #region Saber Sports
+
+    /// <summary>
+    /// Creates the json for submitting the tournament to saber-sports
+    /// </summary>
+    public JsonNode ToSaberSportsSubmission()
+    {
+        PoolsStageViewModel pools = FindStage<PoolsStageViewModel>() ??
+            throw new InvalidOperationException("Cannot create Saber Sports submission for tournament without pools stage.");
+        BracketStageViewModel bracket = FindStage<BracketStageViewModel>() ??
+            throw new InvalidOperationException("Cannot create Saber Sports submission for tournament without bracket stage.");
+        ResultsStageViewModel results = FindStage<ResultsStageViewModel>() ??
+            throw new InvalidOperationException("Cannot create Saber Sports submission for tournament without results stage.");
+
+        var rounds = new JsonArray();
+        for (int i = 0; i < pools.Pools.Count; i++)
+            rounds.Add(pools.Pools[i].ToSaberSportsSubmission(i));
+        rounds.Add(bracket.ToSaberSportsSubmission());
+
+        var node = new JsonObject
+        {
+            ["uuid"] = $"lsc{Guid}",
+            ["title"] = SetupStage.EventName is not null ? $"{SetupStage.EventName} {SetupStage.Title}" : SetupStage.Title,
+            ["date"] = SetupStage.Date?.ToString("yyyy-MM-dd"),
+            ["gender"] = SetupStage.Demographic switch { Demographic.Women => "women", Demographic.Cadet => "cadet", _ => "mixed" },
+            ["level"] = SetupStage.ReyAllowed && !SetupStage.RenAllowed && !SetupStage.TanoAllowed ? "rey" :
+                        !SetupStage.ReyAllowed && SetupStage.RenAllowed && !SetupStage.TanoAllowed ? "ren" : "mixed",
+            ["completed"] = CurrentStage.IsTournamentCompleted,
+            ["participants"] = new JsonArray([.. results.Placements.Select(p => p.ToSaberSportsSubmission())]),
+            ["rounds"] = rounds
+        };
+        return node;
     }
 
     #endregion

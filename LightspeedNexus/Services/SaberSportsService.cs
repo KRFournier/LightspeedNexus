@@ -126,7 +126,7 @@ public static class SaberSportsService
         try
         {
             var request = new RestRequest("v1/tm/fencers");
-            var response = await Client.GetAsync(request);
+            var response = await _client.GetAsync(request);
             if (response.IsSuccessful)
             {
                 JsonNode? node = JsonNode.Parse(response.Content!);

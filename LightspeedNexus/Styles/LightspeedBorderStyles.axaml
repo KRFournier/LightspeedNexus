@@ -8,8 +8,10 @@
 				<c:LightspeedBorder Classes="item" Progress="0.3">
 					<TextBlock>Hello, World!</TextBlock>
 				</c:LightspeedBorder>
-				<c:LightspeedBorder Classes="item">
-					<TextBlock>Hello, World!</TextBlock>
+				<c:LightspeedBorder Classes="item silver">
+					<Panel>
+						<TextBlock>Hello, World!</TextBlock>
+					</Panel>
 				</c:LightspeedBorder>
 			</StackPanel>
 		</Border>
@@ -141,36 +143,39 @@
 	</Style>
 
 	<Style Selector="c|LightspeedBorder.gold">
+		<Setter Property="Background" Value="{StaticResource GoldBackground}"/>
 		<Setter Property="BorderBrush" Value="{StaticResource ShinyGold}"/>
-		<Setter Property="TopLeftBorderBrush" Value="{StaticResource Gold}"/>
-		<Setter Property="BottomRightBorderBrush" Value="{StaticResource Gold}"/>
+		<Setter Property="TopLeftBorderBrush" Value="{StaticResource GoldBrush}"/>
+		<Setter Property="BottomRightBorderBrush" Value="{StaticResource GoldBrush}"/>
 		<Style Selector="^:pointerover">
-			<Setter Property="TopLeftBackground" Value="{StaticResource Gold}"/>
-			<Setter Property="BottomRightBackground" Value="{StaticResource Gold}"/>
+			<Setter Property="TopLeftBackground" Value="{StaticResource GoldBrush}"/>
+			<Setter Property="BottomRightBackground" Value="{StaticResource GoldBrush}"/>
 			<Setter Property="TopLeftOpacity" Value="1.0"/>
 			<Setter Property="BottomRightOpacity" Value="1.0"/>
 		</Style>
 	</Style>
 
 	<Style Selector="c|LightspeedBorder.silver">
+		<Setter Property="Background" Value="{StaticResource SilverBackground}"/>
 		<Setter Property="BorderBrush" Value="{StaticResource ShinySilver}"/>
-		<Setter Property="TopLeftBorderBrush" Value="{StaticResource Silver}"/>
-		<Setter Property="BottomRightBorderBrush" Value="{StaticResource Silver}"/>
+		<Setter Property="TopLeftBorderBrush" Value="{StaticResource SilverBrush}"/>
+		<Setter Property="BottomRightBorderBrush" Value="{StaticResource SilverBrush}"/>
 		<Style Selector="^:pointerover">
-			<Setter Property="TopLeftBackground" Value="{StaticResource Silver}"/>
-			<Setter Property="BottomRightBackground" Value="{StaticResource Silver}"/>
+			<Setter Property="TopLeftBackground" Value="{StaticResource SilverBrush}"/>
+			<Setter Property="BottomRightBackground" Value="{StaticResource SilverBrush}"/>
 			<Setter Property="TopLeftOpacity" Value="1.0"/>
 			<Setter Property="BottomRightOpacity" Value="1.0"/>
 		</Style>
 	</Style>
 
 	<Style Selector="c|LightspeedBorder.bronze">
+		<Setter Property="Background" Value="{StaticResource BronzeBackground}"/>
 		<Setter Property="BorderBrush" Value="{StaticResource ShinyBronze}"/>
-		<Setter Property="TopLeftBorderBrush" Value="{StaticResource Bronze}"/>
-		<Setter Property="BottomRightBorderBrush" Value="{StaticResource Bronze}"/>
+		<Setter Property="TopLeftBorderBrush" Value="{StaticResource BronzeBrush}"/>
+		<Setter Property="BottomRightBorderBrush" Value="{StaticResource BronzeBrush}"/>
 		<Style Selector="^:pointerover">
-			<Setter Property="TopLeftBackground" Value="{StaticResource Bronze}"/>
-			<Setter Property="BottomRightBackground" Value="{StaticResource Bronze}"/>
+			<Setter Property="TopLeftBackground" Value="{StaticResource BronzeBrush}"/>
+			<Setter Property="BottomRightBackground" Value="{StaticResource BronzeBrush}"/>
 			<Setter Property="TopLeftOpacity" Value="1.0"/>
 			<Setter Property="BottomRightOpacity" Value="1.0"/>
 		</Style>
