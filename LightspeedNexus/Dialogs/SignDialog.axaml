@@ -1,0 +1,52 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:LightspeedNexus.ViewModels"
+			 xmlns:v="clr-namespace:LightspeedNexus.Views"
+			 xmlns:c="clr-namespace:LightspeedNexus.Controls"
+             mc:Ignorable="d" d:DesignWidth="550" d:DesignHeight="450"
+             x:Class="LightspeedNexus.Dialogs.SignDialog"
+			 KeyDown="UserControl_KeyDown">
+
+	<StackPanel Spacing="10"
+			    HorizontalAlignment="Center"
+				VerticalAlignment="Center">
+
+		<c:LightspeedBorder Classes="sabersport"
+					        Padding="20">
+
+			<StackPanel Spacing="10">
+
+				<TextBlock Grid.Column="0"
+						   Grid.Row="0"
+						   VerticalAlignment="Center"
+						   Text="Sign Here"/>
+
+				<TextBox x:Name="SignTextBox"
+			             Classes="sabersport"
+						 Watermark="Enter your full name"
+						 Width="400"/>
+
+			</StackPanel>
+
+		</c:LightspeedBorder>
+
+		<!--Buttons-->
+		<StackPanel Orientation="Horizontal"
+			        Spacing="10"
+					HorizontalAlignment="Right">
+
+			<Button x:Name="CancelButton" Classes="gray" Width="75" Click="Cancel_Click">
+				<TextBlock Text="Cancel" HorizontalAlignment="Center"/>
+			</Button>
+
+			<Button x:Name="OkButton" Classes="sabersport" Width="75" Click="OK_Click">
+				<TextBlock Text="OK" HorizontalAlignment="Center"/>
+			</Button>
+
+		</StackPanel>
+
+	</StackPanel>
+	
+</UserControl>

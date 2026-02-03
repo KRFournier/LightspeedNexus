@@ -60,7 +60,7 @@ public partial class SquadronsStageViewModel : StageViewModel,
     /// <summary>
     /// Some names and colors we can use for squadrons
     /// </summary>
-    static readonly (string Name, string Color)[] SquadronNames = [
+    public static readonly (string Name, string Color)[] SquadronNames = [
         ("Red", "Red"),
         ("Blue", "Blue"),
         ("Green", "Green"),

@@ -1,0 +1,27 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:LightspeedNexus.ViewModels"
+			 xmlns:v="clr-namespace:LightspeedNexus.Views"
+			 xmlns:c="clr-namespace:LightspeedNexus.Controls"
+             mc:Ignorable="d" d:DesignWidth="450" d:DesignHeight="450"
+             x:Class="LightspeedNexus.Dialogs.WaitDialog">
+
+	<c:LightspeedBorder HorizontalAlignment="Center"
+					    VerticalAlignment="Center"
+						Padding="50">
+		<StackPanel Spacing="20">
+			<Image Classes="rotate_left"
+		           Height="90"
+				   Source="{StaticResource di_StarWait}">
+				<Image.RenderTransform>
+					<RotateTransform CenterY="1.5"/>
+				</Image.RenderTransform>
+			</Image>
+			<TextBlock x:Name="WaitTextBlock"
+			           Classes="large"/>
+		</StackPanel>
+	</c:LightspeedBorder>
+	
+</UserControl>

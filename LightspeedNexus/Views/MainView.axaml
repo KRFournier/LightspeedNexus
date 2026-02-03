@@ -32,20 +32,6 @@
 			</TransitioningContentControl.PageTransition>
 		</TransitioningContentControl>
 		
-		<Border Background="Black" Opacity="0.85" IsHitTestVisible="true"
-				IsVisible="{Binding WaitMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
-			<c:LightspeedBorder HorizontalAlignment="Center" VerticalAlignment="Center" Padding="50">
-				<StackPanel Spacing="20">
-					<Image Classes="rotate_left" Height="90" Source="{StaticResource di_StarWait}">
-						<Image.RenderTransform>
-							<RotateTransform CenterY="1.5"/>
-						</Image.RenderTransform>
-					</Image>
-					<TextBlock Classes="large" Text="{Binding WaitMessage}"/>
-				</StackPanel>
-			</c:LightspeedBorder>
-		</Border>
-		
 	</Panel>
 	
 </UserControl>

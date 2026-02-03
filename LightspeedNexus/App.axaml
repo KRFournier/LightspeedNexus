@@ -28,6 +28,7 @@
 		<conv:StringsAreEqualConverter x:Key="StringsEqual"/>
 		<conv:WeaponToColorConverter x:Key="WeaponToColor"/>
 		<conv:UppercaseConverter x:Key="Uppercase"/>
+		<conv:CommaListConverter x:Key="CommaList"/>
 	</Application.Resources>
 
 	<Application.Styles>

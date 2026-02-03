@@ -14,61 +14,71 @@
 		<vm:TournamentViewModel/>
 	</Design.DataContext>
 
-	<Grid ColumnDefinitions="200,10,*">
+	<Grid ColumnDefinitions="Auto,10,*">
 
 		<!--Sidebar-->
 		<Grid RowDefinitions="*,10,Auto">
 
 			<!--Stages-->
-			<StackPanel>
-				<ItemsControl ItemsSource="{Binding PreviousStages}"
-							  ClipToBounds="False">
-					<ItemsControl.ItemTemplate>
-						<DataTemplate DataType="vm:StageViewModel">
-							<c:ChevronBorder Opacity="0.5">
-								<TextBlock Classes="large"
-										   HorizontalAlignment="Center"
-										   Text="{Binding Name}"/>
-							</c:ChevronBorder>
-						</DataTemplate>
-					</ItemsControl.ItemTemplate>
-				</ItemsControl>
-				<c:ChevronBorder Classes="blue">
-					<TextBlock Classes="large"
-							   HorizontalAlignment="Center"
-							   Text="{Binding CurrentStage.Name}"/>
-				</c:ChevronBorder>
-			</StackPanel>
+			<Viewbox ClipToBounds="False"
+			         VerticalAlignment="Top"
+					 HorizontalAlignment="Stretch"
+					 StretchDirection="DownOnly">
+				<StackPanel>
+					<ItemsControl ItemsSource="{Binding PreviousStages}">
+						<ItemsControl.ItemTemplate>
+							<DataTemplate DataType="vm:StageViewModel">
+								<c:ChevronBorder Opacity="0.5">
+									<TextBlock Classes="large"
+											   HorizontalAlignment="Center"
+											   Text="{Binding Name}"/>
+								</c:ChevronBorder>
+							</DataTemplate>
+						</ItemsControl.ItemTemplate>
+					</ItemsControl>
+					<c:ChevronBorder Classes="blue">
+						<TextBlock Classes="large"
+								   HorizontalAlignment="Center"
+								   Text="{Binding CurrentStage.Name}"/>
+					</c:ChevronBorder>
+				</StackPanel>
+			</Viewbox>
 			
 			<StackPanel Spacing="10" Grid.Row="2">
 
+				<!--Address-->
+				<TextBlock Classes="medium" HorizontalAlignment="Center" Text="{Binding Address}"/>
+
 				<!--Value-->
 				<c:LightspeedBorder Classes="small color"
+									Padding="6"
 									IsVisible="{Binding IsRanked}">
 					<StackPanel>
 						<TextBlock Classes="small" HorizontalAlignment="Center">Value</TextBlock>
-						<TextBlock Classes="large" HorizontalAlignment="Center" Text="{Binding Value}"/>
+						<TextBlock Classes="medium" HorizontalAlignment="Center" Text="{Binding Value}"/>
 					</StackPanel>
 				</c:LightspeedBorder>
 
 				<!--Initial Rating-->
 				<c:LightspeedBorder Classes="small color"
+									Padding="6"
 									IsVisible="{Binding IsRanked}">
 					<StackPanel>
 						<TextBlock Classes="small" HorizontalAlignment="Center">Initial Rating</TextBlock>
-						<TextBlock Classes="large" HorizontalAlignment="Center" Text="{Binding InitialRank}"/>
+						<TextBlock Classes="medium" HorizontalAlignment="Center" Text="{Binding InitialRank}"/>
 					</StackPanel>
 				</c:LightspeedBorder>
 
 				<!--Final Rating-->
 				<c:LightspeedBorder Classes="small color"
+									Padding="6"
 									IsVisible="{Binding IsRanked}">
 					<StackPanel>
 						<TextBlock Classes="small" HorizontalAlignment="Center">Final Rating</TextBlock>
 						<Panel>
-							<TextBlock Classes="large" HorizontalAlignment="Center" Text="{Binding TopRanked}" Foreground="{StaticResource Gray}"
+							<TextBlock Classes="medium" HorizontalAlignment="Center" Text="{Binding TopRanked}" Foreground="{StaticResource Gray}"
 								IsVisible="{Binding FinalRank, Converter={x:Static StringConverters.IsNullOrEmpty}}"/>
-							<TextBlock Classes="large" HorizontalAlignment="Center" Text="{Binding FinalRank}"
+							<TextBlock Classes="medium" HorizontalAlignment="Center" Text="{Binding FinalRank}"
 								IsVisible="{Binding FinalRank, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
 						</Panel>
 					</StackPanel>

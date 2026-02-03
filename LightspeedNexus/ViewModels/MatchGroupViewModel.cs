@@ -1,5 +1,11 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Avalonia.Controls;
+using Avalonia.Media;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging.Messages;
+using LightspeedNetwork;
 using LightspeedNexus.Models;
+using LightspeedNexus.Networking;
 using LightspeedNexus.Services;
 using System;
 using System.Collections;
@@ -16,11 +22,20 @@ public partial class MatchGroupViewModel : ViewModelBase, IReadOnlyList<MatchVie
 {
     #region Properties
 
+    [ObservableProperty]
+    public partial Guid Guid { get; set; } = Guid.NewGuid();
+
     /// <summary>
     /// The settings for this group
     /// </summary>
     [ObservableProperty]
     public partial MatchSettingsViewModel Settings { get; set; } = new();
+
+    /// <summary>
+    /// The name of this group of matches
+    /// </summary>
+    [ObservableProperty]
+    public partial string Name { get; set; } = "";
 
     /// <summary>
     /// Set by the parent when it no longer allows changes to the settings
@@ -56,11 +71,66 @@ public partial class MatchGroupViewModel : ViewModelBase, IReadOnlyList<MatchVie
 
     #endregion
 
+    public MatchGroupViewModel()
+    {
+        // listen to network requests for match summaries
+        WeakReferenceMessenger.Default.Register<RequestMatchGroupSummaries, Guid>(this, Guid,
+            (r, m) =>
+            {
+                var summaries = new MatchSummaries
+                {
+                    Summaries = [.. Matches.Select(m =>
+                    {
+                        var summary = m.ToSummary();
+
+                        try
+                        {
+                            var (name, color) = SquadronsStageViewModel.SquadronNames.First(p => p.Name == Name);
+                            summary.Color = color;
+                        }
+                        catch { }
+
+                        return summary;
+                    })]
+                };
+
+                m.Reply(summaries);
+            }
+        );
+
+        // listen to network requests for a given match's state and the next match
+        WeakReferenceMessenger.Default.Register<RequestNextMatch, Guid>(this, Guid,
+            (r, m) =>
+            {
+                MatchViewModel? match = null;
+                string? next = null;
+
+                // find the match we want
+                int i = 0;
+                for (; i < Matches.Count && match is null; i++)
+                {
+                    if (Matches[i].Guid == m.MatchId)
+                        match = Matches[i];
+                }
+
+                // find the next incomplete match
+                for (; i < Matches.Count && match is not null && string.IsNullOrEmpty(next); i++)
+                {
+                    if (!Matches[i].IsMatchCompleted)
+                        next = $"Next: {Matches[i].First?.Participant.Name} v. {Matches[i].Second?.Participant.Name}";
+                }
+
+                m.Reply(next);
+            }
+        );
+    }
+
     /// <summary>
     /// Gets the record representation of this view model
     /// </summary>
     public MatchGroup ToModel() => new()
     {
+        Id = Guid,
         Matches = [.. Matches.Select(m => m.Guid)],
         Settings = Settings.ToModel()
     };
@@ -72,6 +142,7 @@ public partial class MatchGroupViewModel : ViewModelBase, IReadOnlyList<MatchVie
     {
         MatchGroupViewModel vm = new()
         {
+            Guid = model.Id,
             Settings = MatchSettingsViewModel.FromModel(model.Settings)
         };
 

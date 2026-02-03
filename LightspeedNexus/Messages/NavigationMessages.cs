@@ -5,11 +5,13 @@ using System;
 namespace LightspeedNexus.Messages;
 
 /// <summary>
-/// Additional buttons that may be added to the dialog.
+/// Possible responses from the dialog
 /// </summary>
-public enum DialogButton
+public enum DialogResponse
 {
-    Delete
+    None,
+    Ok,
+    Cancel
 }
 
 /// <summary>
@@ -28,25 +30,16 @@ public class NavigateHomeMessage()
 }
 
 /// <summary>
-/// Notifies the main view that the given viewmodel should be opened as a dialog
+/// Notifies the main view that the given viewmodel should be opened as a dialog for editing.
+/// Users must pass a copy of the viewmodel to be edited, which will be returned with changes.
+/// It's up to the user to keep or discard the changes based on the response.
 /// </summary>
-public class OpenDialogMessage(
+public class EditDialogMessage(
     ViewModelBase item,
     string title,
-    DialogButton[] additionalButtons,
-    Action<ViewModelBase, OpenDialogMessage.DialogResponse> handler
+    Action<ViewModelBase, DialogResponse> handler
     )
 {
-    /// <summary>
-    /// Possible responses from the dialog
-    /// </summary>
-    public enum DialogResponse
-    {
-        None,
-        Ok,
-        Cancel,
-        Delete
-    }
 
     /// <summary>
     /// The initial content for the dialog
@@ -57,11 +50,6 @@ public class OpenDialogMessage(
     /// The dialog box title
     /// </summary>
     public readonly string Title = title;
-
-    /// <summary>
-    /// Whether the dialog should show a delete button
-    /// </summary>
-    public readonly DialogButton[] AdditionalButtons = additionalButtons;
 
     /// <summary>
     /// Final response from the dialog
@@ -84,8 +72,10 @@ public class CloseDialogMessage()
 /// <summary>
 /// Notifies the main view that the given message should be displayed
 /// </summary>
-public class MessageBoxMessage(string msg) : ValueChangedMessage<string>(msg)
+public class MessageBoxMessage(string msg, Action? handler = null) : ValueChangedMessage<string>(msg)
 {
+    private readonly Action? _handler = handler;
+    public void Respond() => _handler?.Invoke();
 }
 
 /// <summary>
@@ -99,3 +89,23 @@ public class BeginWaitMessage(string msg) : ValueChangedMessage<string>(msg)
 /// Notifies the main view that the given wait message should be hidden
 /// </summary>
 public class EndWaitMessage() { }
+
+/// <summary>
+/// Notifies the main view that the login dialog should be displayed, and allows
+/// for a response to be sent back.
+/// </summary>
+public class ShowLoginDialogMessage(Action<DialogResponse> handler)
+{
+    private readonly Action<DialogResponse> _handler = handler;
+    public void Respond(DialogResponse response) => _handler(response);
+}
+
+/// <summary>
+/// Notifies the main view that the signature dialog should be displayed, and allows
+/// for the signature to be sent back.
+/// </summary>
+public class ShowSignDialogMessage(Action<string?> handler)
+{
+    private readonly Action<string?> _handler = handler;
+    public void Respond(string? response) => _handler(response);
+}

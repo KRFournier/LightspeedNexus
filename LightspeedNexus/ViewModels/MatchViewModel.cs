@@ -1,7 +1,11 @@
 ﻿using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging.Messages;
+using LightspeedNetwork;
 using LightspeedNexus.Models;
+using LightspeedNexus.Networking;
 using LightspeedNexus.Services;
 using System;
 using System.Collections.Generic;
@@ -74,7 +78,7 @@ public abstract partial class MatchViewModel : ViewModelBase
             var matchEdit = GetEditViewModel();
             if (matchEdit is not null)
             {
-                var result = await DialogBox(matchEdit, "Set Final Match Score");
+                var result = await EditDialog(matchEdit, "Set Final Match Score");
                 if (result.IsOk)
                     UpdateMatch(result.Item);
             }
@@ -94,6 +98,21 @@ public abstract partial class MatchViewModel : ViewModelBase
             First = new ScoreViewModel(new PlayerViewModel("Player", "1")) { Points = 99, Seed = 1 };
             Second = new ScoreViewModel(new PlayerViewModel("Player", "With Long Name")) { Points = -99, Seed = 64 };
         }
+        else
+        {
+            // Listen for the network's request for this match's state
+            WeakReferenceMessenger.Default.Register<RequestMatchState, Guid>(this, Guid,
+                (_, m) =>
+                {
+                    MatchState matchState = ToState();
+                    matchState.Next = m.Next;
+                    m.Reply(matchState);
+                }
+            );
+
+            // List for live status updates
+            WeakReferenceMessenger.Default.Register<SetLiveMessage, Guid>(this, Guid, (_, m) => IsLive = m.IsLive);
+        }
     }
 
     public abstract Match? ToModel();
@@ -104,6 +123,10 @@ public abstract partial class MatchViewModel : ViewModelBase
         null => new MatchNotFoundViewModel(),
         _ => throw new NotSupportedException($"Match type {model.GetType().Name} is not supported."),
     };
+
+    public virtual MatchState ToState() => throw new NotImplementedException();
+
+    public virtual MatchSummary ToSummary() => throw new NotImplementedException();
 
     public MatchEditViewModel? GetEditViewModel()
     {
@@ -249,7 +272,6 @@ public abstract partial class MatchViewModel : ViewModelBase
     public override string ToString() => Number is not null ?
         $"#{Number}: {First} vs {Second}" :
         $"{First} vs {Second}";
-
 }
 
 /// <summary>
@@ -294,6 +316,21 @@ public partial class ClockViewModel : ViewModelBase
     };
 
     public override string ToString() => $"{Timer:mm\\:ss}" + (Overtime > 0 ? $" +{Overtime}OT" : string.Empty);
+
+    public ClockState ToState() => new()
+    {
+        TimeRemaining = Timer,
+        OvertimeCount = Overtime
+    };
+
+    public void FromState(ClockState? state)
+    {
+        if (state is null)
+            return;
+
+        Timer = state.TimeRemaining;
+        Overtime = state.OvertimeCount;
+    }
 }
 
 /// <summary>
@@ -333,5 +370,22 @@ public partial class PriorityViewModel : ViewModelBase
         if (InPriority)
             return PreviousPriority == Side.First ? $"<- {PriorityPoints}" : $"{PriorityPoints} ->";
         return "< 0 >";
+    }
+
+    public PriorityState ToState() => new()
+    {
+        PreviousPriority = PreviousPriority,
+        PriorityPoints = PriorityPoints,
+        InPriority = InPriority
+    };
+
+    public void FromState(PriorityState? state)
+    {
+        if (state is null)
+            return;
+
+        PreviousPriority = state.PreviousPriority;
+        PriorityPoints = state.PriorityPoints;
+        InPriority = state.InPriority;
     }
 }

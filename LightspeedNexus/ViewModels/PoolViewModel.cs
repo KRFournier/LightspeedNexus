@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using LightspeedNetwork;
 using LightspeedNexus.Models;
 using System;
 using System.Collections.Generic;
@@ -55,7 +56,7 @@ public partial class PoolViewModel : ViewModelBase
         PoolViewModel vm = new()
         {
             Squadron = squadron,
-            MatchGroup = new() { Settings = squadron.Settings.Clone() }
+            MatchGroup = new() { Name = squadron.Name, Settings = squadron.Settings.Clone() }
         };
 
         // find the match arrangements for the number of participants, and create matches accordingly
@@ -72,6 +73,13 @@ public partial class PoolViewModel : ViewModelBase
 
         return vm;
     }
+
+    public MatchGroupState ToState() => new()
+    {
+        Name = Squadron.Name,
+        Color = Squadron.Color.ToString(),
+        IsCompleted = MatchGroup.IsCompleted
+    };
 
     #region Match Arrangement
 
@@ -248,21 +256,21 @@ public partial class PoolViewModel : ViewModelBase
             int redIndex = players.IndexOf(match.Second.Participant as PlayerViewModel ?? throw new InvalidOperationException("Second participant is not a PlayerViewModel"));
             if (blueIndex >= 0 && redIndex >= 0)
             {
-                scores[blueIndex]![redIndex] = match.First.Points.ToString();
-                scores[redIndex]![blueIndex] = match.Second.Points.ToString();
+                scores[blueIndex]![redIndex] = $"{(match.IsFirstWinner ? "V" : "")}{match.First.Points}";
+                scores[redIndex]![blueIndex] = $"{(match.IsSecondWinner ? "V" : "")}{match.Second.Points}";
 
                 actions.Add(new JsonArray([
                     new JsonObject
                     {
                         ["index"] = blueIndex,
                         ["actions"] = new JsonArray([.. match.FirstActions.ToSaberScore()]),
-                        ["clock"] = match.Clock.Timer.ToString("m\\:ss")
+                        ["clock"] = match.Clock.Timer.ToString("mm\\:ss")
                     },
                     new JsonObject
                     {
                         ["index"] = redIndex,
                         ["actions"] = new JsonArray([.. match.SecondActions.ToSaberScore()]),
-                        ["clock"] = match.Clock.Timer.ToString("m\\:ss")
+                        ["clock"] = match.Clock.Timer.ToString("mm\\:ss")
                     }
                 ]));
             }

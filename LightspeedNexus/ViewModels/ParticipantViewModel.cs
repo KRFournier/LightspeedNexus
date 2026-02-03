@@ -1,7 +1,9 @@
 ﻿using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
+using LightspeedNetwork;
 using LightspeedNexus.Models;
+using LightspeedNexus.Networking;
 using System;
 using System.ComponentModel;
 using System.Text.Json.Nodes;
@@ -63,6 +65,9 @@ public abstract partial class ParticipantViewModel : ViewModelBase
     }
 
     public override string ToString() => Name;
+
+    public virtual ParticipantState ToState() => throw new NotImplementedException("ToState not implemented.");
+    public virtual void FromState(ParticipantState? state) => throw new NotImplementedException("FromState not implemented.");
 }
 
 /// <summary>
@@ -174,7 +179,10 @@ public sealed partial class PlayerViewModel : ParticipantViewModel
         if (Design.IsDesignMode)
             ShowWeapons = true;
         else
+        {
             ShowWeapons = StrongReferenceMessenger.Default.Send(new RequestHasChoice());
+            WeakReferenceMessenger.Default.Register<HonorStateMessage, Guid>(this, Guid, (_, m) => Honor = m.State.Honor);
+        }
     }
 
     public PlayerViewModel(string firstname, string lastname) : this()
@@ -231,6 +239,33 @@ public sealed partial class PlayerViewModel : ParticipantViewModel
         Rank = registree.Rank,
         WeaponOfChoice = registree.WeaponOfChoice
     };
+
+    public override PlayerState ToState() => new()
+    {
+        Card = Card,
+        Ejected = IsEjected,
+        Honor = Honor,
+        ForceCalls = ForceCalls,
+        Club = Club,
+        Weapon = WeaponOfChoice.ToString().ToLower(),
+        Rank = Rank.Letter
+    };
+
+
+    public override void FromState(ParticipantState? state)
+    {
+        if (state is PlayerState playerState)
+        {
+            Card = playerState.Card;
+            IsEjected = playerState.Ejected;
+            Honor = playerState.Honor;
+            ForceCalls = playerState.ForceCalls;
+        }
+        else
+        {
+            throw new InvalidOperationException("Cannot load PlayerViewModel from non-PlayerState");
+        }
+    }
 
     #region Saber Sports
 

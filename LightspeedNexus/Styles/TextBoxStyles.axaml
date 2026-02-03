@@ -6,7 +6,7 @@
 		<Border Padding="20">
 			<StackPanel Spacing="20" Width="300">
 				<TextBox>Normal</TextBox>
-				<TextBox Classes="green">Saber Sport</TextBox>
+				<TextBox Classes="sabersport">Saber Sport</TextBox>
 			</StackPanel>
 		</Border>
 	</Design.PreviewWith>
@@ -20,7 +20,7 @@
 		</Style>
 	</Style>
 	
-	<Style Selector="TextBox.green">
+	<Style Selector="TextBox.sabersport">
 		<Setter Property="BorderBrush" Value="{StaticResource SaberSportGreen}"/>
 		<Style Selector="^:pointerover /template/ c|LightspeedBorder#PART_BorderElement">
 			<Setter Property="TopLeftBackground" Value="{StaticResource SaberSportGreen}"/>

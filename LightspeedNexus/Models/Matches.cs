@@ -1,25 +1,7 @@
-﻿using System;
+﻿using LightspeedNetwork;
+using System;
 
 namespace LightspeedNexus.Models;
-
-/// <summary>
-/// Identifies a participant's side in the match.
-/// </summary>
-public enum Side
-{
-    Neither,
-    First,
-    Second
-}
-
-/// <summary>
-/// References a participant in a match based on outcome.
-/// </summary>
-public enum MatchOutcome
-{
-    Winner,
-    Loser
-}
 
 /// <summary>
 /// Base class for all matches

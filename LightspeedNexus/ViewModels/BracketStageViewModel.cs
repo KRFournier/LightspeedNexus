@@ -3,11 +3,13 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
+using LightspeedNetwork;
 using LightspeedNexus.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
 
 namespace LightspeedNexus.ViewModels;
 
@@ -32,7 +34,7 @@ public partial class BracketStageViewModel : StageViewModel, IRecipient<RequestB
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Top32Title))]
     [NotifyPropertyChangedFor(nameof(Top16Title))]
-    public partial MatchGroupViewModel Top64 { get; set; } = new() { Settings = new() { WinningScore = 16, TimeLimit = TimeSpan.FromMinutes(2), Rounds = 2 } };
+    public partial MatchGroupViewModel Top64 { get; set; } = new() { Name = "Top 64", Settings = new() { WinningScore = 16, TimeLimit = TimeSpan.FromMinutes(2), Rounds = 2 } };
 
     /// <summary>
     /// The top 32 matches
@@ -40,7 +42,7 @@ public partial class BracketStageViewModel : StageViewModel, IRecipient<RequestB
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Top32Title))]
     [NotifyPropertyChangedFor(nameof(Top16Title))]
-    public partial MatchGroupViewModel Top32 { get; set; } = new() { Settings = new() { WinningScore = 16, TimeLimit = TimeSpan.FromMinutes(2), Rounds = 2 } };
+    public partial MatchGroupViewModel Top32 { get; set; } = new() { Name = "Top 32", Settings = new() { WinningScore = 16, TimeLimit = TimeSpan.FromMinutes(2), Rounds = 2 } };
     public string? Top32Title => Top64.Matches.Count > 0 ? "Round 2" : "Round 1";
 
     /// <summary>
@@ -48,32 +50,32 @@ public partial class BracketStageViewModel : StageViewModel, IRecipient<RequestB
     /// </summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Top16Title))]
-    public partial MatchGroupViewModel Top16 { get; set; } = new() { Settings = new() { WinningScore = 16, TimeLimit = TimeSpan.FromMinutes(2), Rounds = 2 } };
+    public partial MatchGroupViewModel Top16 { get; set; } = new() { Name = "Top 16", Settings = new() { WinningScore = 16, TimeLimit = TimeSpan.FromMinutes(2), Rounds = 2 } };
     public string? Top16Title => Top64.Matches.Count > 0 ? "Round 3" : (Top32.Matches.Count > 0 ? "Round 2" : "Round 1");
 
     /// <summary>
     /// The top 8 matches
     /// </summary>
     [ObservableProperty]
-    public partial MatchGroupViewModel Quarterfinals { get; set; } = new() { Settings = new() { WinningScore = 16, TimeLimit = TimeSpan.FromMinutes(2), Rounds = 2 } };
+    public partial MatchGroupViewModel Quarterfinals { get; set; } = new() { Name = "Quarterfinals", Settings = new() { WinningScore = 16, TimeLimit = TimeSpan.FromMinutes(2), Rounds = 2 } };
 
     /// <summary>
     /// The top 4 matches
     /// </summary>
     [ObservableProperty]
-    public partial MatchGroupViewModel Semifinals { get; set; } = new() { Settings = new() { WinningScore = 16, TimeLimit = TimeSpan.FromMinutes(2), Rounds = 2 } };
+    public partial MatchGroupViewModel Semifinals { get; set; } = new() { Name = "Semifinals", Settings = new() { WinningScore = 16, TimeLimit = TimeSpan.FromMinutes(2), Rounds = 2 } };
 
     /// <summary>
     /// The optional third place match
     /// </summary>
     [ObservableProperty]
-    public partial MatchGroupViewModel Third { get; set; } = new() { Settings = new() { WinningScore = 24, TimeLimit = TimeSpan.FromMinutes(3), Rounds = 2 } };
+    public partial MatchGroupViewModel Third { get; set; } = new() { Name = "Third Place", Settings = new() { WinningScore = 24, TimeLimit = TimeSpan.FromMinutes(3), Rounds = 2 } };
 
     /// <summary>
     /// The final match
     /// </summary>
     [ObservableProperty]
-    public partial MatchGroupViewModel Final { get; set; } = new() { Settings = new() { WinningScore = 32, TimeLimit = TimeSpan.FromMinutes(4), Rounds = 2 } };
+    public partial MatchGroupViewModel Final { get; set; } = new() { Name = "Final", Settings = new() { WinningScore = 32, TimeLimit = TimeSpan.FromMinutes(4), Rounds = 2 } };
 
     /// <summary>
     /// Determines if at least one match has started
@@ -217,6 +219,22 @@ public partial class BracketStageViewModel : StageViewModel, IRecipient<RequestB
         };
         vm.SetGroupListeners();
         return vm;
+    }
+
+    public IEnumerable<MatchGroupState> GetMatchGroupsState()
+    {
+        if (Top64.Matches.Count > 0)
+            yield return new MatchGroupState() { Name = "Top 64", IsCompleted = Top64.IsCompleted };
+        if (Top32.Matches.Count > 0)
+            yield return new MatchGroupState() { Name = "Top 32", IsCompleted = Top32.IsCompleted };
+        if (Top16.Matches.Count > 0)
+            yield return new MatchGroupState() { Name = "Top 16", IsCompleted = Top16.IsCompleted };
+        if (Quarterfinals.Matches.Count > 0)
+            yield return new MatchGroupState() { Name = "Quarterfinals", IsCompleted = Quarterfinals.IsCompleted };
+        if (Semifinals.Matches.Count > 0)
+            yield return new MatchGroupState() { Name = "Semifinals", IsCompleted = Semifinals.IsCompleted };
+        yield return new MatchGroupState() { Name = "Third", IsCompleted = Third.IsCompleted };
+        yield return new MatchGroupState() { Name = "Final", IsCompleted = Final.IsCompleted };
     }
 
     /// <summary>

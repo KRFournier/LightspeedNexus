@@ -75,7 +75,7 @@
 		<Grid Grid.Row="4" RowDefinitions="Auto,10,Auto,10,*">
 		
 			<Grid ColumnDefinitions="50,10,7*,10,3*,10,100,10,100,10,100,10,150"
-				  Margin="12,0"
+				  Margin="32,0"
 				  Grid.Row="2">
 				<TextBlock Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Bottom">Seed</TextBlock>
 				<TextBlock Grid.Column="2" VerticalAlignment="Bottom">Name</TextBlock>
@@ -88,7 +88,7 @@
 			
 			<!-- Players -->
 			<ScrollViewer Grid.Row="4">
-				<ItemsControl ItemsSource="{Binding Seeds}">
+				<ItemsControl ItemsSource="{Binding Seeds}" Margin="20,0">
 					<ItemsControl.ItemsPanel>
 						<ItemsPanelTemplate>
 							<StackPanel Spacing="10"/>

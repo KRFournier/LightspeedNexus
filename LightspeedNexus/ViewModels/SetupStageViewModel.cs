@@ -164,6 +164,8 @@ public partial class SetupStageViewModel : StageViewModel, IComparer,
     public partial bool AllowURanks { get; set; } = true;
     partial void OnAllowURanksChanged(bool value) => ValidateRoster();
 
+    public ObservableCollection<string> Rings { get; set; }
+
     #endregion
 
     #region Next Stage
@@ -209,6 +211,7 @@ public partial class SetupStageViewModel : StageViewModel, IComparer,
     /// </summary>
     public SetupStageViewModel() : base("Setup")
     {
+        Rings = new ObservableCollection<string>(StorageService.ReadRings() ?? []);
         LoadFighters();
         SortedPlayers = new(Registrees);
         SortedPlayers.SortDescriptions.Add(new DataGridComparerSortDescription(this, ListSortDirection.Ascending));
@@ -252,6 +255,7 @@ public partial class SetupStageViewModel : StageViewModel, IComparer,
         AllowDRanks = AllowDRanks,
         AllowERanks = AllowERanks,
         AllowURanks = AllowURanks,
+        Rings = [.. Rings],
         Next = Next?.ToModel()
     };
 
@@ -276,7 +280,8 @@ public partial class SetupStageViewModel : StageViewModel, IComparer,
             AllowCRanks = model.AllowCRanks,
             AllowDRanks = model.AllowDRanks,
             AllowERanks = model.AllowERanks,
-            AllowURanks = model.AllowURanks
+            AllowURanks = model.AllowURanks,
+            Rings = [.. model.Rings],
         };
 
         foreach (var r in model.Registrees)
@@ -287,6 +292,15 @@ public partial class SetupStageViewModel : StageViewModel, IComparer,
         vm.Next = FromModel(model.Next);
 
         return vm;
+    }
+
+    /// <summary>
+    /// Called when the tournament is saved
+    /// </summary>
+    public override void OnTournamentSaved()
+    {
+        StorageService.WriteRings(Rings);
+        base.OnTournamentSaved();
     }
 
     /// <summary>
@@ -421,7 +435,7 @@ public partial class SetupStageViewModel : StageViewModel, IComparer,
     {
         try
         {
-            var result = await DialogBox(new FighterViewModel(), "New Fighter");
+            var result = await EditDialog(new FighterViewModel(), "New Fighter");
             if (result.IsOk)
             {
                 var fighter = result.Item.ToModel();
@@ -448,7 +462,7 @@ public partial class SetupStageViewModel : StageViewModel, IComparer,
     {
         try
         {
-            var result = await DialogBox(registree.ToFighterViewModel(), "Edit Fighter");
+            var result = await EditDialog(registree.ToFighterViewModel(), "Edit Fighter");
             if (result.IsOk)
             {
                 registree.Update(result.Item);

@@ -47,7 +47,7 @@
 
 				<TextBlock Classes="large" Text="Open" Margin="0,10"/>
 
-				<ItemsControl ItemsSource="{Binding IncompleteTournaments}">
+				<ItemsControl ItemsSource="{Binding IncompleteTournaments}" Margin="20,0">
 					<ItemsControl.ItemsPanel>
 						<ItemsPanelTemplate>
 							<StackPanel Spacing="10"/>
@@ -97,7 +97,7 @@
 
 				<TextBlock Classes="large" Text="Completed" Margin="0,10"/>
 
-				<ItemsControl ItemsSource="{Binding CompleteTournaments}">
+				<ItemsControl ItemsSource="{Binding CompleteTournaments}" Margin="20,0">
 					<ItemsControl.ItemsPanel>
 						<ItemsPanelTemplate>
 							<StackPanel Spacing="10"/>

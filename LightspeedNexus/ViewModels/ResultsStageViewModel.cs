@@ -2,12 +2,16 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using LightspeedNexus.Messages;
 using LightspeedNexus.Models;
+using LightspeedNexus.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.Json.Nodes;
+using System.Threading.Tasks;
 
 namespace LightspeedNexus.ViewModels;
 
@@ -176,12 +180,29 @@ public partial class ResultsStageViewModel : StageViewModel
     [RelayCommand]
     private static void Close() => StrongReferenceMessenger.Default.Send<SaveAndCloseMessage>();
 
+    /// <summary>
+    /// Submits the tournament to saber-sport.com
+    /// </summary>
     [RelayCommand]
-    private void Submit()
+    private async Task Submit()
     {
         if (CanSubmit)
         {
-            string json = StrongReferenceMessenger.Default.Send<RequestSaberScoreJson>();
+            try
+            {
+                var signature = await ShowSignDialog();
+                if (signature is null)
+                    return;
+                BeginWait("Submitting to Saber Sport...");
+                string json = StrongReferenceMessenger.Default.Send(new RequestSaberScoreJson(signature));
+                var (_, msg) = await SaberSportsService.Submit(json);
+                EndWait();
+                await MessageBox(msg);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine($"Unexpected error editing a fighter: {e}");
+            }
         }
     }
 
@@ -211,7 +232,7 @@ public partial class ResultsStageViewModel : StageViewModel
     {
         var stage = new ResultsStageViewModel();
 
-        var poolsStage = StrongReferenceMessenger.Default.Send<RequestPoolsStageMessage>().Response;
+        var poolsStage = StrongReferenceMessenger.Default.Send<RequestPoolsMessage>().Response;
         var grades = StrongReferenceMessenger.Default.Send<RequestFinalGrading>().Response;
         var roster = StrongReferenceMessenger.Default.Send<RequestParticipants>().Response;
         var value = StrongReferenceMessenger.Default.Send<RequestTournamentValue>().Response;

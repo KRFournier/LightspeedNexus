@@ -5,10 +5,10 @@
     <Design.PreviewWith>
 		<Border Padding="20" Background="#1f1f1f" Width="500">
 			<StackPanel Spacing="20">
-				<c:LightspeedBorder Classes="item" Progress="0.3">
+				<c:LightspeedBorder Classes="small" Progress="0.3">
 					<TextBlock>Hello, World!</TextBlock>
 				</c:LightspeedBorder>
-				<c:LightspeedBorder Classes="item silver">
+				<c:LightspeedBorder Classes="sabersport">
 					<Panel>
 						<TextBlock>Hello, World!</TextBlock>
 					</Panel>
@@ -179,6 +179,17 @@
 			<Setter Property="TopLeftOpacity" Value="1.0"/>
 			<Setter Property="BottomRightOpacity" Value="1.0"/>
 		</Style>
+	</Style>
+
+	<Style Selector="c|LightspeedBorder.sabersport">
+		<Setter Property="Background" Value="{StaticResource SaberSportBackground}"/>
+		<Setter Property="BorderBrush" Value="{StaticResource SaberSportGreen}"/>
+		<Setter Property="TopLeftBorderBrush" Value="{StaticResource SaberSportGreen}"/>
+		<Setter Property="TopLeftBackground" Value="{StaticResource SaberSportGreen}"/>
+		<Setter Property="TopLeftOpacity" Value="1.0"/>
+		<Setter Property="BottomRightBorderBrush" Value="{StaticResource SaberSportGreen}"/>
+		<Setter Property="BottomRightBackground" Value="{StaticResource SaberSportGreen}"/>
+		<Setter Property="BottomRightOpacity" Value="1.0"/>
 	</Style>
 
 </Styles>

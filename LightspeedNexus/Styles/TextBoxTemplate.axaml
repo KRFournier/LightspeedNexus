@@ -120,6 +120,7 @@
 						  Name="PART_BorderElement"
 						  Classes="small Focus"
 						  Background="{TemplateBinding Background}"
+						  BorderBrush="{TemplateBinding BorderBrush}"
 						  BorderThickness="{TemplateBinding BorderThickness}"
 						  MinWidth="{TemplateBinding MinWidth}"
 						  MinHeight="{TemplateBinding MinHeight}"

@@ -10,11 +10,11 @@ namespace LightspeedNexus.ViewModels;
 
 #region Messages
 
-public sealed class RequestPoolsStageMessage : RequestMessage<PoolsStageViewModel> { }
+public sealed class RequestPoolsMessage : RequestMessage<PoolsStageViewModel> { }
 
 #endregion
 
-public partial class PoolsStageViewModel : StageViewModel, IRecipient<RequestPoolsStageMessage>
+public partial class PoolsStageViewModel : StageViewModel, IRecipient<RequestPoolsMessage>
 {
     #region Properties
 
@@ -39,7 +39,7 @@ public partial class PoolsStageViewModel : StageViewModel, IRecipient<RequestPoo
 
     #region Message Handlers
 
-    public void Receive(RequestPoolsStageMessage message) => message.Reply(this);
+    public void Receive(RequestPoolsMessage message) => message.Reply(this);
 
     #endregion
 

@@ -47,7 +47,7 @@ public partial class FightersViewModel : ViewModelBase, IComparer
     {
         try
         {
-            var result = await DialogBox(new FighterViewModel(), "New Fighter");
+            var result = await EditDialog(new FighterViewModel(), "New Fighter");
             if (result.IsOk)
             {
                 Fighters.Add(result.Item);
@@ -65,22 +65,32 @@ public partial class FightersViewModel : ViewModelBase, IComparer
     {
         try
         {
-            var result = await DialogBox(item.Clone(), "Edit Fighter", DialogButton.Delete);
+            var result = await EditDialog(item.Clone(), "Edit Fighter");
             if (result.IsOk)
             {
                 item.Update(result.Item);
                 StorageService.Write(result.Item.ToModel());
                 SortedFighters.Refresh();
             }
-            else if (result.IsDeleted)
-            {
-                Fighters.Remove(item);
-                StorageService.Write(result.Item.ToModel());
-            }
         }
         catch (Exception e)
         {
             Debug.WriteLine($"Unexpected error editing a fighter: {e}");
+        }
+    }
+
+    [RelayCommand]
+    private async Task DeleteFighter(FighterViewModel item)
+    {
+        try
+        {
+            StorageService.Delete<Fighter>(item.Guid);
+            Fighters.Remove(item);
+            SortedFighters.Refresh();
+        }
+        catch (Exception e)
+        {
+            Debug.WriteLine($"Unexpected error deleting a fighter: {e}");
         }
     }
 
@@ -117,7 +127,7 @@ public partial class FightersViewModel : ViewModelBase, IComparer
                 Fighters.Add(FighterViewModel.NewFromImported(fighter));
         }
         else
-            MessageBox(message);
+            await MessageBox(message);
     }
 
     #endregion

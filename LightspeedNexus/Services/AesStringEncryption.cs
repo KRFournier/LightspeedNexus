@@ -44,7 +44,7 @@ public static class AesStringEncryption
     public static string DecryptString(string cipherText)
     {
         if (string.IsNullOrEmpty(cipherText))
-            throw new ArgumentNullException(nameof(cipherText));
+            return string.Empty;
 
         byte[] fullCipher = Convert.FromBase64String(cipherText);
 

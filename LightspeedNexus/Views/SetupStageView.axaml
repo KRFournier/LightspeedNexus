@@ -200,6 +200,17 @@
 							 Watermark="Additional Description"
 							 Text="{Binding SubTitle}"/>
 				</Grid>
+			
+				<!--Rings-->
+				<Grid ColumnDefinitions="Auto,10,*">
+					<TextBlock Grid.Column="0"
+							   VerticalAlignment="Center"
+							   Text="Rings"/>
+					<TextBox Grid.Column="2"
+							 VerticalContentAlignment="Center"
+							 Watermark="Comma separated list, e.g., Red, Blue, Green"
+							 Text="{Binding Rings, Converter={StaticResource CommaList}}"/>
+				</Grid>
 		
 			</StackPanel>
 			

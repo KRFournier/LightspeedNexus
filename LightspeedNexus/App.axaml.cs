@@ -48,7 +48,7 @@ public partial class App : Application
     private static void SetupServices()
     {
         StorageService.RegisterSerializers();
-        SaberSportsService.LoadLastUsed();
+        //SaberSportsService.LoadLastUsed();
 
         // Set up DI
         var serviceCollection = new ServiceCollection();

@@ -1,6 +1,14 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Avalonia.Controls;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging.Messages;
+using LightspeedNetwork;
 using LightspeedNexus.Models;
+using LightspeedNexus.Networking;
+using Network;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace LightspeedNexus.ViewModels;
@@ -15,13 +23,24 @@ public partial class StandardMatchViewModel : MatchViewModel
     [ObservableProperty]
     public partial ClockViewModel Clock { get; set; } = new();
 
-    [ObservableProperty]
-    public partial Models.Action[] Actions { get; set; } = [];
+    public ObservableCollection<Models.Action> Actions { get; set; } = [];
 
     [ObservableProperty]
     public partial PriorityViewModel Priority { get; set; } = new();
 
     #endregion
+
+    public StandardMatchViewModel() : base()
+    {
+        if(!Design.IsDesignMode)
+        {
+            WeakReferenceMessenger.Default.Register<ClockStateMessage, Guid>(this, Guid, (_, m) => Clock.FromState(m.State));
+            WeakReferenceMessenger.Default.Register<NewActionMessage, Guid>(this, Guid, (_, m) => SetNewAction(m.State));
+            WeakReferenceMessenger.Default.Register<UndoActionMessage, Guid>(this, Guid, (_, m) => UndoAction(m.State));
+            WeakReferenceMessenger.Default.Register<ActionModifiedMessage, Guid>(this, Guid, (_, m) => ModifyAction(m.State));
+            WeakReferenceMessenger.Default.Register<PriorityChangedMessage, Guid>(this, Guid, (_, m) => Priority.FromState(m.State.Priority));
+        }
+    }
 
     public override StandardMatch ToModel() => new()
     {
@@ -31,7 +50,7 @@ public partial class StandardMatchViewModel : MatchViewModel
         First = First.ToModel(),
         Second = Second.ToModel(),
         IsMatchStarted = IsMatchStarted,
-        Actions = Actions,
+        Actions = [..Actions],
         Priority = Priority.ToModel(),
         Winner = WinningSide
     };
@@ -46,98 +65,81 @@ public partial class StandardMatchViewModel : MatchViewModel
             First = ScoreViewModel.FromModel(model.First),
             Second = ScoreViewModel.FromModel(model.Second),
             IsMatchStarted = model.IsMatchStarted,
-            Actions = model.Actions,
+            Actions = [..model.Actions],
             Priority = PriorityViewModel.FromModel(model.Priority),
             WinningSide = model.Winner
         };
         return vm;
     }
 
+    public override StandardMatchState ToState() => new()
+    {
+        Id = Guid,
+        First = First.ToState(),
+        Second = Second.ToState(),
+        Settings = Settings.ToState(),
+        Clock = Clock.ToState(),
+        Actions = [.. Actions.Select(a => a.ToState())],
+        Priority = Priority.ToState()
+    };
+
+
+    public override MatchSummary ToSummary() => new()
+    {
+        Id = Guid,
+        Number = Number ?? 0,
+        First = First.ToState(),
+        Second = Second.ToState(),
+        Winner = WinningSide,
+        IsStarted = IsMatchStarted,
+        IsCompleted = IsMatchCompleted,
+        Clock = Clock.ToState()
+    };
+
     #region Actions
 
-    ///// <summary>
-    ///// Adds the action and updates the player states
-    ///// </summary>
-    //public void SetNewAction(NewActionState state)
-    //{
-    //    TimeRemaining = state.TimeRemaining;
-    //    OvertimeCount = state.OvertimeCount;
+    /// <summary>
+    /// Adds the action and updates the player states
+    /// </summary>
+    public void SetNewAction(NewActionState state)
+    {
+        Clock.FromState(state.Clock);
+        First.FromState(state.First);
+        Second.FromState(state.Second);
 
-    //    var first = GetParticipant(state.First.Id);
-    //    if (first is not null)
-    //    {
-    //        first.Score = state.First.Score;
-    //        first.MinorViolations = state.First.MinorViolationCount;
-    //        first.Player.Card = state.First.Card;
-    //        first.Player.Ejected = state.First.Ejected;
-    //        first.Player.Honor = state.First.Honor;
-    //        first.Player.ForceCalls = state.First.ForceCalls;
-    //    }
+        if (state.Action is not null)
+            Actions.Insert(0, state.Action.ToModel());
+    }
 
-    //    var second = GetParticipant(state.Second.Id);
-    //    if (second is not null)
-    //    {
-    //        second.Score = state.Second.Score;
-    //        second.MinorViolations = state.Second.MinorViolationCount;
-    //        second.Player.Card = state.Second.Card;
-    //        second.Player.Ejected = state.Second.Ejected;
-    //        second.Player.Honor = state.Second.Honor;
-    //        second.Player.ForceCalls = state.Second.ForceCalls;
-    //    }
+    /// <summary>
+    /// Adds the action and updates the player states
+    /// </summary>
+    public void ModifyAction(ActionModified state)
+    {
+        First.Points = state.Points;
+        Second.Points = state.Points;
 
-    //    Actions.Insert(0, state.Action);
-    //}
+        var action = Actions.FirstOrDefault(a => a.Id == state.ActionId);
+        action?.Points = state.Points;
+    }
 
-    ///// <summary>
-    ///// Adds the action and updates the player states
-    ///// </summary>
-    //public void ModifyAction(ActionModified state)
-    //{
-    //    var first = GetParticipant(state.First.Id);
-    //    first?.Score = state.First.Score;
+    /// <summary>
+    /// Updates the players states and removes the last action
+    /// </summary>
+    public void UndoAction(UndoActionState state)
+    {
+        Clock.FromState(state.Clock);
+        First.FromState(state.First);
+        Second.FromState(state.Second);
 
-    //    var second = GetParticipant(state.Second.Id);
-    //    second?.Score = state.Second.Score;
+        var action = Actions.FirstOrDefault(a => a.Id == state.ActionId);
+        if (action is not null)
+            Actions.Remove(action);
+    }
 
-    //    var action = Actions.FirstOrDefault(a => a.Id == state.ActionId);
-    //    action?.Points = state.Points;
-    //}
-
-    ///// <summary>
-    ///// Updates the players states and removes the last action
-    ///// </summary>
-    //public void UndoAction(UndoActionState state)
-    //{
-    //    TimeRemaining = state.TimeRemaining;
-    //    OvertimeCount = state.OvertimeCount;
-
-    //    var first = GetParticipant(state.First.Id);
-    //    if (first is not null)
-    //    {
-    //        first.Score = state.First.Score;
-    //        first.MinorViolations = state.First.MinorViolationCount;
-    //        first.Player.Card = state.First.Card;
-    //        first.Player.Ejected = state.First.Ejected;
-    //        first.Player.Honor = state.First.Honor;
-    //    }
-
-    //    var second = GetParticipant(state.Second.Id);
-    //    if (second is not null)
-    //    {
-    //        second.Score = state.Second.Score;
-    //        second.MinorViolations = state.Second.MinorViolationCount;
-    //        second.Player.Card = state.Second.Card;
-    //        second.Player.Ejected = state.Second.Ejected;
-    //        second.Player.Honor = state.Second.Honor;
-    //    }
-
-    //    var action = Actions.FirstOrDefault(a => a.Id == state.ActionId);
-    //    if (action is not null)
-    //        Actions.Remove(action);
-    //}
-
-    public IEnumerable<Action> FirstActions => Actions.Where(a => a.Actor == Side.First);
-    public IEnumerable<Action> SecondActions => Actions.Where(a => a.Actor == Side.Second);
+    public IEnumerable<Models.Action> FirstActions => Actions.Where(a => a.Actor == Side.First);
+    public IEnumerable<Models.Action> SecondActions => Actions.Where(a => a.Actor == Side.Second);
 
     #endregion
+
 }

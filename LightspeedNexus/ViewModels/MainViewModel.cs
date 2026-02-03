@@ -1,24 +1,17 @@
-﻿using Avalonia.Animation;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
+using LightspeedNetwork;
 using LightspeedNexus.Messages;
-using LightspeedNexus.Services;
+using LightspeedNexus.Networking;
 using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LightspeedNexus.ViewModels;
 
 public partial class MainViewModel : ViewModelBase,
-    IRecipient<NavigatePageMessage>, IRecipient<NavigateHomeMessage>,
-    IRecipient<BeginWaitMessage>, IRecipient<EndWaitMessage>
+    IRecipient<NavigatePageMessage>, IRecipient<NavigateHomeMessage>, IRecipient<RequestOpenTournaments>
 {
     [ObservableProperty]
     public partial ViewModelBase CurrentPage { get; set; } = new HomeViewModel();
-
-    [ObservableProperty]
-    public partial string? WaitMessage { get; set; }
 
     public MainViewModel()
     {
@@ -43,63 +36,22 @@ public partial class MainViewModel : ViewModelBase,
         CurrentPage = new HomeViewModel();
     }
 
-    public void Receive(BeginWaitMessage message) => WaitMessage = message.Value;
-
-    public void Receive(EndWaitMessage message) => WaitMessage = null;
-
-    #endregion
-
-    #region Saber Sports
-
-    [ObservableProperty]
-    private bool _showLogin = false;
-
-    [ObservableProperty]
-    private string? _email;
-
-    [ObservableProperty]
-    private string? _password;
-
-    [ObservableProperty]
-    private string? _message;
-
-    [RelayCommand]
-    private async Task Register()
+    public void Receive(RequestOpenTournaments message)
     {
-        if (Email is not null)
-            Message = await SaberSportsService.RegisterEmail(Email);
-    }
+        var reply = new OpenTournaments();
 
-    [RelayCommand]
-    private async Task Resend()
-    {
-        if (Email is not null)
-            Message = await SaberSportsService.RegisterEmail(Email);
-    }
+        if (CurrentPage is TournamentViewModel tvm)
+        {
+            reply.Tournaments = [new OpenTournament()
+                {
+                    Id = tvm.Guid,
+                    Competition = tvm.SetupStage.Event,
+                    Name = tvm.SetupStage.Name
+                }
+            ];
+        }
 
-    [RelayCommand]
-    private async Task NewPassword()
-    {
-        if (Email is not null)
-            Message = await SaberSportsService.RegisterEmail(Email);
-    }
-
-    [RelayCommand]
-    private void CancelLogin()
-    {
-        ShowLogin = false;
-    }
-
-    [RelayCommand]
-    private void AcceptLogin()
-    {
-        ShowLogin = false;
-    }
-
-    [RelayCommand]
-    private void AccepMessage()
-    {
-        Message = null;
+        message.Reply(reply);
     }
 
     #endregion

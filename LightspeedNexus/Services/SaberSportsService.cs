@@ -19,57 +19,66 @@ public static class SaberSportsService
     private static RestClient Client => _client;
 #endif
 
+    private static DateTime _tokenExpiration = DateTime.MinValue;
     private static string? _bearerToken;
 
     public static string? LastEmail { get; private set; }
 
     public static string? LastPassword { get; private set; }
 
-    public static void SaveLastUsed()
-    {
-        if (string.IsNullOrEmpty(LastEmail) || string.IsNullOrEmpty(LastPassword))
-            return;
+    public static bool LoginNeeded => string.IsNullOrEmpty(_bearerToken) || DateTime.Now >= _tokenExpiration;
 
-        var lastUsed = new BsonDocument
-        {
-            ["_id"] = 748,
-            ["email"] = LastEmail,
-            ["password"] = AesStringEncryption.EncryptString(LastPassword)
-        };
-        StorageService.WriteSettings(lastUsed);
-    }
+    //public static void SaveLastUsed(bool savePassword)
+    //{
+    //    if (string.IsNullOrEmpty(LastEmail) || string.IsNullOrEmpty(LastPassword))
+    //        return;
 
-    public static void LoadLastUsed()
-    {
-        var lastUsed = StorageService.ReadSettings(748);
-        if (lastUsed != null)
-        {
-            LastEmail = lastUsed["email"].AsString;
-            LastPassword = AesStringEncryption.DecryptString(lastUsed["password"].AsString);
-        }
-    }
+    //    var lastUsed = new BsonDocument
+    //    {
+    //        ["_id"] = 748,
+    //        ["email"] = LastEmail,
+    //        ["password"] = savePassword ? AesStringEncryption.EncryptString(LastPassword) : string.Empty
+    //    };
+    //    StorageService.WriteSettings(lastUsed);
+    //}
 
-    public static async Task<string> RegisterEmail(string email)
+    //public static void LoadLastUsed()
+    //{
+    //    var lastUsed = StorageService.ReadSettings(748);
+    //    if (lastUsed != null)
+    //    {
+    //        LastEmail = lastUsed["email"].AsString;
+    //        LastPassword = AesStringEncryption.DecryptString(lastUsed["password"].AsString);
+    //    }
+    //}
+
+    public static async Task<string> RegisterEmail(string? email)
     {
         try
         {
-            await Client.PostAsync(
+            var response = await Client.PostAsync(
                 new RestRequest("/auth/register")
                 .AddJsonBody($"{{\"email\":\"{email}\"}}")
                 );
-            return $"Password sent to \"{email}\".";
+
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                return $"Password sent to \"{email}\".";
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            return ex.Message;
         }
+
+        return """
+            Register failed. Please check your email address and try again.
+            If you've registered this email before, you can use the "Resend" option instead.
+            """;
     }
 
-    public static async Task<string> ResendPassword(string email)
+    public static async Task<string> ResendPassword(string? email)
     {
         try
         {
-            await Client.PostAsync(
+            var response = await Client.PostAsync(
                 new RestRequest("/auth/resend")
                 .AddJsonBody($"{{\"email\":\"{email}\"}}")
                 );
@@ -85,7 +94,7 @@ public static class SaberSportsService
     {
         try
         {
-            await Client.PostAsync(
+            var response = await Client.PostAsync(
                 new RestRequest("/auth/rotate")
                 .AddJsonBody($"{{\"email\":\"{email}\",\"password\":\"{password}\"}}")
                 );
@@ -97,10 +106,15 @@ public static class SaberSportsService
         }
     }
 
-    public static async Task<(bool Success, string Message)> Login(string email, string password)
+    public static async Task<(bool Success, string Message)> Login(string email, string password, bool savePassword)
     {
         try
         {
+            if(string.IsNullOrEmpty(password))
+            {
+
+            }
+
             var response = await Client.PostAsync(
                 new RestRequest("/auth/token")
                 .AddJsonBody($"{{\"email\":\"{email}\",\"password\":\"{password}\"}}")
@@ -109,7 +123,7 @@ public static class SaberSportsService
             {
                 JsonNode? node = JsonNode.Parse(response.Content!);
                 _bearerToken = node?["token"]?.GetValue<string>();
-                SaveLastUsed();
+                //SaveLastUsed(savePassword);
                 return (true, "");
             }
             else
@@ -144,6 +158,32 @@ public static class SaberSportsService
         catch (Exception ex)
         {
             return (false, ex.Message, []);
+        }
+    }
+
+    public static async Task<(bool Success, string Message)> Submit(string body)
+    {
+        try
+        {
+            var request = new RestRequest("v1/tm/submit", Method.Post)
+                .AddHeader("x-api-key", "@Lightspeed4Ever!")
+                .AddJsonBody(body);
+
+            //var response = await Client.PostAsync(request);
+            var response = await Client.ExecuteAsync(request);
+
+            if (response.IsSuccessful)
+            {
+                //JsonNode? node = JsonNode.Parse(response.Content!);
+                //var responseMessage = node?["response"]?.GetValue<string>();
+                return (true, "Tournament successfully submitted.");
+            }
+            else
+                return (false, response.ErrorMessage ?? "Saber-sports submission failed");
+        }
+        catch (Exception ex)
+        {
+            return (false, ex.Message);
         }
     }
 }

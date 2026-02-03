@@ -7,6 +7,7 @@ namespace LightspeedNexus.Models;
 /// </summary>
 public sealed class MatchGroup
 {
+    public Guid Id { get; set; } = Guid.NewGuid();
     public MatchSettings Settings { get; set; } = new();
     public Guid[] Matches { get; set; } = [];
 }

@@ -1,4 +1,5 @@
-﻿using LiteDB;
+﻿using LightspeedNetwork;
+using LiteDB;
 using System;
 
 namespace LightspeedNexus.Models;

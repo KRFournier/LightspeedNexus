@@ -55,6 +55,7 @@ public sealed class SetupStage : Stage
     public bool AllowDRanks { get; set; } = true;
     public bool AllowERanks { get; set; } = true;
     public bool AllowURanks { get; set; } = true;
+    public string[] Rings { get; set; } = [];
 
     /// <summary>
     /// The name of the tournament, e.g., Open Rey

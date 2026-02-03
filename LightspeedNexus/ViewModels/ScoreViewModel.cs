@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
+using LightspeedNetwork;
 using LightspeedNexus.Models;
 using System;
 using System.ComponentModel;
@@ -21,6 +22,9 @@ public partial class ScoreViewModel : ViewModelBase
 
     [ObservableProperty]
     public partial int? Seed { get; set; }
+
+    [ObservableProperty]
+    public partial int MinorViolations { get; set; } = 0;
 
     /// <summary>
     /// Determines if this player/team is out of the match, either due to disqualification or
@@ -63,7 +67,8 @@ public partial class ScoreViewModel : ViewModelBase
         Points = Points,
         Seed = Seed,
         ParentMatchId = _parentMatch?.Guid,
-        ParentMatchReference = _parentMatchRef
+        ParentMatchReference = _parentMatchRef,
+        MinorViolations = MinorViolations
     };
 
     public static ScoreViewModel FromModel(Score model)
@@ -81,6 +86,7 @@ public partial class ScoreViewModel : ViewModelBase
                 };
                 vm.Points = model.Points;
                 vm.Seed = model.Seed;
+                vm.MinorViolations = model.MinorViolations;
                 return vm;
             }
         }
@@ -133,4 +139,23 @@ public partial class ScoreViewModel : ViewModelBase
     }
 
     #endregion
+
+    public ScoreState ToState() => new()
+    {
+        Participant = Participant.ToState(),
+        Points = Points,
+        Seed = Seed,
+        MinorViolationCount = MinorViolations
+    };
+
+    public void FromState(ScoreState? state)
+    {
+        if (state is null)
+            return;
+
+        Participant.FromState(state.Participant);
+        Points = state.Points;
+        Seed = state.Seed;
+        MinorViolations = state.MinorViolationCount;
+    }
 }

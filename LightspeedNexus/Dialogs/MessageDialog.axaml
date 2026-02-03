@@ -1,0 +1,35 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:LightspeedNexus.ViewModels"
+			 xmlns:v="clr-namespace:LightspeedNexus.Views"
+			 xmlns:c="clr-namespace:LightspeedNexus.Controls"
+             mc:Ignorable="d" d:DesignWidth="450" d:DesignHeight="450"
+             x:Class="LightspeedNexus.Dialogs.MessageDialog"
+			 KeyDown="UserControl_KeyDown">
+
+	<StackPanel Spacing="10"
+			    HorizontalAlignment="Center"
+				VerticalAlignment="Center">
+
+		<!--Content-->
+		<c:LightspeedBorder Classes="color darkback"
+							Padding="50">
+			<TextBlock x:Name="MessageTextBlock" Classes="medium"/>
+		</c:LightspeedBorder>
+
+		<!--Buttons-->
+		<StackPanel Orientation="Horizontal"
+			        Spacing="10"
+					HorizontalAlignment="Center">
+
+			<Button x:Name="OkButton" Width="100" Click="OK_Click">
+				<TextBlock Text="OK" HorizontalAlignment="Center"/>
+			</Button>
+
+		</StackPanel>
+
+	</StackPanel>
+	
+</UserControl>

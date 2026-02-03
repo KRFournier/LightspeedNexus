@@ -2,8 +2,10 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
+using LightspeedNetwork;
 using LightspeedNexus.Messages;
 using LightspeedNexus.Models;
+using LightspeedNexus.Networking;
 using LightspeedNexus.Services;
 using System;
 using System.Collections.Generic;
@@ -19,7 +21,10 @@ public sealed class RequestFinalGrading : RequestMessage<Grading?> { }
 public sealed class RequestTournamentValue : RequestMessage<int> { }
 public sealed class SaveAndCloseMessage { }
 public sealed class RequestSubmittable : RequestMessage<bool> { }
-public sealed class RequestSaberScoreJson : RequestMessage<string> { }
+public sealed class RequestSaberScoreJson(string signature) : RequestMessage<string>
+{
+    public readonly string Signature = signature;
+}
 
 #endregion
 
@@ -28,7 +33,7 @@ public partial class TournamentViewModel : ViewModelBase, IDisposable,
     IRecipient<RosterChangedMessage>, IRecipient<BracketRoundCompleted>,
     IRecipient<RequestIsRanked>, IRecipient<RequestFinalGrading>,
     IRecipient<RequestTournamentValue>, IRecipient<SaveAndCloseMessage>,
-    IRecipient<RequestSubmittable>, IRecipient<RequestSaberScoreJson>   
+    IRecipient<RequestSubmittable>, IRecipient<RequestSaberScoreJson>
 {
     #region Properties
 
@@ -174,6 +179,7 @@ public partial class TournamentViewModel : ViewModelBase, IDisposable,
     public void Receive(RequestSaberScoreJson message)
     {
         var node = ToSaberSportsSubmission();
+        node["signature"] = message.Signature;
         message.Reply(node.ToJsonString());
     }
 
@@ -189,6 +195,8 @@ public partial class TournamentViewModel : ViewModelBase, IDisposable,
         SetupStage = new();
         StrongReferenceMessenger.Default.RegisterAll(this);
         _loading = false;
+
+        SetupNetworkListeners();
     }
 
     /// <summary>
@@ -203,6 +211,8 @@ public partial class TournamentViewModel : ViewModelBase, IDisposable,
         // have to set this manually since the stages are loaded in bulk and won't trigger the property changed events
         FindStage<BracketStageViewModel>()?.IsRanked = IsRanked;
         _loading = false;
+
+        SetupNetworkListeners();
     }
 
     /// <summary>
@@ -334,7 +344,7 @@ public partial class TournamentViewModel : ViewModelBase, IDisposable,
 
         var node = new JsonObject
         {
-            ["uuid"] = $"lsc{Guid}",
+            ["uuid"] = $"lsn{Guid}",
             ["title"] = SetupStage.EventName is not null ? $"{SetupStage.EventName} {SetupStage.Title}" : SetupStage.Title,
             ["date"] = SetupStage.Date?.ToString("yyyy-MM-dd"),
             ["gender"] = SetupStage.Demographic switch { Demographic.Women => "women", Demographic.Cadet => "cadet", _ => "mixed" },
@@ -345,6 +355,55 @@ public partial class TournamentViewModel : ViewModelBase, IDisposable,
             ["rounds"] = rounds
         };
         return node;
+    }
+
+    #endregion
+
+    #region Networking
+
+    public static int Connections => NetworkService.Connections;
+
+    public static string? Address => NetworkService.GetIPAddress();
+
+    /// <summary>
+    /// Sets up handlers for messages that come from the network service
+    /// </summary>
+    private void SetupNetworkListeners()
+    {
+        WeakReferenceMessenger.Default.Register<NetworkConnectionsChangedMessage>(this, (_, _) => OnPropertyChanged(nameof(Connections)));
+
+        // returns the active match groups of this tournament. We use the Guid as a token
+        // to ensure we only respond to requests for this tournament
+        WeakReferenceMessenger.Default.Register<RequestActiveMatchGroups, Guid>(this, Guid,
+            (r, m) =>
+            {
+                MatchGroupsState result = new();
+
+                var bracket = FindStage<BracketStageViewModel>();
+                if (bracket is not null)
+                {
+                    result = new()
+                    {
+                        Type = "Bracket",
+                        Groups = [.. bracket.GetMatchGroupsState()]
+                    };
+                }
+                else
+                {
+                    var pools = FindStage<PoolsStageViewModel>();
+                    if (pools is not null)
+                    {
+                        result = new()
+                        {
+                            Type = "Pool",
+                            Groups = [.. pools.Pools.Select(p => p.ToState())]
+                        };
+                    }
+                }
+
+                m.Reply(result);
+            }
+        );
     }
 
     #endregion

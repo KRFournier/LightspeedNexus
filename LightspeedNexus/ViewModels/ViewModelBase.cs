@@ -1,8 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using LightspeedNexus.Messages;
-using System.Threading.Tasks;
 using System;
+using System.Threading.Tasks;
 
 namespace LightspeedNexus.ViewModels;
 
@@ -15,37 +15,31 @@ public class ViewModelBase : ObservableObject
     {
         public bool IsOk { get; set; } = false;
         public bool IsCancelled { get; set; } = false;
-        public bool IsDeleted { get; set; } = false;
         public T Item { get; set; }
-        public DialogBoxResult(OpenDialogMessage.DialogResponse response, T item)
+        public DialogBoxResult(DialogResponse response, T item)
         {
             switch (response)
             {
-                case OpenDialogMessage.DialogResponse.Ok: IsOk = true; break;
-                case OpenDialogMessage.DialogResponse.Cancel: IsCancelled = true; break;
-                case OpenDialogMessage.DialogResponse.Delete: IsDeleted = true; break;
+                case DialogResponse.Ok: IsOk = true; break;
+                case DialogResponse.Cancel: IsCancelled = true; break;
             }
             Item = item;
         }
     }
 
     /// <summary>
-    /// Shows the message in a message box
+    /// Closes the current dialog, if any.
     /// </summary>
-    protected static void MessageBox(string msg)
-    {
-        MessageBoxMessage messageBoxMessage = new(msg);
-        WeakReferenceMessenger.Default.Send(messageBoxMessage);
-    }
+    protected static void CloseDialog() => WeakReferenceMessenger.Default.Send<CloseDialogMessage>();
 
     /// <summary>
-    /// Opens a dialog with the given initial viewmodel and returns the result when the dialog is closed.
+    /// Opens an edit dialog with the given initial viewmodel and returns the result when the dialog is closed.
     /// </summary>
-    protected static Task<DialogBoxResult<T>> DialogBox<T>(T initial, string title, params DialogButton[] additionalButtons)
+    protected static Task<DialogBoxResult<T>> EditDialog<T>(T initial, string title)
         where T : ViewModelBase
     {
         var cs = new TaskCompletionSource<DialogBoxResult<T>>();
-        OpenDialogMessage message = new(initial, title, additionalButtons, (vm, response) =>
+        EditDialogMessage message = new(initial, title, (vm, response) =>
         {
             if (vm is T item)
                 cs.SetResult(new DialogBoxResult<T>(response, item));
@@ -57,20 +51,45 @@ public class ViewModelBase : ObservableObject
     }
 
     /// <summary>
-    /// Closes the current dialog, if any.
+    /// Opens the login dialog and returns the result when the dialog is closed.
     /// </summary>
-    protected static void CloseDialog()
+    protected static Task<DialogResponse> ShowLoginDialog()
     {
-        WeakReferenceMessenger.Default.Send<CloseDialogMessage>();
+        var cs = new TaskCompletionSource<DialogResponse>();
+        ShowLoginDialogMessage message = new(response => cs.SetResult(response));
+        WeakReferenceMessenger.Default.Send(message);
+        return cs.Task;
     }
 
-    protected static void BeginWait(string msg)
+    /// <summary>
+    /// Opens the signature dialog and returns the signature when the dialog is closed.
+    /// </summary>
+    protected static Task<string?> ShowSignDialog()
     {
-        WeakReferenceMessenger.Default.Send(new BeginWaitMessage(msg));
+        var cs = new TaskCompletionSource<string?>();
+        ShowSignDialogMessage message = new(response => cs.SetResult(response));
+        WeakReferenceMessenger.Default.Send(message);
+        return cs.Task;
     }
 
-    protected static void EndWait()
+    /// <summary>
+    /// Shows the message in a message box
+    /// </summary>
+    protected static Task MessageBox(string msg)
     {
-        WeakReferenceMessenger.Default.Send<EndWaitMessage>();
+        var cs = new TaskCompletionSource<bool>();
+        MessageBoxMessage messageBoxMessage = new(msg, () => cs.SetResult(true));
+        WeakReferenceMessenger.Default.Send(messageBoxMessage);
+        return cs.Task;
     }
+
+    /// <summary>
+    /// Shows a wait dialog
+    /// </summary>
+    protected static void BeginWait(string msg) => WeakReferenceMessenger.Default.Send(new BeginWaitMessage(msg));
+
+    /// <summary>
+    /// Hides the wait dialog
+    /// </summary>
+    protected static void EndWait() => WeakReferenceMessenger.Default.Send<EndWaitMessage>();
 }

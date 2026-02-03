@@ -60,6 +60,6 @@ public partial class HomeViewModel : ViewModelBase
                 StorageService.Write(fighter);
         }
         else
-            MessageBox(message);
+            await MessageBox(message);
     }
 }

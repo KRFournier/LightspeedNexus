@@ -1,0 +1,49 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:LightspeedNexus.ViewModels"
+			 xmlns:v="clr-namespace:LightspeedNexus.Views"
+			 xmlns:c="clr-namespace:LightspeedNexus.Controls"
+             mc:Ignorable="d" d:DesignWidth="450" d:DesignHeight="450"
+             x:Class="LightspeedNexus.Dialogs.EditDialog"
+			 KeyDown="UserControl_KeyDown">
+
+	<!--<UserControl.KeyBindings>
+		<KeyBinding Gesture="Escape"/>
+	</UserControl.KeyBindings>-->
+
+	<StackPanel Spacing="10"
+			    HorizontalAlignment="Center"
+				VerticalAlignment="Center">
+
+		<!--Title-->
+		<TextBlock x:Name="TitleTextBlock"
+			       Classes="large"
+				   HorizontalAlignment="Center"/>
+
+		<!--Content-->
+		<c:LightspeedBorder Classes="color darkback"
+							Padding="20"
+							Width="400">
+			<ContentControl x:Name="ContentControl"/>
+		</c:LightspeedBorder>
+
+		<!--Buttons-->
+		<StackPanel Orientation="Horizontal"
+			        Spacing="10"
+					HorizontalAlignment="Right">
+
+			<Button x:Name="CancelButton" Classes="gray" Width="75" Click="Cancel_Click">
+				<TextBlock Text="Cancel" HorizontalAlignment="Center"/>
+			</Button>
+
+			<Button x:Name="OkButton" Width="75" Click="OK_Click">
+				<TextBlock Text="OK" HorizontalAlignment="Center"/>
+			</Button>
+
+		</StackPanel>
+
+	</StackPanel>
+	
+</UserControl>

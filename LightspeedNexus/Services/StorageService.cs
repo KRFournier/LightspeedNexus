@@ -57,24 +57,51 @@ public static class StorageService
 
     #region Settings
 
+    ///// <summary>
+    ///// Writes a document to the database in the specified collection
+    ///// </summary>
+    //public static void WriteSettings(BsonDocument document)
+    //{
+    //    using var db = GetDatabase();
+    //    var collection = db.GetCollection("settings");
+    //    collection.Upsert(document);
+    //}
+
+    ///// <summary>
+    ///// Gets the document with the given id
+    ///// </summary>
+    //public static BsonDocument? ReadSettings(BsonValue id)
+    //{
+    //    using var db = GetDatabase();
+    //    var collection = db.GetCollection("settings");
+    //    return collection.FindById(id);
+    //}
+
     /// <summary>
     /// Writes a document to the database in the specified collection
     /// </summary>
-    public static void WriteSettings(BsonDocument document)
+    public static void WriteRings(IEnumerable<string> rings)
     {
         using var db = GetDatabase();
         var collection = db.GetCollection("settings");
-        collection.Upsert(document);
+
+        var doc = new BsonDocument
+        {
+            ["_id"] = 1,
+            ["rings"] = new BsonArray(rings.Select(r => new BsonValue(r)))
+        };
+
+        collection.Upsert(doc);
     }
 
     /// <summary>
     /// Gets the document with the given id
     /// </summary>
-    public static BsonDocument? ReadSettings(BsonValue id)
+    public static string[]? ReadRings()
     {
         using var db = GetDatabase();
         var collection = db.GetCollection("settings");
-        return collection.FindById(id);
+        return collection.FindById(new BsonValue(1))?["rings"]?.AsArray.Select(b => b.AsString).ToArray();
     }
 
     #endregion

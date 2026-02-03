@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LightspeedNetwork;
+using System;
 
 namespace LightspeedNexus.Models;
 
@@ -32,4 +33,9 @@ public sealed class Score
     /// The participant to use from the referenced match, either the winner or the loser
     /// </summary>
     public MatchOutcome? ParentMatchReference { get; set; }
+
+    /// <summary>
+    /// The number of minor violations this match
+    /// </summary>
+    public int MinorViolations { get; set; } = 0;
 }

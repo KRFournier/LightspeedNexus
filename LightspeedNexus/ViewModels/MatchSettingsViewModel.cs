@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using LightspeedNetwork;
 using LightspeedNexus.Models;
 using System;
 using System.Text.Json.Nodes;
@@ -118,6 +119,14 @@ public partial class MatchSettingsViewModel : ViewModelBase
         Rounds = model.Rounds,
         IsLocked = model.IsLocked
     };
+
+    public MatchSettingsState ToState() => new()
+    {
+        WinningScore = WinningScore,
+        TimeLimit = TimeLimit,
+        Rounds = Rounds
+    };
+
 
     #region Saber Sports
 
