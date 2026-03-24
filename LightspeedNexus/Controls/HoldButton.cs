@@ -2,7 +2,6 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Threading;
-using System;
 using System.Diagnostics;
 
 namespace LightspeedNexus.Controls;
@@ -16,7 +15,7 @@ public class HoldButton : Button
     /// <summary>
     /// Tracks how much time has passed
     /// </summary>
-    private Stopwatch _stopwatch = new();
+    private readonly Stopwatch _stopwatch = new();
 
     private const int _interval = 20;
 

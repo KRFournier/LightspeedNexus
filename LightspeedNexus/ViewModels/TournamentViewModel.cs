@@ -2,14 +2,11 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
-using LightspeedNetwork;
+using Lightspeed.Network;
 using LightspeedNexus.Messages;
 using LightspeedNexus.Models;
 using LightspeedNexus.Networking;
 using LightspeedNexus.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.Json.Nodes;
 
 namespace LightspeedNexus.ViewModels;
@@ -145,30 +142,15 @@ public partial class TournamentViewModel : ViewModelBase, IDisposable,
         OnPropertyChanged(nameof(FinalRank));
     }
 
-    public void Receive(BracketRoundCompleted message)
-    {
-        OnPropertyChanged(nameof(FinalRank));
-    }
+    public void Receive(BracketRoundCompleted message) => OnPropertyChanged(nameof(FinalRank));
 
-    public void Receive(RequestIsRanked message)
-    {
-        message.Reply(IsRanked);
-    }
+    public void Receive(RequestIsRanked message) => message.Reply(IsRanked);
 
-    public void Receive(RequestFinalGrading message)
-    {
-        message.Reply(GetFinalGrading());
-    }
+    public void Receive(RequestFinalGrading message) => message.Reply(GetFinalGrading());
 
-    public void Receive(RequestTournamentValue message)
-    {
-        message.Reply(Value);
-    }
+    public void Receive(RequestTournamentValue message) => message.Reply(Value);
 
-    public void Receive(SaveAndCloseMessage message)
-    {
-        GoHome();
-    }
+    public void Receive(SaveAndCloseMessage message) => GoHome();
 
     public void Receive(RequestSubmittable message)
     {

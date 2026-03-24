@@ -1,9 +1,5 @@
 ﻿using LightspeedNexus.Models;
 using LiteDB;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
 namespace LightspeedNexus.Services;
 
@@ -41,14 +37,13 @@ public static class StorageService
     /// <summary>
     /// The database
     /// </summary>
-    private static LiteDatabase GetDatabase()
-    {
+    private static LiteDatabase GetDatabase() =>
 #if DEBUG
-        return new LiteDatabase(Path.Combine(Dir, "debug_data.db"));
+        new(Path.Combine(Dir, "debug_data.db"));
 #else
         return new LiteDatabase(Path.Combine(Dir, "data.db"));
 #endif
-    }
+
 
     /// <summary>
     /// Builds the collection name from the type name
@@ -82,16 +77,20 @@ public static class StorageService
     /// </summary>
     public static void WriteRings(IEnumerable<string> rings)
     {
-        using var db = GetDatabase();
-        var collection = db.GetCollection("settings");
-
-        var doc = new BsonDocument
+        string[] ringArray = [.. rings];
+        if (ringArray.Length > 0 && !string.IsNullOrEmpty(ringArray[0]))
         {
-            ["_id"] = 1,
-            ["rings"] = new BsonArray(rings.Select(r => new BsonValue(r)))
-        };
+            using var db = GetDatabase();
+            var collection = db.GetCollection("settings");
 
-        collection.Upsert(doc);
+            var doc = new BsonDocument
+            {
+                ["_id"] = 1,
+                ["rings"] = new BsonArray(ringArray.Select(r => new BsonValue(r)))
+            };
+
+            collection.Upsert(doc);
+        }
     }
 
     /// <summary>

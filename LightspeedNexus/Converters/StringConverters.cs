@@ -1,5 +1,4 @@
 ﻿using Avalonia.Data.Converters;
-using System;
 using System.Collections.ObjectModel;
 using System.Globalization;
 
@@ -25,20 +24,20 @@ public class CommaListConverter : IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (value is System.Collections.IEnumerable enumerable)
+        if (value is IEnumerable<string> strings)
         {
-            return string.Join(", ", enumerable);
+            return string.Join(", ", [.. strings]);
         }
-        return value;
+        return "";
     }
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if( value is string s)
+        if (value is string s)
         {
             return new ObservableCollection<string>(s.Split([','], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries));
         }
 
-        return value;
+        return new ObservableCollection<string>();
     }
 }

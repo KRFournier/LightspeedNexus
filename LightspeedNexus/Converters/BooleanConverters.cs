@@ -1,5 +1,4 @@
 ﻿using Avalonia.Data.Converters;
-using System;
 using System.Globalization;
 
 namespace LightspeedNexus.Converters;
@@ -31,10 +30,7 @@ public class TrueToInvisibleConverter : IValueConverter
         return 1.0;
     }
 
-    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
-    {
-        return value is double d && d >= 1.0;
-    }
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) => value is double d && d >= 1.0;
 }
 
 public class TrueToBrushConverter : IValueConverter
@@ -45,8 +41,5 @@ public class TrueToBrushConverter : IValueConverter
             return parameter;
         return null;
     }
-    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
-    {
-        throw new NotImplementedException();
-    }
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) => throw new NotImplementedException();
 }

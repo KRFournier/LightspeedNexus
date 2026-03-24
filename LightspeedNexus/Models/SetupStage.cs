@@ -1,38 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace LightspeedNexus.Models;
-
-/// <summary>
-/// The tournament's game mode
-/// </summary>
-public enum GameMode
-{
-    Standard,
-    Duo,
-    Annihilation
-}
-
-/// <summary>
-/// The tournament's division based on demographics
-/// </summary>
-public enum Demographic
-{
-    All,
-    Women,
-    Cadet
-}
-
-/// <summary>
-/// The tournament's division based on skill level
-/// </summary>
-public enum SkillLevel
-{
-    Open,
-    Advanced,
-    Novice
-}
+﻿namespace LightspeedNexus.Models;
 
 /// <summary>
 /// The settings for a tournament

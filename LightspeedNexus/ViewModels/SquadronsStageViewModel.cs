@@ -5,10 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using LightspeedNexus.Models;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 
 namespace LightspeedNexus.ViewModels;
 
@@ -116,10 +113,7 @@ public partial class SquadronsStageViewModel : StageViewModel,
         message.Reply(squadron);
     }
 
-    public void Receive(RequestParticipants message)
-    {
-        message.Reply(Participants);
-    }
+    public void Receive(RequestParticipants message) => message.Reply(Participants);
 
     #endregion
 

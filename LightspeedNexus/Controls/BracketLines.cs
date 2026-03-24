@@ -1,8 +1,8 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Utilities;
-using Avalonia;
 
 namespace LightspeedNexus.Controls;
 

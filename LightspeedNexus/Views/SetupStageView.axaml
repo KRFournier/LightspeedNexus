@@ -2,8 +2,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:lsl="using:Lightspeed"
              xmlns:vm="clr-namespace:LightspeedNexus.ViewModels"
-			 xmlns:m="clr-namespace:LightspeedNexus.Models"
 			 xmlns:v="clr-namespace:LightspeedNexus.Views"
 			 xmlns:c="clr-namespace:LightspeedNexus.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -110,7 +110,7 @@
 										 HorizontalContentAlignment="Center"
 										 IsChecked="{Binding Demographic,
 											 Converter={StaticResource RadioValue},
-											 ConverterParameter={x:Static m:Demographic.All}}"
+											 ConverterParameter={x:Static lsl:Demographic.All}}"
 										 Content="All"/>
 							<RadioButton GroupName="Demographic"
 										 Theme="{StaticResource RadioButtonButtons}"
@@ -118,7 +118,7 @@
 										 HorizontalContentAlignment="Center"
 										 IsChecked="{Binding Demographic,
 											 Converter={StaticResource RadioValue},
-											 ConverterParameter={x:Static m:Demographic.Women}}"
+											 ConverterParameter={x:Static lsl:Demographic.Women}}"
 										 Content="Women"/>
 							<RadioButton GroupName="Demographic"
 										 Theme="{StaticResource RadioButtonButtons}"
@@ -126,7 +126,7 @@
 										 HorizontalContentAlignment="Center"
 										 IsChecked="{Binding Demographic,
 											 Converter={StaticResource RadioValue},
-											 ConverterParameter={x:Static m:Demographic.Cadet}}"
+											 ConverterParameter={x:Static lsl:Demographic.Cadet}}"
 										 Content="Cadet"/>
 						</StackPanel>
 
@@ -294,7 +294,7 @@
 													 GroupName="{Binding FullName}"
 													 IsChecked="{Binding WeaponOfChoice,
 														 Converter={StaticResource RadioValue},
-														 ConverterParameter={x:Static m:WeaponClass.Rey}}"
+														 ConverterParameter={x:Static lsl:WeaponClass.Rey}}"
 													 Width="50"
 													 ToolTip.Tip="Rey"
 													 HorizontalAlignment="Stretch"
@@ -314,7 +314,7 @@
 													 GroupName="{Binding FullName}"
 													 IsChecked="{Binding WeaponOfChoice,
 														 Converter={StaticResource RadioValue},
-														 ConverterParameter={x:Static m:WeaponClass.Ren}}"
+														 ConverterParameter={x:Static lsl:WeaponClass.Ren}}"
 													 Width="50"
 													 ToolTip.Tip="Ren"
 													 HorizontalAlignment="Stretch"
@@ -334,7 +334,7 @@
 													 GroupName="{Binding FullName}"
 													 IsChecked="{Binding WeaponOfChoice,
 														 Converter={StaticResource RadioValue},
-														 ConverterParameter={x:Static m:WeaponClass.Tano}}"
+														 ConverterParameter={x:Static lsl:WeaponClass.Tano}}"
 													 Width="50"
 													 ToolTip.Tip="Tano"
 													 HorizontalAlignment="Stretch"

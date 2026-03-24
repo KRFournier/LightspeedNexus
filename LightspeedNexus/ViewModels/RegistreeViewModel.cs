@@ -1,14 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using LightspeedNexus.Models;
-using LightspeedNexus.Services;
-using System;
-using System.ComponentModel;
-using System.Linq;
-using System.Text.Json.Nodes;
 
 namespace LightspeedNexus.ViewModels;
 
-public partial class RegistreeViewModel : ViewModelBase, IComparable<RegistreeViewModel>    
+public partial class RegistreeViewModel : ViewModelBase, IComparable<RegistreeViewModel>
 {
     #region Properties
 
@@ -204,10 +198,7 @@ public partial class RegistreeViewModel : ViewModelBase, IComparable<RegistreeVi
     /// <summary>
     /// Determines if the current weapon meets the given requirements
     /// </summary>
-    public void Validate(bool allowARanks, bool allowBRanks, bool allowCRanks, bool allowDRanks, bool allowERanks, bool allowURanks)
-    {
-        MeetsRequirements = ValidateWeapon(WeaponOfChoice, allowARanks, allowBRanks, allowCRanks, allowDRanks, allowERanks, allowURanks);
-    }
+    public void Validate(bool allowARanks, bool allowBRanks, bool allowCRanks, bool allowDRanks, bool allowERanks, bool allowURanks) => MeetsRequirements = ValidateWeapon(WeaponOfChoice, allowARanks, allowBRanks, allowCRanks, allowDRanks, allowERanks, allowURanks);
 
     /// <summary>
     /// Determines if the current weapon meets the given requirements

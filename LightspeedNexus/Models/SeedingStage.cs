@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace LightspeedNexus.Models;
+﻿namespace LightspeedNexus.Models;
 
 public class Seed
 {

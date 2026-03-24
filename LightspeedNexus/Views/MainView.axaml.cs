@@ -4,7 +4,6 @@ using Avalonia.Media;
 using CommunityToolkit.Mvvm.Messaging;
 using LightspeedNexus.Dialogs;
 using LightspeedNexus.Messages;
-using System.Collections.Generic;
 
 namespace LightspeedNexus.Views;
 

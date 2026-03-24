@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -31,7 +28,9 @@ public class Beacon : IDisposable
 
         try
         {
+#pragma warning disable CA1416 // Lightspeed Nexus is currently only planned to run on Windows
             udp.AllowNatTraversal(true);
+#pragma warning restore CA1416
         }
         catch (Exception ex)
         {

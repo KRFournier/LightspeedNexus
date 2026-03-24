@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using LightspeedNexus.Messages;
 using LightspeedNexus.Models;
-using System;
 
 namespace LightspeedNexus.ViewModels;
 
@@ -66,20 +65,17 @@ public abstract partial class StageViewModel(string name) : ViewModelBase, IDisp
     /// <summary>
     /// Converts from a model
     /// </summary>
-    public static StageViewModel? FromModel(Stage? model)
+    public static StageViewModel? FromModel(Stage? model) => model switch
     {
-        return model switch
-        {
-            SetupStage ss => SetupStageViewModel.FromModel(ss),
-            SquadronsStage sqs => SquadronsStageViewModel.FromModel(sqs),
-            PoolsStage ps => PoolsStageViewModel.FromModel(ps),
-            SeedingStage sds => SeedingStageViewModel.FromModel(sds),
-            BracketStage bs => BracketStageViewModel.FromModel(bs),
-            ResultsStage rs => ResultsStageViewModel.FromModel(rs),
-            null => null,
-            _ => throw new NotSupportedException("Unsupported stage type"),
-        };
-    }
+        SetupStage ss => SetupStageViewModel.FromModel(ss),
+        SquadronsStage sqs => SquadronsStageViewModel.FromModel(sqs),
+        PoolsStage ps => PoolsStageViewModel.FromModel(ps),
+        SeedingStage sds => SeedingStageViewModel.FromModel(sds),
+        BracketStage bs => BracketStageViewModel.FromModel(bs),
+        ResultsStage rs => ResultsStageViewModel.FromModel(rs),
+        null => null,
+        _ => throw new NotSupportedException("Unsupported stage type"),
+    };
 
     /// <summary>
     /// Called when the tournament is saved

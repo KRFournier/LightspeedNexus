@@ -1,9 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
-using LightspeedNetwork;
+using Lightspeed.Network;
 using LightspeedNexus.Messages;
 using LightspeedNexus.Networking;
-using System;
 
 namespace LightspeedNexus.ViewModels;
 

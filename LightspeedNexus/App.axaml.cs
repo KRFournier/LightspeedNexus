@@ -6,7 +6,6 @@ using LightspeedNexus.Services;
 using LightspeedNexus.ViewModels;
 using LightspeedNexus.Views;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace LightspeedNexus;
 
@@ -14,10 +13,7 @@ public partial class App : Application
 {
     public static IServiceProvider Services { get; private set; } = null!;
 
-    public override void Initialize()
-    {
-        AvaloniaXamlLoader.Load(this);
-    }
+    public override void Initialize() => AvaloniaXamlLoader.Load(this);
 
     public override void OnFrameworkInitializationCompleted()
     {

@@ -1,15 +1,9 @@
 ﻿using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
-using CommunityToolkit.Mvvm.Messaging.Messages;
-using LightspeedNetwork;
-using LightspeedNexus.Models;
+using Lightspeed.Network;
 using LightspeedNexus.Networking;
-using Network;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 
 namespace LightspeedNexus.ViewModels;
 
@@ -23,7 +17,7 @@ public partial class StandardMatchViewModel : MatchViewModel
     [ObservableProperty]
     public partial ClockViewModel Clock { get; set; } = new();
 
-    public ObservableCollection<Models.Action> Actions { get; set; } = [];
+    public ObservableCollection<Lightspeed.Action> Actions { get; set; } = [];
 
     [ObservableProperty]
     public partial PriorityViewModel Priority { get; set; } = new();
@@ -32,7 +26,7 @@ public partial class StandardMatchViewModel : MatchViewModel
 
     public StandardMatchViewModel() : base()
     {
-        if(!Design.IsDesignMode)
+        if (!Design.IsDesignMode)
         {
             WeakReferenceMessenger.Default.Register<ClockStateMessage, Guid>(this, Guid, (_, m) => Clock.FromState(m.State));
             WeakReferenceMessenger.Default.Register<NewActionMessage, Guid>(this, Guid, (_, m) => SetNewAction(m.State));
@@ -50,7 +44,7 @@ public partial class StandardMatchViewModel : MatchViewModel
         First = First.ToModel(),
         Second = Second.ToModel(),
         IsMatchStarted = IsMatchStarted,
-        Actions = [..Actions],
+        Actions = [.. Actions],
         Priority = Priority.ToModel(),
         Winner = WinningSide
     };
@@ -65,7 +59,7 @@ public partial class StandardMatchViewModel : MatchViewModel
             First = ScoreViewModel.FromModel(model.First),
             Second = ScoreViewModel.FromModel(model.Second),
             IsMatchStarted = model.IsMatchStarted,
-            Actions = [..model.Actions],
+            Actions = [.. model.Actions],
             Priority = PriorityViewModel.FromModel(model.Priority),
             WinningSide = model.Winner
         };
@@ -137,8 +131,8 @@ public partial class StandardMatchViewModel : MatchViewModel
             Actions.Remove(action);
     }
 
-    public IEnumerable<Models.Action> FirstActions => Actions.Where(a => a.Actor == Side.First);
-    public IEnumerable<Models.Action> SecondActions => Actions.Where(a => a.Actor == Side.Second);
+    public IEnumerable<Lightspeed.Action> FirstActions => Actions.Where(a => a.Actor == Side.First);
+    public IEnumerable<Lightspeed.Action> SecondActions => Actions.Where(a => a.Actor == Side.Second);
 
     #endregion
 

@@ -9,7 +9,8 @@ public partial class FighterView : UserControl
     {
         InitializeComponent();
 
-        FirstField.AttachedToVisualTree += (_, _) => Dispatcher.UIThread.Post(() => {
+        FirstField.AttachedToVisualTree += (_, _) => Dispatcher.UIThread.Post(() =>
+        {
             FirstField.SelectAll();
             FirstField.Focus();
         });

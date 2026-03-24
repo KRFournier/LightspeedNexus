@@ -19,16 +19,16 @@
 				<MergeResourceInclude Source="avares://LightspeedNexus/Styles/AutoCompleteBoxTemplate.axaml"/>
 				<MergeResourceInclude Source="avares://LightspeedNexus/Styles/TabItemTemplate.axaml"/>
 			</ResourceDictionary.MergedDictionaries>
+			<FontFamily x:Key="Prototype">avares://LightspeedNexus/Assets/Fonts#Prototype</FontFamily>
+			<FontFamily x:Key="Electrolize">avares://LightspeedNexus/Assets/Fonts#Electrolize</FontFamily>
+			<conv:RadioButtonValueConverter x:Key="RadioValue"/>
+			<conv:TrueToFadedConverter x:Key="TrueToFaded"/>
+			<conv:TrueToInvisibleConverter x:Key="TrueToInvis"/>
+			<conv:StringsAreEqualConverter x:Key="StringsEqual"/>
+			<conv:WeaponToColorConverter x:Key="WeaponToColor"/>
+			<conv:UppercaseConverter x:Key="Uppercase"/>
+			<conv:CommaListConverter x:Key="CommaList"/>
 		</ResourceDictionary>
-		<FontFamily x:Key="Prototype">avares://LightspeedNexus/Assets/Fonts#Prototype</FontFamily>
-		<FontFamily x:Key="Electrolize">avares://LightspeedNexus/Assets/Fonts#Electrolize</FontFamily>
-		<conv:RadioButtonValueConverter x:Key="RadioValue"/>
-		<conv:TrueToFadedConverter x:Key="TrueToFaded"/>
-		<conv:TrueToInvisibleConverter x:Key="TrueToInvis"/>
-		<conv:StringsAreEqualConverter x:Key="StringsEqual"/>
-		<conv:WeaponToColorConverter x:Key="WeaponToColor"/>
-		<conv:UppercaseConverter x:Key="Uppercase"/>
-		<conv:CommaListConverter x:Key="CommaList"/>
 	</Application.Resources>
 
 	<Application.Styles>

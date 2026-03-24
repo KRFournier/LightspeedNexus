@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace LightspeedNexus.Models;
+﻿namespace LightspeedNexus.Models;
 
 /// <summary>
 /// A round robin pool of matches.

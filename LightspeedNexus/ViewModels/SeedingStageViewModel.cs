@@ -2,12 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using LightspeedNexus.Models;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LightspeedNexus.ViewModels;
 
@@ -105,7 +100,7 @@ public partial class SeedingStageViewModel : StageViewModel
 
         var rankings = new List<SeedViewModel>();
         foreach (var pool in poolsStage.Pools)
-            foreach (var ranking in pool.CalculateScores(pool.MatchGroup.Settings.WinningScore, ActionPointValues.Max))
+            foreach (var ranking in pool.CalculateScores(pool.MatchGroup.Settings.WinningScore, PointValues.Max))
                 rankings.Add(new SeedViewModel
                 {
                     Participant = ranking.Participant,

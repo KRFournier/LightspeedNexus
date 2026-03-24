@@ -5,21 +5,19 @@ using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Messaging;
 using LightspeedNexus.Messages;
 using LightspeedNexus.Services;
-using System;
-using System.Threading.Tasks;
 
 namespace LightspeedNexus.Dialogs;
 
 public partial class LoginDialog : UserControl
 {
-    private readonly Action? _closeAction;
+    private readonly System.Action? _closeAction;
 
     public LoginDialog()
     {
         InitializeComponent();
     }
 
-    public LoginDialog(Action closeAction) : this()
+    public LoginDialog(System.Action closeAction) : this()
     {
         _closeAction = closeAction;
         EmailTextBox.Text = SaberSportsService.LastEmail;
@@ -32,15 +30,9 @@ public partial class LoginDialog : UserControl
         }, DispatcherPriority.Input);
     }
 
-    private void OK_Click(object? sender, RoutedEventArgs e)
-    {
-        _closeAction?.Invoke();
-    }
+    private void OK_Click(object? sender, RoutedEventArgs e) => _closeAction?.Invoke();
 
-    private void Cancel_Click(object? sender, RoutedEventArgs e)
-    {
-        _closeAction?.Invoke();
-    }
+    private void Cancel_Click(object? sender, RoutedEventArgs e) => _closeAction?.Invoke();
 
     private void UserControl_KeyDown(object? sender, KeyEventArgs e)
     {

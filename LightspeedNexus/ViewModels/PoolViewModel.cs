@@ -1,13 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using LightspeedNetwork;
+using Lightspeed.Network;
 using LightspeedNexus.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.Json.Nodes;
-using System.Text.RegularExpressions;
 
 namespace LightspeedNexus.ViewModels;
 
@@ -164,7 +159,7 @@ public partial class PoolViewModel : ViewModelBase
         // gather statistics for each player
         Dictionary<ParticipantViewModel, ParticipantStatistics> stats = new([.. Squadron.Participants
             .Select(p => new KeyValuePair<ParticipantViewModel, ParticipantStatistics>(p, new(p)))]);
-        foreach (var match in MatchGroup.Matches .Where(m => m.IsMatchCompleted))
+        foreach (var match in MatchGroup.Matches.Where(m => m.IsMatchCompleted))
         {
             if (match is StandardMatchViewModel stdMatch && stdMatch.First is not null && stdMatch.Second is not null)
             {

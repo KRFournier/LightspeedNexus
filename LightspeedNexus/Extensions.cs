@@ -1,7 +1,4 @@
-﻿using LightspeedNetwork;
-using LightspeedNexus.Models;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Lightspeed.Network;
 
 namespace LightspeedNexus;
 
@@ -23,11 +20,11 @@ public static class Extensions
         _ => null,
     };
 
-    public static IEnumerable<string> ToSaberScore(this IEnumerable<Action> actions) => actions
+    public static IEnumerable<string> ToSaberScore(this IEnumerable<Lightspeed.Action> actions) => actions
             .Select(a => a.Type.ToSaberScore())
             .Where(s => s != null)!;
 
-    public static ActionState ToState(this Action action) => new()
+    public static ActionState ToState(this Lightspeed.Action action) => new()
     {
         Id = action.Id,
         Actor = action.Actor,
@@ -37,7 +34,7 @@ public static class Extensions
         SubType = action.SubType
     };
 
-    public static Action ToModel(this ActionState state) => new()
+    public static Lightspeed.Action ToModel(this ActionState state) => new()
     {
         Id = state.Id,
         Actor = state.Actor,

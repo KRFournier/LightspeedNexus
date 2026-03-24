@@ -1,13 +1,10 @@
 ﻿using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
-using LightspeedNetwork;
+using Lightspeed.Network;
 using MessagePack;
 using Network;
 using Network.Packets;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 
@@ -263,10 +260,11 @@ public static class NetworkService
     /// </summary>
     private static void OnTimerStateReceived(Connection _, TimerState state)
     {
-        WeakReferenceMessenger.Default.Send(new ClockStateMessage(state.Clock), state.MatchId);
+        if (state.Clock is not null)
+            WeakReferenceMessenger.Default.Send(new ClockStateMessage(state.Clock), state.MatchId);
+
         foreach (var scoreboard in Scoreboards.Where(s => s.RingId == state.RingId))
             scoreboard.Connection.SendTimerState(state);
-
     }
 
     /// <summary>

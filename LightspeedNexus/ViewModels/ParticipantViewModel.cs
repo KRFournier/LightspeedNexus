@@ -1,10 +1,8 @@
 ﻿using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
-using LightspeedNetwork;
-using LightspeedNexus.Models;
+using Lightspeed.Network;
 using LightspeedNexus.Networking;
-using System;
 using System.ComponentModel;
 using System.Text.Json.Nodes;
 
@@ -144,9 +142,6 @@ public sealed partial class PlayerViewModel : ParticipantViewModel
     public partial int Honor { get; set; } = 0;
 
     [ObservableProperty]
-    public partial int ForceCalls { get; set; } = 0;
-
-    [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsDisqualified))]
     public partial bool IsEjected { get; set; } = false;
 
@@ -204,7 +199,6 @@ public sealed partial class PlayerViewModel : ParticipantViewModel
         Rank = Rank,
         Card = Card,
         Honor = Honor,
-        ForceCalls = ForceCalls,
         IsEjected = IsEjected,
         WeaponOfChoice = WeaponOfChoice
     };
@@ -222,7 +216,6 @@ public sealed partial class PlayerViewModel : ParticipantViewModel
         Rank = player.Rank,
         Card = player.Card,
         Honor = player.Honor,
-        ForceCalls = player.ForceCalls,
         IsEjected = player.IsEjected,
         WeaponOfChoice = player.WeaponOfChoice
     };
@@ -245,7 +238,6 @@ public sealed partial class PlayerViewModel : ParticipantViewModel
         Card = Card,
         Ejected = IsEjected,
         Honor = Honor,
-        ForceCalls = ForceCalls,
         Club = Club,
         Weapon = WeaponOfChoice.ToString().ToLower(),
         Rank = Rank.Letter
@@ -259,7 +251,6 @@ public sealed partial class PlayerViewModel : ParticipantViewModel
             Card = playerState.Card;
             IsEjected = playerState.Ejected;
             Honor = playerState.Honor;
-            ForceCalls = playerState.ForceCalls;
         }
         else
         {
@@ -277,24 +268,21 @@ public sealed partial class PlayerViewModel : ParticipantViewModel
     /// <summary>
     /// Creates the json for submitting the tournament to saber-sports
     /// </summary>
-    public JsonNode ToSaberSportsSubmission()
+    public JsonNode ToSaberSportsSubmission() => new JsonObject
     {
-        return new JsonObject
+        ["uuid"] = SaberSportId,
+        ["first_name"] = FirstName,
+        ["last_name"] = LastName,
+        ["rating"] = Rank.ToString(),
+        ["weapon"] = WeaponOfChoice switch
         {
-            ["uuid"] = SaberSportId,
-            ["first_name"] = FirstName,
-            ["last_name"] = LastName,
-            ["rating"] = Rank.ToString(),
-            ["weapon"] = WeaponOfChoice switch
-            {
-                WeaponClass.Rey => "rey",
-                WeaponClass.Ren => "ren",
-                WeaponClass.Tano => "tano",
-                _ => throw new InvalidOperationException("Invalid weapon class for saber-sports submission")
-            },
-            ["honor"] = Honor
-        };
-    }
+            WeaponClass.Rey => "rey",
+            WeaponClass.Ren => "ren",
+            WeaponClass.Tano => "tano",
+            _ => throw new InvalidOperationException("Invalid weapon class for saber-sports submission")
+        },
+        ["honor"] = Honor
+    };
 
     #endregion
 }

@@ -1,10 +1,5 @@
-﻿using LightspeedNexus.Models;
-using LiteDB;
-using RestSharp;
-using System;
-using System.Linq;
+﻿using RestSharp;
 using System.Text.Json.Nodes;
-using System.Threading.Tasks;
 
 namespace LightspeedNexus.Services;
 
@@ -19,7 +14,7 @@ public static class SaberSportsService
     private static RestClient Client => _client;
 #endif
 
-    private static DateTime _tokenExpiration = DateTime.MinValue;
+    private static readonly DateTime _tokenExpiration = DateTime.MinValue;
     private static string? _bearerToken;
 
     public static string? LastEmail { get; private set; }
@@ -110,7 +105,7 @@ public static class SaberSportsService
     {
         try
         {
-            if(string.IsNullOrEmpty(password))
+            if (string.IsNullOrEmpty(password))
             {
 
             }

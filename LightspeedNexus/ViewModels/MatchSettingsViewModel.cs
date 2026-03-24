@@ -1,8 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using LightspeedNetwork;
-using LightspeedNexus.Models;
-using System;
+using Lightspeed.Network;
 using System.Text.Json.Nodes;
 
 namespace LightspeedNexus.ViewModels;
@@ -68,7 +66,7 @@ public partial class MatchSettingsViewModel : ViewModelBase
     [RelayCommand]
     private void DecreaseScore()
     {
-        if(WinningScore > 0)
+        if (WinningScore > 0)
             WinningScore--;
     }
 

@@ -3,13 +3,9 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
-using LightspeedNetwork;
+using Lightspeed.Network;
 using LightspeedNexus.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.Json.Nodes;
-using System.Text.RegularExpressions;
 
 namespace LightspeedNexus.ViewModels;
 
@@ -142,7 +138,7 @@ public partial class BracketStageViewModel : StageViewModel, IRecipient<RequestB
 
     public void Receive(RequestBracketMatch message)
     {
-        foreach(var group in EnumerateGroups())
+        foreach (var group in EnumerateGroups())
         {
             var match = group.Matches.FirstOrDefault(m => m.Guid == message.Id);
             if (match is not null)
@@ -419,19 +415,16 @@ public partial class BracketStageViewModel : StageViewModel, IRecipient<RequestB
     /// <summary>
     /// Finds the group based on the exact number of players in that group
     /// </summary>
-    private MatchGroupViewModel FindBracket(int numPlayers)
+    private MatchGroupViewModel FindBracket(int numPlayers) => numPlayers switch
     {
-        return numPlayers switch
-        {
-            64 => Top64,
-            32 => Top32,
-            16 => Top16,
-            8 => Quarterfinals,
-            4 => Semifinals,
-            2 => Final,
-            _ => throw new ArgumentOutOfRangeException(nameof(numPlayers), "Parameter must be 2, 4, 8, 16, 32, or 64")
-        };
-    }
+        64 => Top64,
+        32 => Top32,
+        16 => Top16,
+        8 => Quarterfinals,
+        4 => Semifinals,
+        2 => Final,
+        _ => throw new ArgumentOutOfRangeException(nameof(numPlayers), "Parameter must be 2, 4, 8, 16, 32, or 64")
+    };
 
     /// <summary>
     /// Returns the players for the given tier.
@@ -458,7 +451,7 @@ public partial class BracketStageViewModel : StageViewModel, IRecipient<RequestB
             return 1;
         else if (participant == Final[0].Loser?.Participant)
             return 2;
-        else if ( (Third[0].Winner is not null && participant == Third[0].Winner!.Participant) ||
+        else if ((Third[0].Winner is not null && participant == Third[0].Winner!.Participant) ||
                   (Third[0].Winner is null && Third[0].Contains(participant)))
             return 3;
         else if (Third[0].Loser is not null && participant == Third[0].Loser!.Participant)

@@ -3,7 +3,6 @@ using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Utilities;
-using System;
 
 namespace LightspeedNexus.Controls;
 

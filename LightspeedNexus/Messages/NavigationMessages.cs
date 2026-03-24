@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Messaging.Messages;
 using LightspeedNexus.ViewModels;
-using System;
 
 namespace LightspeedNexus.Messages;
 
@@ -72,9 +71,9 @@ public class CloseDialogMessage()
 /// <summary>
 /// Notifies the main view that the given message should be displayed
 /// </summary>
-public class MessageBoxMessage(string msg, Action? handler = null) : ValueChangedMessage<string>(msg)
+public class MessageBoxMessage(string msg, System.Action? handler = null) : ValueChangedMessage<string>(msg)
 {
-    private readonly Action? _handler = handler;
+    private readonly System.Action? _handler = handler;
     public void Respond() => _handler?.Invoke();
 }
 

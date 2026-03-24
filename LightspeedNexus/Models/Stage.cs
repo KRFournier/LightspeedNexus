@@ -1,6 +1,4 @@
-﻿using LiteDB;
-
-namespace LightspeedNexus.Models;
+﻿namespace LightspeedNexus.Models;
 
 /// <summary>
 /// A stage in a tournament.

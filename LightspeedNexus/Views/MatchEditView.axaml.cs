@@ -1,7 +1,5 @@
 using Avalonia.Controls;
 using Avalonia.Threading;
-using System.Linq;
-using Avalonia.Collections;
 using Avalonia.VisualTree;
 
 namespace LightspeedNexus.Views;
@@ -12,11 +10,12 @@ public partial class MatchEditView : UserControl
     {
         InitializeComponent();
 
-        AttachedToVisualTree += (_, _) => Dispatcher.UIThread.Post(() => {
+        AttachedToVisualTree += (_, _) => Dispatcher.UIThread.Post(() =>
+        {
             var firstTextBox = this.GetVisualDescendants()
                 .OfType<TextBox>()
                 .FirstOrDefault();
-            
+
             if (firstTextBox != null)
             {
                 firstTextBox.SelectAll();

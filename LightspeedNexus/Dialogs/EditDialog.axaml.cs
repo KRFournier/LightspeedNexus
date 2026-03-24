@@ -4,21 +4,20 @@ using Avalonia.Interactivity;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using LightspeedNexus.Messages;
-using System;
 
 namespace LightspeedNexus.Dialogs;
 
 public partial class EditDialog : UserControl
 {
     private readonly EditDialogMessage? _message;
-    private readonly Action? _closeAction;
+    private readonly System.Action? _closeAction;
 
     public EditDialog()
     {
         InitializeComponent();
     }
 
-    public EditDialog(EditDialogMessage message, Action onClose) : this()
+    public EditDialog(EditDialogMessage message, System.Action onClose) : this()
     {
         _message = message;
         _closeAction = onClose;

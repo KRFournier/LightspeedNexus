@@ -1,6 +1,5 @@
 ﻿using Avalonia.Data.Converters;
 using Avalonia.Media;
-using System;
 using System.Globalization;
 
 namespace LightspeedNexus.Converters;
@@ -31,13 +30,13 @@ public class WeaponToColorConverter : ColorConverter, IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (value is Models.WeaponClass weaponClass)
+        if (value is WeaponClass weaponClass)
         {
             return weaponClass switch
             {
-                Models.WeaponClass.Rey => Teal,
-                Models.WeaponClass.Ren => Red,
-                Models.WeaponClass.Tano => Yellow,
+                WeaponClass.Rey => Teal,
+                WeaponClass.Ren => Red,
+                WeaponClass.Tano => Yellow,
                 _ => White
             };
         }

@@ -1,9 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia.Interactivity;
-using LightspeedNexus.Controls;
 using LightspeedNexus.ViewModels;
-using System;
 
 namespace LightspeedNexus.Views;
 

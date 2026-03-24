@@ -2,16 +2,11 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using CommunityToolkit.Mvvm.Messaging.Messages;
-using LightspeedNetwork;
-using LightspeedNexus.Models;
+using Lightspeed.Network;
 using LightspeedNexus.Networking;
 using LightspeedNexus.Services;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Threading.Tasks;
 
 namespace LightspeedNexus.ViewModels;
 
@@ -36,7 +31,7 @@ public abstract partial class MatchViewModel : ViewModelBase
     partial void OnFirstChanged(ScoreViewModel oldValue, ScoreViewModel newValue)
     {
         oldValue?.PropertyChanged -= ScorePropertyChanged;
-        newValue?.PropertyChanged += ScorePropertyChanged; 
+        newValue?.PropertyChanged += ScorePropertyChanged;
     }
     public bool HasFirst => !First.Participant.IsEmpty;
 
@@ -157,7 +152,7 @@ public abstract partial class MatchViewModel : ViewModelBase
 
     protected void ScorePropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if(e.PropertyName == nameof(Score.Participant))
+        if (e.PropertyName == nameof(Score.Participant))
         {
             OnPropertyChanged(nameof(HasBye));
             OnPropertyChanged(nameof(IsEmpty));
