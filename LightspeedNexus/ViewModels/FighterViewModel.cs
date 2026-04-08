@@ -1,9 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using Lightspeed.ViewModels;
+using LightspeedNexus.Services;
 
 namespace LightspeedNexus.ViewModels;
 
-public partial class FighterViewModel : ViewModelBase, IComparable<FighterViewModel>
+public partial class FighterViewModel(IServiceProvider serviceProvider, IMessenger messenger, LoadingService loadingService) : ViewModelBase(serviceProvider, messenger), IComparable<FighterViewModel>
 {
     #region Properties
 
@@ -75,34 +78,21 @@ public partial class FighterViewModel : ViewModelBase, IComparable<FighterViewMo
     };
 
     /// <summary>
-    /// Converts from a <see cref="Fighter"/>
-    /// </summary>
-    public static FighterViewModel FromModel(Fighter fighter) => new()
-    {
-        Guid = fighter.Id,
-        OnlineId = fighter.OnlineId,
-        FirstName = fighter.FirstName,
-        LastName = fighter.LastName,
-        Club = fighter.Club,
-        ReyRank = fighter.Rey,
-        RenRank = fighter.Ren,
-        TanoRank = fighter.Tano
-    };
-
-    /// <summary>
     /// Creates a copy.
     /// </summary>
-    public FighterViewModel Clone() => new()
+    public FighterViewModel Clone()
     {
-        Guid = Guid,
-        OnlineId = OnlineId,
-        FirstName = FirstName,
-        LastName = LastName,
-        Club = Club,
-        ReyRank = ReyRank,
-        RenRank = RenRank,
-        TanoRank = TanoRank
-    };
+        var vm = loadingService.LoadFighter(ToModel());
+        vm.Guid = Guid;
+        vm.OnlineId = OnlineId;
+        vm.FirstName = FirstName;
+        vm.LastName = LastName;
+        vm.Club = Club;
+        vm.ReyRank = ReyRank;
+        vm.RenRank = RenRank;
+        vm.TanoRank = TanoRank;
+        return vm;
+    }
 
     /// <summary>
     /// Compares the current Fighter to another Fighter.
@@ -185,9 +175,9 @@ public partial class FighterViewModel : ViewModelBase, IComparable<FighterViewMo
         }
     }
 
-    public static FighterViewModel NewFromImported(Fighter fighter)
+    public FighterViewModel NewFromImported(Fighter fighter)
     {
-        var vm = FromModel(fighter);
+        var vm = loadingService.LoadFighter(fighter);
         vm.IsNew = true;
         vm.HasNewClub = true;
         vm.HasNewReyRank = true;

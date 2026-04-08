@@ -5,7 +5,7 @@
              xmlns:vm="clr-namespace:LightspeedNexus.ViewModels"
 			 xmlns:v="clr-namespace:LightspeedNexus.Views"
 			 xmlns:m="clr-namespace:LightspeedNexus.Models"
-			 xmlns:c="clr-namespace:LightspeedNexus.Controls"
+			 xmlns:c="using:Lightspeed.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="LightspeedNexus.Views.TournamentsView"
 			 x:DataType="vm:TournamentsViewModel">

@@ -2,8 +2,9 @@
 using Avalonia.Layout;
 using Avalonia.Media;
 using CommunityToolkit.Mvvm.Messaging;
-using LightspeedNexus.Dialogs;
-using LightspeedNexus.Messages;
+using Lightspeed.Dialogs;
+using Lightspeed.Messages;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace LightspeedNexus.Views;
 
@@ -14,13 +15,14 @@ public partial class MainView : UserControl
     public MainView()
     {
         InitializeComponent();
-        WeakReferenceMessenger.Default.Register<CloseDialogMessage>(this, (_, _) => CloseModal());
-        WeakReferenceMessenger.Default.Register<EditDialogMessage>(this, (_, m) => EditDialog(m));
-        WeakReferenceMessenger.Default.Register<BeginWaitMessage>(this, (_, m) => BeginWait(m.Value));
-        WeakReferenceMessenger.Default.Register<EndWaitMessage>(this, (_, _) => EndWait());
-        WeakReferenceMessenger.Default.Register<ShowLoginDialogMessage>(this, (_, _) => ShowLoginDialog());
-        WeakReferenceMessenger.Default.Register<ShowSignDialogMessage>(this, (_, m) => ShowSignDialog(m));
-        WeakReferenceMessenger.Default.Register<MessageBoxMessage>(this, (_, m) => ShowMessageBox(m.Value));
+
+        var messenger = App.Services.GetRequiredService<IMessenger>();
+        messenger.Register<CloseDialogMessage>(this, (_, _) => CloseModal());
+        messenger.Register<EditDialogMessage>(this, (_, m) => EditDialog(m));
+        messenger.Register<BeginWaitMessage>(this, (_, m) => BeginWait(m.Value));
+        messenger.Register<EndWaitMessage>(this, (_, _) => EndWait());
+        messenger.Register<ShowSignDialogMessage>(this, (_, m) => ShowSignDialog(m));
+        messenger.Register<MessageBoxMessage>(this, (_, m) => ShowMessageBox(m.Value));
     }
 
     private void OpenModel(Control dialog)
@@ -56,8 +58,6 @@ public partial class MainView : UserControl
     private void EditDialog(EditDialogMessage msg) => OpenModel(new EditDialog(msg, () => CloseModal()));
 
     private void BeginWait(string message) => OpenModel(new WaitDialog(message));
-
-    private void ShowLoginDialog() => OpenModel(new LoginDialog(() => CloseModal()));
 
     private void ShowSignDialog(ShowSignDialogMessage message) => OpenModel(new SignDialog(signature =>
     {

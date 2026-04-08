@@ -3,7 +3,7 @@ using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using LightspeedNexus.Messages;
+using Lightspeed.ViewModels;
 using LightspeedNexus.Services;
 using System.Collections;
 using System.Collections.ObjectModel;
@@ -14,6 +14,11 @@ namespace LightspeedNexus.ViewModels;
 
 public partial class FightersViewModel : ViewModelBase, IComparer
 {
+    private readonly NavigationService _navigationService;
+    private readonly StorageService _storageService;
+    private readonly SaberSportsService _saberSportsService;
+    private readonly LoadingService _loadingService;
+
     #region Properties
 
     public ObservableCollection<FighterViewModel> Fighters { get; set; } = [];
@@ -35,18 +40,18 @@ public partial class FightersViewModel : ViewModelBase, IComparer
     private void ClearSearch() => SearchText = "";
 
     [RelayCommand]
-    private static void GoHome() => WeakReferenceMessenger.Default.Send<NavigateHomeMessage>();
+    private void GoHome() => _navigationService.NavigateToHome();
 
     [RelayCommand]
     private async Task NewFighter()
     {
         try
         {
-            var result = await EditDialog(new FighterViewModel(), "New Fighter");
+            var result = await EditDialog(New<FighterViewModel>(), "New Fighter");
             if (result.IsOk)
             {
                 Fighters.Add(result.Item);
-                StorageService.Write(result.Item.ToModel());
+                _storageService.Write(result.Item.ToModel());
             }
         }
         catch (Exception e)
@@ -64,7 +69,7 @@ public partial class FightersViewModel : ViewModelBase, IComparer
             if (result.IsOk)
             {
                 item.Update(result.Item);
-                StorageService.Write(result.Item.ToModel());
+                _storageService.Write(result.Item.ToModel());
                 SortedFighters.Refresh();
             }
         }
@@ -79,7 +84,7 @@ public partial class FightersViewModel : ViewModelBase, IComparer
     {
         try
         {
-            StorageService.Delete<Fighter>(item.Guid);
+            _storageService.Delete<Fighter>(item.Guid);
             Fighters.Remove(item);
             SortedFighters.Refresh();
         }
@@ -93,7 +98,7 @@ public partial class FightersViewModel : ViewModelBase, IComparer
     private async Task ImportFighters()
     {
         BeginWait("Importing Fighters...");
-        (var success, var message, var fighters) = await SaberSportsService.GetAllFighters();
+        (var success, var message, var fighters) = await _saberSportsService.GetAllFighters();
         EndWait();
 
         if (success)
@@ -112,14 +117,22 @@ public partial class FightersViewModel : ViewModelBase, IComparer
                     existing.UpdateFromImported(fighter);
                 else
                 {
-                    StorageService.Write(fighter);
+                    _storageService.Write(fighter);
                     fightersToAdd.Add(fighter);
                 }
             }
 
             // we add new fighters at the end so the above loop doesn't have to search new additions
             foreach (var fighter in fightersToAdd)
-                Fighters.Add(FighterViewModel.NewFromImported(fighter));
+            {
+                var vm = _loadingService.LoadFighter(fighter);
+                vm.IsNew = true;
+                vm.HasNewClub = true;
+                vm.HasNewReyRank = true;
+                vm.HasNewRenRank = true;
+                vm.HasNewTanoRank = true;
+                Fighters.Add(vm);
+            }
         }
         else
             await MessageBox(message);
@@ -130,8 +143,13 @@ public partial class FightersViewModel : ViewModelBase, IComparer
     /// <summary>
     /// Creates a new Fighters view model that loads all known fighters from storage and sorts them.
     /// </summary>
-    public FightersViewModel()
+    public FightersViewModel(IServiceProvider serviceProvider, IMessenger messenger, NavigationService navigationService, StorageService storageService, SaberSportsService saberSportsService, LoadingService loadingService) : base(serviceProvider, messenger)
     {
+        _navigationService = navigationService;
+        _storageService = storageService;
+        _saberSportsService = saberSportsService;
+        _loadingService = loadingService;
+
         LoadFighters();
         SortedFighters = new(Fighters);
         SortedFighters.SortDescriptions.Add(new DataGridComparerSortDescription(this, ListSortDirection.Ascending));
@@ -162,7 +180,7 @@ public partial class FightersViewModel : ViewModelBase, IComparer
 
         try
         {
-            Fighters = [.. StorageService.ReadAll<Fighter>().Select(f => FighterViewModel.FromModel(f))];
+            Fighters = [.. _storageService.ReadAll<Fighter>().Select(f => _loadingService.LoadFighter(f))];
         }
         catch (Exception e)
         {

@@ -5,7 +5,7 @@
 			 xmlns:m="clr-namespace:LightspeedNexus.Models"
 			 xmlns:vm="clr-namespace:LightspeedNexus.ViewModels"
 			 xmlns:v="clr-namespace:LightspeedNexus.Views"
-			 xmlns:c="clr-namespace:LightspeedNexus.Controls"
+			 xmlns:c="using:Lightspeed.Controls"
              mc:Ignorable="d" d:DesignWidth="1440" d:DesignHeight="810"
              x:Class="LightspeedNexus.Views.HomeView"
              x:DataType="vm:HomeViewModel">

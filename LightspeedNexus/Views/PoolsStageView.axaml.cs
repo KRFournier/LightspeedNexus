@@ -1,6 +1,9 @@
 using Avalonia.Controls;
 using Avalonia.Input;
+using Lightspeed.ViewModels;
+using LightspeedNexus.Services;
 using LightspeedNexus.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace LightspeedNexus.Views;
 
@@ -27,12 +30,54 @@ public partial class PoolsStageView : UserControl
         }
     }
 
-    public void Match_DoubleTapped(object? sender, TappedEventArgs e)
+    public async void Match_DoubleTapped(object? sender, TappedEventArgs e)
     {
         if (sender is Decorator border && border.DataContext is MatchViewModel match)
         {
-            if (match.EditMatchCommand.CanExecute(null))
-                match.EditMatchCommand.Execute(null);
+            if (match.First is not null && match.Second is not null)
+            {
+#if DEBUG
+                if (e.KeyModifiers == (KeyModifiers.Control | KeyModifiers.Shift))
+                {
+                    var (first, second) = ScoreGenerator.GenerateScores(match);
+                    match.UpdateMatch(first, second);
+                    App.Services.GetRequiredService<StorageService>().WriteMatch(match.ToModel());
+                    e.Handled = true;
+                    return;
+                }
+#endif
+                var editViewModel = new MatchEditViewModel()
+                {
+                    First = [new() { Name = match.First.Participant.Name, Points = match.First.Points }],
+                    Second = [new() { Name = match.Second.Participant.Name, Points = match.Second.Points }]
+                };
+                var result = await match.EditDialog(editViewModel, "Set Final Match Score");
+                if (result.IsOk)
+                {
+                    match.UpdateMatch(result.Item.First[0].Points, result.Item.Second[0].Points);
+                    App.Services.GetRequiredService<StorageService>().WriteMatch(match.ToModel());
+                }
+            }
         }
+
+    }
+
+    private void PoolsScrollViewer_DoubleTapped(object? sender, TappedEventArgs e)
+    {
+#if DEBUG
+        if (sender is ScrollViewer && DataContext is PoolsStageViewModel poolStage && e.KeyModifiers == (KeyModifiers.Control | KeyModifiers.Shift))
+        {
+            foreach (var pool in poolStage.Pools)
+            {
+                foreach (var currMatch in pool.MatchGroup.Matches)
+                {
+                    var (first, second) = ScoreGenerator.GenerateScores(currMatch);
+                    currMatch.UpdateMatch(first, second);
+                    App.Services.GetRequiredService<StorageService>().WriteMatch(currMatch.ToModel());
+                }
+            }
+            return;
+        }
+#endif
     }
 }

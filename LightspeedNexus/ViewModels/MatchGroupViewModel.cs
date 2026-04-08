@@ -1,7 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Lightspeed.Network;
-using LightspeedNexus.Networking;
+using Lightspeed.Network.Messages;
+using Lightspeed.Services;
+using Lightspeed.ViewModels;
 using LightspeedNexus.Services;
 using System.Collections;
 using System.Collections.ObjectModel;
@@ -13,6 +15,9 @@ namespace LightspeedNexus.ViewModels;
 /// </summary>
 public partial class MatchGroupViewModel : ViewModelBase, IReadOnlyList<MatchViewModel>
 {
+    private readonly StorageService _storageService;
+    private readonly MatchFactory _matchFactory;
+
     #region Properties
 
     [ObservableProperty]
@@ -22,7 +27,7 @@ public partial class MatchGroupViewModel : ViewModelBase, IReadOnlyList<MatchVie
     /// The settings for this group
     /// </summary>
     [ObservableProperty]
-    public partial MatchSettingsViewModel Settings { get; set; } = new();
+    public partial MatchSettingsViewModel Settings { get; set; }
 
     /// <summary>
     /// The name of this group of matches
@@ -54,7 +59,7 @@ public partial class MatchGroupViewModel : ViewModelBase, IReadOnlyList<MatchVie
 
     #region List implementation
 
-    public MatchViewModel this[int index] => index >= 0 && index < Matches.Count ? Matches[index] : new MatchNotFoundViewModel();
+    public MatchViewModel this[int index] => index >= 0 && index < Matches.Count ? Matches[index] : New<MatchNotFoundViewModel>();
 
     public int Count => Matches.Count;
 
@@ -64,10 +69,16 @@ public partial class MatchGroupViewModel : ViewModelBase, IReadOnlyList<MatchVie
 
     #endregion
 
-    public MatchGroupViewModel()
+    public MatchGroupViewModel(IServiceProvider serviceProvider, IMessenger messenger, SquadronService squadronService, StorageService storageService, MatchFactory matchFactory)
+        : base(serviceProvider, messenger)
     {
+        _storageService = storageService;
+        _matchFactory = matchFactory;
+
+        Settings = New<MatchSettingsViewModel>();
+
         // listen to network requests for match summaries
-        WeakReferenceMessenger.Default.Register<RequestMatchGroupSummaries, Guid>(this, Guid,
+        messenger.Register<RequestMatchGroupSummaries, Guid>(this, Guid,
             (r, m) =>
             {
                 var summaries = new MatchSummaries
@@ -78,8 +89,7 @@ public partial class MatchGroupViewModel : ViewModelBase, IReadOnlyList<MatchVie
 
                         try
                         {
-                            var (name, color) = SquadronsStageViewModel.SquadronNames.First(p => p.Name == Name);
-                            summary.Color = color;
+                            summary.Color = squadronService.FindSquadronColor(Name);
                         }
                         catch { }
 
@@ -92,7 +102,7 @@ public partial class MatchGroupViewModel : ViewModelBase, IReadOnlyList<MatchVie
         );
 
         // listen to network requests for a given match's state and the next match
-        WeakReferenceMessenger.Default.Register<RequestNextMatch, Guid>(this, Guid,
+        messenger.Register<RequestNextMatch, Guid>(this, Guid,
             (r, m) =>
             {
                 MatchViewModel? match = null;
@@ -129,83 +139,45 @@ public partial class MatchGroupViewModel : ViewModelBase, IReadOnlyList<MatchVie
     };
 
     /// <summary>
-    /// Loads a match group from the given model
+    /// Adds the given match
     /// </summary>
-    public static MatchGroupViewModel FromModel(MatchGroup model)
+    public T Add<T>(T match) where T : MatchViewModel
     {
-        MatchGroupViewModel vm = new()
-        {
-            Guid = model.Id,
-            Settings = MatchSettingsViewModel.FromModel(model.Settings)
-        };
-
-        // load matches
-        vm.Matches = [.. model.Matches.Select(id =>
-        {
-            var newmatch = MatchViewModel.FromModel(StorageService.GetMatch(id));
-            newmatch.Settings = vm.Settings;
-            vm.AddMatchListeners(newmatch);
-            return newmatch;
-        })];
-
-        return vm;
+        Matches.Add(match);
+        AddMatchListeners(match);
+        return match;
     }
 
     /// <summary>
     /// Adds a new match to the group, setting the <see cref="MatchViewModel.Settings"/> and orignal number
     /// and returns it
     /// </summary>
-    public T NewMatch<T>(ParticipantViewModel first, ParticipantViewModel second, int? number = null) where T : MatchViewModel, new() =>
-        Add(new T()
-        {
-            Settings = Settings,
-            Number = number,
-            First = new ScoreViewModel(first),
-            Second = new ScoreViewModel(second)
-        });
+    public T NewMatch<T>(ParticipantViewModel first, ParticipantViewModel second, int? number = null) where T : MatchViewModel
+    {
+        var match = _matchFactory.NewMatch<T>(first, second, number);
+        match.Settings = Settings;
+        return Add(match);
+    }
 
     /// <summary>
     /// Adds a new match to the group, setting the <see cref="MatchViewModel.Settings"/> and orignal number
     /// and returns it
     /// </summary>
-    public T NewMatch<T>(ParticipantViewModel? first, int firstSeed, ParticipantViewModel? second, int secondSeed) where T : MatchViewModel, new() =>
-        Add(new T()
-        {
-            Settings = Settings,
-            First = first is not null ? new ScoreViewModel(first) { Seed = firstSeed } : new ScoreViewModel(ParticipantViewModel.Bye),
-            Second = second is not null ? new ScoreViewModel(second) { Seed = secondSeed } : new ScoreViewModel(ParticipantViewModel.Bye)
-        });
+    public T NewMatch<T>(ParticipantViewModel? first, int firstSeed, ParticipantViewModel? second, int secondSeed) where T : MatchViewModel
+    {
+        var match = _matchFactory.NewMatch<T>(first, firstSeed, second, secondSeed);
+        match.Settings = Settings;
+        return Add(match);
+    }
 
     /// <summary>
     /// Adds a new match to the group that will be bound to the winners of the given matches
     /// </summary>
-    public T NewMatchFromWinnersOf<T>(MatchViewModel parent1, MatchViewModel parent2) where T : MatchViewModel, new() =>
-        Add(new T()
-        {
-            Settings = Settings,
-            First = ScoreViewModel.WinnerOf(parent1),
-            Second = ScoreViewModel.WinnerOf(parent2)
-        });
-
-    /// <summary>
-    /// Adds a new match to the group that will be bound to the losers of the given matches
-    /// </summary>
-    public T NewMatchFromLosersOf<T>(MatchViewModel parent1, MatchViewModel parent2) where T : MatchViewModel, new() =>
-        Add(new T()
-        {
-            Settings = Settings,
-            First = ScoreViewModel.LoserOf(parent1),
-            Second = ScoreViewModel.LoserOf(parent2)
-        });
-
-    /// <summary>
-    /// Adds the given match
-    /// </summary>
-    private T Add<T>(T match) where T : MatchViewModel
+    public T NewEmptyMatch<T>() where T : MatchViewModel
     {
-        Matches.Add(match);
-        AddMatchListeners(match);
-        return match;
+        var match = _matchFactory.NewEmptyMatch<T>();
+        match.Settings = Settings;
+        return Add(match);
     }
 
     /// <summary>
@@ -214,7 +186,7 @@ public partial class MatchGroupViewModel : ViewModelBase, IReadOnlyList<MatchVie
     public void PermanentlyDeleteAll()
     {
         foreach (var match in Matches)
-            StorageService.Delete<Match>(match.Guid);
+            _storageService.Delete<Match>(match.Guid);
         Matches.Clear();
     }
 
@@ -240,7 +212,7 @@ public partial class MatchGroupViewModel : ViewModelBase, IReadOnlyList<MatchVie
     /// <summary>
     /// Saves all the matches
     /// </summary>
-    public void Save() => StorageService.WriteMatches(Matches
+    public void Save() => _storageService.WriteMatches(Matches
         .Select(m => m.ToModel())
         );
 

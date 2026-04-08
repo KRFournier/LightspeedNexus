@@ -1,28 +1,25 @@
 ﻿using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using CommunityToolkit.Mvvm.Messaging.Messages;
 using Lightspeed.Network;
+using Lightspeed.ViewModels;
 using LightspeedNexus.Models;
-using System.Text.Json.Nodes;
+using LightspeedNexus.Services;
+using LightspeedNexus.Transitions;
 
 namespace LightspeedNexus.ViewModels;
 
 #region Messages
 
-public sealed class RequestBracketMatch(Guid id) : RequestMessage<MatchViewModel>
-{
-    public Guid Id { get; } = id;
-}
-
 public sealed class BracketRoundCompleted() { };
 
 #endregion
 
-public partial class BracketStageViewModel : StageViewModel, IRecipient<RequestBracketMatch>
+public partial class BracketStageViewModel : StageViewModel, IRecipient<MatchWinnerChangedMessage>
 {
     #region Properties
+
+    public override string Name => "Bracket";
 
     /// <summary>
     /// The top 64 matches
@@ -30,7 +27,8 @@ public partial class BracketStageViewModel : StageViewModel, IRecipient<RequestB
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Top32Title))]
     [NotifyPropertyChangedFor(nameof(Top16Title))]
-    public partial MatchGroupViewModel Top64 { get; set; } = new() { Name = "Top 64", Settings = new() { WinningScore = 16, TimeLimit = TimeSpan.FromMinutes(2), Rounds = 2 } };
+    public partial MatchGroupViewModel Top64 { get; set; }
+    partial void OnTop64Changed(MatchGroupViewModel value) => SetGroupListeners(value);
 
     /// <summary>
     /// The top 32 matches
@@ -38,40 +36,46 @@ public partial class BracketStageViewModel : StageViewModel, IRecipient<RequestB
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Top32Title))]
     [NotifyPropertyChangedFor(nameof(Top16Title))]
-    public partial MatchGroupViewModel Top32 { get; set; } = new() { Name = "Top 32", Settings = new() { WinningScore = 16, TimeLimit = TimeSpan.FromMinutes(2), Rounds = 2 } };
+    public partial MatchGroupViewModel Top32 { get; set; }
     public string? Top32Title => Top64.Matches.Count > 0 ? "Round 2" : "Round 1";
+    partial void OnTop32Changed(MatchGroupViewModel value) => SetGroupListeners(value);
 
     /// <summary>
     /// The top 16 matches
     /// </summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Top16Title))]
-    public partial MatchGroupViewModel Top16 { get; set; } = new() { Name = "Top 16", Settings = new() { WinningScore = 16, TimeLimit = TimeSpan.FromMinutes(2), Rounds = 2 } };
+    public partial MatchGroupViewModel Top16 { get; set; }
     public string? Top16Title => Top64.Matches.Count > 0 ? "Round 3" : (Top32.Matches.Count > 0 ? "Round 2" : "Round 1");
+    partial void OnTop16Changed(MatchGroupViewModel value) => SetGroupListeners(value);
 
     /// <summary>
     /// The top 8 matches
     /// </summary>
     [ObservableProperty]
-    public partial MatchGroupViewModel Quarterfinals { get; set; } = new() { Name = "Quarterfinals", Settings = new() { WinningScore = 16, TimeLimit = TimeSpan.FromMinutes(2), Rounds = 2 } };
+    public partial MatchGroupViewModel Quarterfinals { get; set; }
+    partial void OnQuarterfinalsChanged(MatchGroupViewModel value) => SetGroupListeners(value);
 
     /// <summary>
     /// The top 4 matches
     /// </summary>
     [ObservableProperty]
-    public partial MatchGroupViewModel Semifinals { get; set; } = new() { Name = "Semifinals", Settings = new() { WinningScore = 16, TimeLimit = TimeSpan.FromMinutes(2), Rounds = 2 } };
+    public partial MatchGroupViewModel Semifinals { get; set; }
+    partial void OnSemifinalsChanged(MatchGroupViewModel value) => SetGroupListeners(value);
 
     /// <summary>
     /// The optional third place match
     /// </summary>
     [ObservableProperty]
-    public partial MatchGroupViewModel Third { get; set; } = new() { Name = "Third Place", Settings = new() { WinningScore = 24, TimeLimit = TimeSpan.FromMinutes(3), Rounds = 2 } };
+    public partial MatchGroupViewModel Third { get; set; }
+    partial void OnThirdChanged(MatchGroupViewModel value) => SetGroupListeners(value);
 
     /// <summary>
     /// The final match
     /// </summary>
     [ObservableProperty]
-    public partial MatchGroupViewModel Final { get; set; } = new() { Name = "Final", Settings = new() { WinningScore = 32, TimeLimit = TimeSpan.FromMinutes(4), Rounds = 2 } };
+    public partial MatchGroupViewModel Final { get; set; }
+    partial void OnFinalChanged(MatchGroupViewModel value) => SetGroupListeners(value);
 
     /// <summary>
     /// Determines if at least one match has started
@@ -125,27 +129,48 @@ public partial class BracketStageViewModel : StageViewModel, IRecipient<RequestB
 
     #region Commands
 
-    /// <summary>
-    /// Go to the Final Results Stage
-    /// </summary>
-    [RelayCommand(CanExecute = nameof(CanGoToResults))]
-    private void GoToResults() => Next = ResultsStageViewModel.FromBracket(this);
-    public bool CanGoToResults() => IsCompleted;
+    protected override bool CanGoNext() => IsCompleted;
 
     #endregion
 
     #region Message Handlers
 
-    public void Receive(RequestBracketMatch message)
+    /// <summary>
+    /// Called when a match winner is changed. 
+    /// </summary>
+    public void Receive(MatchWinnerChangedMessage message)
     {
-        foreach (var group in EnumerateGroups())
+        var match = message.Value;
+
+        // find this match's group
+        MatchGroupViewModel? group = EnumerateGroups().FirstOrDefault(g => g.Matches.Contains(match));
+
+        // if this is the final or third place match, we don't need to advance anyone
+        if (group is null || group == Final || group == Third)
+            return;
+
+        // find the match's index into the group
+        int index = group.Matches.IndexOf(match);
+
+        // calculate the index of the next match this feeds into.
+        int nextIndex = index / 2;
+
+        // get the next group.
+        var nextGroup = FindBracketGroup(group.Matches.Count);
+
+        // advance the winner. If index is even, winner goes to first slot, else second slot
+        if (index % 2 == 0)
+            nextGroup[nextIndex].First.Participant = match.Winner?.Participant ?? New<EmptyParticipantViewModel>();
+        else
+            nextGroup[nextIndex].Second.Participant = match.Winner?.Participant ?? New<EmptyParticipantViewModel>();
+
+        // advance the loser to the third place match if this is the semifinals
+        if (group == Semifinals)
         {
-            var match = group.Matches.FirstOrDefault(m => m.Guid == message.Id);
-            if (match is not null)
-            {
-                message.Reply(match);
-                return;
-            }
+            if (index % 2 == 0)
+                Third[0].First.Participant = match.Loser?.Participant ?? New<EmptyParticipantViewModel>();
+            else
+                Third[0].Second.Participant = match.Loser?.Participant ?? New<EmptyParticipantViewModel>();
         }
     }
 
@@ -154,33 +179,62 @@ public partial class BracketStageViewModel : StageViewModel, IRecipient<RequestB
     /// <summary>
     /// Creates a new view model with default settings, populating test data when in design mode
     /// </summary>
-    public BracketStageViewModel() : base("Bracket")
+    public BracketStageViewModel(IServiceProvider serviceProvider, IMessenger messenger, NavigationService navigationService, ActiveTournamentService activeTournamentService)
+        : base(serviceProvider, messenger, navigationService)
     {
+        Top64 = NewBracketMatchGroup("Top 64", 16);
+        Top32 = NewBracketMatchGroup("Top 32", 16);
+        Top16 = NewBracketMatchGroup("Top 16", 16);
+        Quarterfinals = NewBracketMatchGroup("Quarterfinals", 16);
+        Semifinals = NewBracketMatchGroup("Semifinals", 16);
+        Third = NewBracketMatchGroup("Third Place", 24);
+        Final = NewBracketMatchGroup("Final", 32);
+
+        // listen for match winner changes to advance players
+        messenger.Register<MatchWinnerChangedMessage>(this);
+
         if (Design.IsDesignMode)
         {
-            _topXForFinals = GradingsChart.GetTopX(50);
-            var rankings = Enumerable.Range(1, 64).Select(i =>
-            {
-                if (i >= 50)
-                    return ParticipantViewModel.Bye;
-                return PlayerViewModel.FromRegistree(new RegistreeViewModel() { FirstName = "Player", LastName = $"{i}" });
-            });
-            int playerCount = rankings.Count();
-            int bracketCount = FindBracketCount(playerCount, true);
-            var list = BuildList(rankings, bracketCount);
-            var group = SetInitialRoundTo(bracketCount, list);
-            while (group.Matches.Count > 2)
-                group = SetNextRoundFor(group);
-            Final.NewMatchFromWinnersOf<StandardMatchViewModel>(group.Matches[0], group.Matches[1]);
-            Third.NewMatchFromLosersOf<StandardMatchViewModel>(group.Matches[0], group.Matches[1]);
+            //_topXForFinals = GradingsChart.GetTopX(50);
+            //var rankings = Enumerable.Range(1, 64).Select(i =>
+            //{
+            //    if (i >= 50)
+            //        return ParticipantViewModel.Bye;
+            //    return new RegistreeViewModel() { FirstName = "Player", LastName = $"{i}" }.ToPlayer();
+            //});
+            //int playerCount = rankings.Count();
+            //int bracketCount = FindBracketCount(playerCount, true);
+            //var list = BuildList(rankings, bracketCount);
+            //var group = SetInitialRoundTo(bracketCount, list);
+            //while (group.Matches.Count > 2)
+            //    group = SetNextRoundFor(group);
+            //Final.NewMatchFromWinnersOf<StandardMatchViewModel>(group.Matches[0], group.Matches[1]);
+            //Third.NewMatchFromLosersOf<StandardMatchViewModel>(group.Matches[0], group.Matches[1]);
         }
         else
         {
-            _topXForFinals = GradingsChart.GetTopX(StrongReferenceMessenger.Default.Send(new RequestRegistreeCount()));
-            StrongReferenceMessenger.Default.RegisterAll(this);
-            SetGroupListeners();
+            _topXForFinals = GradingsChart.GetTopX(activeTournamentService.RegistreeCount);
         }
     }
+
+    /// <summary>
+    /// Loads a match group from the given model
+    /// </summary>
+    protected MatchGroupViewModel NewBracketMatchGroup(string name, int winningScore)
+    {
+        var vm = New<MatchGroupViewModel>();
+        vm.Name = name;
+        vm.Settings = New<MatchSettingsViewModel>();
+        vm.Settings.WinningScore = winningScore;
+        vm.Settings.TimeLimit = TimeSpan.FromSeconds(winningScore / 4 * 30);
+        vm.Settings.Rounds = 2;
+        return vm;
+    }
+
+    /// <summary>
+    /// Brackets always go to results
+    /// </summary>
+    public override IStageTransition GetTransitionToNextStage() => NewTransition<BracketToResultsTransition>();
 
     /// <summary>
     /// Exports this view model to a <see cref="BracketStage"/>.
@@ -198,26 +252,9 @@ public partial class BracketStageViewModel : StageViewModel, IRecipient<RequestB
     };
 
     /// <summary>
-    /// Loads from a <see cref="BracketStage"/>
+    /// Gets the state of each match group.
     /// </summary>
-    public static BracketStageViewModel FromModel(BracketStage model)
-    {
-        BracketStageViewModel vm = new()
-        {
-            Top64 = MatchGroupViewModel.FromModel(model.Top64),
-            Top32 = MatchGroupViewModel.FromModel(model.Top32),
-            Top16 = MatchGroupViewModel.FromModel(model.Top16),
-            Quarterfinals = MatchGroupViewModel.FromModel(model.Quarterfinals),
-            Semifinals = MatchGroupViewModel.FromModel(model.Semifinals),
-            Third = MatchGroupViewModel.FromModel(model.Third),
-            Final = MatchGroupViewModel.FromModel(model.Final),
-            Next = FromModel(model.Next)
-        };
-        vm.SetGroupListeners();
-        return vm;
-    }
-
-    public IEnumerable<MatchGroupState> GetMatchGroupsState()
+    public IEnumerable<MatchGroupState> GetMatchGroupsStates()
     {
         if (Top64.Matches.Count > 0)
             yield return new MatchGroupState() { Name = "Top 64", IsCompleted = Top64.IsCompleted };
@@ -234,21 +271,6 @@ public partial class BracketStageViewModel : StageViewModel, IRecipient<RequestB
     }
 
     /// <summary>
-    /// Sets listeners for all the groups. This is necessary to update the stage's IsStarted and IsCompleted properties,
-    /// which are used to determine if we can advance to the next stage.
-    /// </summary>
-    protected void SetGroupListeners()
-    {
-        SetGroupListeners(Top64);
-        SetGroupListeners(Top32);
-        SetGroupListeners(Top16);
-        SetGroupListeners(Quarterfinals);
-        SetGroupListeners(Semifinals);
-        SetGroupListeners(Third);
-        SetGroupListeners(Final);
-    }
-
-    /// <summary>
     /// Sets listeners for a specific group. This is necessary to update the stage's IsStarted and IsCompleted properties,
     /// </summary>
     /// <param name="group"></param>
@@ -262,113 +284,13 @@ public partial class BracketStageViewModel : StageViewModel, IRecipient<RequestB
             {
                 OnPropertyChanged(nameof(IsCompleted));
                 StrongReferenceMessenger.Default.Send(new BracketRoundCompleted());
-                GoToResultsCommand.NotifyCanExecuteChanged();
+                GoNextCommand.NotifyCanExecuteChanged();
             }
         };
         OnPropertyChanged(nameof(IsStarted));
         OnPropertyChanged(nameof(IsCompleted));
-        GoToResultsCommand.NotifyCanExecuteChanged();
+        GoNextCommand.NotifyCanExecuteChanged();
     }
-
-    #region Initialization of the Bracket
-
-    /// <summary>
-    /// Predefined loadouts for optimal bracket seeding
-    /// </summary>
-    static readonly Dictionary<int, (int, int)[]> _loadouts = new() {
-        { 2, [(0, 1)] },
-        { 4, [(0, 3), (1, 2)] },
-        { 8, [(0, 7), (3, 4), (2, 5), (1, 6)] },
-        { 16, [(0, 15), (7, 8), (3, 12), (4, 11), (1, 14), (6, 9), (2, 13), (5, 10)] },
-        { 32, [(0, 31), (15, 16), (8, 23), (7, 24), (3, 28), (12, 19), (11, 20), (4, 27), (1, 30), (14, 17), (9, 22), (6, 25), (2, 29), (13, 18), (10, 21), (5, 26)] },
-        { 64, [(0, 63), (31, 32), (16, 47), (15, 48), (8, 55), (23, 40), (24, 39), (7, 56), (3, 60), (28, 35), (19, 44), (12, 51), (11, 52), (50, 43), (27, 36), (4, 59), (1, 62), (30, 33), (17, 46), (14, 49), (9, 54), (22, 41), (25, 38), (6, 57), (2, 61), (29, 34), (18, 47), (13, 50), (10, 53), (21, 42), (26, 37), (5, 58)] }
-    };
-
-    /// <summary>
-    /// Creates the view model from an ordered list of participants. The list should be ordered by seed, 
-    /// so the first item is the top seed, the second item is the second seed, and so on. The number of 
-    /// items in the list can be less than or equal to 64. If it is less than 64, then byes will be added
-    /// to fill out the bracket. The settings will determine how the bracket is filled out. For example,
-    /// if 100% advancement is enabled, then the bracket will be filled out to the nearest power of 2 above
-    /// the number of players. If 100% advancement is disabled, then the bracket will be filled out to
-    /// the nearest power of 2 below the number of players.
-    /// </summary>
-    public static BracketStageViewModel FromRankedList(IEnumerable<ParticipantViewModel> rankings, bool isFullAdvancement)
-    {
-        var vm = new BracketStageViewModel();
-        int playerCount = rankings.Count();
-        int bracketCount = FindBracketCount(playerCount, isFullAdvancement);
-        var list = BuildList(rankings, bracketCount);
-        var group = vm.SetInitialRoundTo(bracketCount, list);
-        while (group.Matches.Count > 2)
-            group = vm.SetNextRoundFor(group);
-        vm.Final.NewMatchFromWinnersOf<StandardMatchViewModel>(vm.Semifinals.Matches[0], vm.Semifinals.Matches[1]);
-        vm.Third.NewMatchFromLosersOf<StandardMatchViewModel>(vm.Semifinals.Matches[0], vm.Semifinals.Matches[1]);
-        vm.IsRanked = StrongReferenceMessenger.Default.Send<RequestIsRanked>().Response ?? false;
-
-        return vm;
-    }
-
-    /// <summary>
-    /// Given a number of players, find the bracket we want to work with. This will either
-    /// round up to the nearest power of 2 (if 100% advance in enabled) or down to the
-    /// nearest power of 2 (if 100% advance is disabled).
-    /// </summary>
-    private static int FindBracketCount(int numPlayers, bool isFullAdvancement)
-    {
-        if (isFullAdvancement)
-            return numPlayers switch { > 32 => 64, > 16 => 32, > 8 => 16, > 4 => 8, _ => 4 };
-        else
-            return numPlayers switch { >= 64 => 64, >= 32 => 32, >= 16 => 16, >= 8 => 8, _ => 4 };
-    }
-
-    /// <summary>
-    /// Converts rankings into a padded list of rankings to match the given count. The padded items
-    /// are null. This is useful in handling byes
-    /// </summary>
-    private static List<ParticipantViewModel?> BuildList(IEnumerable<ParticipantViewModel> rankings, int count)
-    {
-        List<ParticipantViewModel?> list = [];
-        foreach (var seed in rankings)
-            list.Add(seed);
-        while (list.Count < count)
-            list.Add(null);
-        return list;
-    }
-
-    /// <summary>
-    /// Sets the initial round identified by the number of matches
-    /// </summary>
-    private MatchGroupViewModel SetInitialRoundTo(int count, List<ParticipantViewModel?> list)
-    {
-        var group = FindBracket(count);
-        (int, int)[] loadout = _loadouts[count];
-        for (int i = 0; i < loadout.Length; i++)
-        {
-            group.NewMatch<StandardMatchViewModel>(
-                list[loadout[i].Item1], loadout[i].Item1 + 1,
-                list[loadout[i].Item2], loadout[i].Item2 + 1
-            );
-        }
-        return group;
-    }
-
-    /// <summary>
-    /// Sets the next round by wiring it up to the given round's winners
-    /// </summary>
-    private MatchGroupViewModel SetNextRoundFor(MatchGroupViewModel previousRound)
-    {
-        // matches always represent two players, so if we pass the size of the previous
-        // group (aka, number of matches), we'll have the correct amount of players for this
-        // round, e.g. 8 matches in the previous round would be 8 players in the new one
-        var group = FindBracket(previousRound.Matches.Count);
-        for (int i = 0; (i + 1) < previousRound.Matches.Count; i += 2)
-            group.NewMatchFromWinnersOf<StandardMatchViewModel>(previousRound.Matches[i], previousRound.Matches[i + 1]);
-
-        return group;
-    }
-
-    #endregion
 
     #region Match Enumeration and Lookup
 
@@ -415,7 +337,7 @@ public partial class BracketStageViewModel : StageViewModel, IRecipient<RequestB
     /// <summary>
     /// Finds the group based on the exact number of players in that group
     /// </summary>
-    private MatchGroupViewModel FindBracket(int numPlayers) => numPlayers switch
+    public MatchGroupViewModel FindBracketGroup(int numPlayers) => numPlayers switch
     {
         64 => Top64,
         32 => Top32,
@@ -434,35 +356,12 @@ public partial class BracketStageViewModel : StageViewModel, IRecipient<RequestB
     /// <exception cref="ArgumentOutOfRangeException">Thrown if x does not reference a valid tier</exception>
     public IEnumerable<ParticipantViewModel> GetTopXParticipants(int x)
     {
-        MatchGroupViewModel group = FindBracket(x);
+        MatchGroupViewModel group = FindBracketGroup(x);
         foreach (var match in group)
         {
             yield return match.First.Participant;
             yield return match.Second.Participant;
         }
-    }
-
-    /// <summary>
-    /// Gets a participant's final placing in the bracket
-    /// </summary>
-    public int GetPlace(ParticipantViewModel participant)
-    {
-        if (participant == Final[0].Winner?.Participant)
-            return 1;
-        else if (participant == Final[0].Loser?.Participant)
-            return 2;
-        else if ((Third[0].Winner is not null && participant == Third[0].Winner!.Participant) ||
-                  (Third[0].Winner is null && Third[0].Contains(participant)))
-            return 3;
-        else if (Third[0].Loser is not null && participant == Third[0].Loser!.Participant)
-            return 4;
-        else if (Quarterfinals.Contains(participant))
-            return 5;
-        else if (Top16.Contains(participant))
-            return 9;
-        else if (Top32.Contains(participant))
-            return 17;
-        else return 33;
     }
 
     #endregion
@@ -479,85 +378,4 @@ public partial class BracketStageViewModel : StageViewModel, IRecipient<RequestB
         foreach (var group in EnumerateGroups())
             group.PermanentlyDeleteAll();
     }
-
-    #region Saber Sports
-
-    /// <summary>
-    /// Creates the json for submitting the tournament to saber-sports
-    /// </summary>
-    public JsonNode ToSaberSportsSubmission()
-    {
-        int id = 1;
-        var rounds = new JsonArray();
-        TimeSpan duration = TimeSpan.Zero;
-        int score = 0;
-        foreach (var round in EnumerateGroups())
-        {
-            if (round.IsCompleted)
-            {
-                var matches = new JsonArray();
-                for (int i = 0; i < round.Matches.Count; i++)
-                {
-                    StandardMatchViewModel match = round.Matches[i] as StandardMatchViewModel ?? throw new InvalidOperationException("Can only submit standard matches to SaberScore.");
-                    var fencers = new JsonArray();
-                    if (match.First.Participant is PlayerViewModel firstPlayer)
-                    {
-                        fencers.Add(new JsonObject
-                        {
-                            ["uuid"] = firstPlayer.SaberSportId,
-                            ["score"] = match.First.Points,
-                            ["is_winner"] = match.IsFirstWinner,
-                            ["actions"] = new JsonArray([.. match.FirstActions.ToSaberScore()])
-                        });
-                    }
-                    if (match.Second.Participant is PlayerViewModel secondPlayer)
-                    {
-                        fencers.Add(new JsonObject
-                        {
-                            ["uuid"] = secondPlayer.SaberSportId,
-                            ["score"] = match.Second.Points,
-                            ["is_winner"] = match.IsSecondWinner,
-                            ["actions"] = new JsonArray([.. match.SecondActions.ToSaberScore()])
-                        });
-                    }
-
-                    var matchNode = new JsonObject
-                    {
-                        ["id"] = i,
-                        ["fencers"] = fencers
-                    };
-                    matches.Add(matchNode);
-                }
-                rounds.Add(new JsonObject
-                {
-                    ["id"] = id++,
-                    ["matches"] = matches
-                });
-
-                // find longest match and highest score for the configuration
-                if (round.Settings.TimeLimit > duration)
-                    duration = round.Settings.TimeLimit;
-                if (round.Settings.WinningScore > score)
-                    score = round.Settings.WinningScore;
-            }
-        }
-
-        var config = new JsonObject();
-        config["name"] = "Direct Elimination";
-        config["duration"] = duration.ToString("mm\\:ss");
-        config["score"] = score;
-        config["disable_rank_promotion"] = false;
-
-        var node = new JsonObject();
-        node["type"] = "bracket";
-        node["configuration"] = config;
-        node["round"] = new JsonObject
-        {
-            ["rounds"] = rounds
-        };
-
-        return node;
-    }
-
-    #endregion
 }

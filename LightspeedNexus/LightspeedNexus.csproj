@@ -12,9 +12,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <AvaloniaResource Remove="Assets\Fonts\**" />
+    <AvaloniaXaml Remove="Assets\Fonts\**" />
     <AvaloniaXaml Remove="Helpers\**" />
+    <Compile Remove="Assets\Fonts\**" />
     <Compile Remove="Helpers\**" />
+    <EmbeddedResource Remove="Assets\Fonts\**" />
     <EmbeddedResource Remove="Helpers\**" />
+    <None Remove="Assets\Fonts\**" />
     <None Remove="Helpers\**" />
   </ItemGroup>
 
@@ -38,7 +43,7 @@
     <Compile Remove="Controls\SchedulePanel.cs" />
     <Compile Remove="Controls\TextControlBase.cs" />
     <Compile Remove="Controls\TimeBar.cs" />
-    <Compile Remove="Converters\VenueToStringConverter.cs" />
+    <Compile Remove="Messages\StageMessages.cs" />
     <Compile Remove="Models\Action.cs" />
     <Compile Remove="Models\Competition.cs" />
     <Compile Remove="Models\Event.cs" />
@@ -47,6 +52,7 @@
     <Compile Remove="Models\Roster.cs" />
     <Compile Remove="Models\Settings.cs" />
     <Compile Remove="Models\Venue.cs" />
+    <Compile Remove="Services\ViewModelFactory.cs" />
     <Compile Remove="ViewModels\ActionViewModel.cs" />
     <Compile Remove="ViewModels\BracketSettingsViewModel.cs" />
     <Compile Remove="ViewModels\CalendarViewModel.cs" />
@@ -73,7 +79,7 @@
     <PackageReference Include="Avalonia.Controls.ItemsRepeater" Version="11.1.5" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.12" />
     <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.12" />
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.1" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
 
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
     <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.3.12" />
@@ -83,21 +89,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Dialogs\SignDialog.axaml.cs">
-      <DependentUpon>SignDialog.axaml</DependentUpon>
-    </Compile>
-    <Compile Update="Dialogs\MessageDialog.axaml.cs">
-      <DependentUpon>MessageDialog.axaml</DependentUpon>
-    </Compile>
-    <Compile Update="Dialogs\LoginDialog.axaml.cs">
-      <DependentUpon>LoginDialog.axaml</DependentUpon>
-    </Compile>
-    <Compile Update="Dialogs\WaitDialog.axaml.cs">
-      <DependentUpon>WaitDialog.axaml</DependentUpon>
-    </Compile>
-    <Compile Update="Dialogs\EditDialog.axaml.cs">
-      <DependentUpon>EditDialog.axaml</DependentUpon>
-    </Compile>
+    <ProjectReference Include="..\..\LightspeedShared\LightspeedShared\LightspeedShared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Update="Views\FighterSearchView.axaml.cs">
       <DependentUpon>FighterSearchView.axaml</DependentUpon>
     </Compile>

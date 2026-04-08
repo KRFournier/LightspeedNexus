@@ -1,6 +1,7 @@
 ﻿using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
+using Lightspeed.ViewModels;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 
@@ -25,7 +26,7 @@ public partial class SquadronViewModel : ViewModelBase
     public partial IBrush Color { get; set; } = Brushes.Transparent;
 
     [ObservableProperty]
-    public partial MatchSettingsViewModel Settings { get; set; } = new();
+    public partial MatchSettingsViewModel Settings { get; set; }
 
     public int NumMatches => Participants.Count * (Participants.Count - 1) / 2;
 
@@ -34,8 +35,9 @@ public partial class SquadronViewModel : ViewModelBase
     /// <summary>
     /// Creates a brand new squadron
     /// </summary>
-    public SquadronViewModel()
+    public SquadronViewModel(IServiceProvider serviceProvider, IMessenger messenger) : base(serviceProvider, messenger)
     {
+        Settings = New<MatchSettingsViewModel>();
         Participants.CollectionChanged += OnParticipantsChanged;
     }
 
@@ -53,17 +55,6 @@ public partial class SquadronViewModel : ViewModelBase
         Participants = [.. Participants.Select(p => p.Guid)],
         Weight = Weight,
         MatchSettings = Settings.ToModel()
-    };
-
-    /// <summary>
-    /// Converts from a <see cref="Squadron"/>
-    /// </summary>
-    public static SquadronViewModel FromModel(Squadron squadron) => new()
-    {
-        Guid = squadron.Guid,
-        Participants = [.. squadron.Participants.Select(id => StrongReferenceMessenger.Default.Send(new RequestParticipant(id)))],
-        Weight = squadron.Weight,
-        Settings = MatchSettingsViewModel.FromModel(squadron.MatchSettings)
     };
 
     /// <summary>

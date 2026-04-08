@@ -3,9 +3,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:LightspeedNexus.ViewModels"
-			 xmlns:m="clr-namespace:LightspeedNexus.Models"
 			 xmlns:v="clr-namespace:LightspeedNexus.Views"
 			 xmlns:c="clr-namespace:LightspeedNexus.Controls"
+			 xmlns:lsl="using:Lightspeed.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			 ClipToBounds="False"
              x:Class="LightspeedNexus.Views.BracketStageView"
@@ -39,7 +39,7 @@
 			</Button>
 
 			<!--Dangerous! Back Button-->
-			<c:HoldButton Classes="red"
+			<lsl:HoldButton Classes="red"
 						  x:Name="WarningBackButton"
 						  HorizontalAlignment="Stretch"
 						  VerticalAlignment="Stretch"
@@ -67,7 +67,7 @@
 						</StackPanel>
 					</StackPanel>
 				</StackPanel>
-			</c:HoldButton>
+			</lsl:HoldButton>
 
 			<StackPanel Grid.Column="2" VerticalAlignment="Center">
 				<TextBlock Classes="small info"						   
@@ -84,7 +84,7 @@
 					VerticalAlignment="Stretch"
 					HorizontalContentAlignment="Center"
 					VerticalContentAlignment="Center"
-					Command="{Binding GoToResultsCommand}">
+					Command="{Binding GoNextCommand}">
 				<StackPanel>
 					<StackPanel Orientation="Horizontal"
 								Spacing="10">

@@ -7,7 +7,7 @@ namespace LightspeedNexus.ViewModels;
 /// <summary>
 /// A single score, used to edit matches
 /// </summary>
-public partial class ScoreEditViewModel : ViewModelBase
+public partial class ScoreEditViewModel : ObservableObject
 {
     #region Properties
 
@@ -37,7 +37,7 @@ public partial class ScoreEditViewModel : ViewModelBase
 /// <summary>
 /// A match's scores, used to edit matches
 /// </summary>
-public partial class MatchEditViewModel : ViewModelBase
+public partial class MatchEditViewModel : ObservableObject
 {
     #region Properties
 

@@ -1,61 +1,20 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Messaging;
-using Lightspeed.Network;
-using Lightspeed.ViewModels;
-using LightspeedNexus.Models;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Lightspeed.ViewModels;
+using LightspeedNexus.ViewModels;
 
-namespace LightspeedNexus.ViewModels;
+namespace LightspeedNexus.Services;
 
-public partial class PoolViewModel(IServiceProvider serviceProvider, IMessenger messenger) : ViewModelBase(serviceProvider, messenger)
+/// <summary>
+/// This service calculates the ranks of participants based on their performance in a given pool
+/// </summary>
+public class PoolRankingService
 {
-    #region Properties
-
-    /// <summary>
-    /// The squadron assigned to this pool
-    /// </summary>
-    [ObservableProperty]
-    public partial SquadronViewModel Squadron { get; set; } = serviceProvider.GetRequiredService<SquadronViewModel>();
-
-    /// <summary>
-    /// Matches are view/viewmodel driven. We just reference them here, and the view takes
-    /// care of the rest. This means all match viewmodels must have a corresponding view
-    /// </summary>
-    [ObservableProperty]
-    public partial MatchGroupViewModel MatchGroup { get; set; } = serviceProvider.GetRequiredService<MatchGroupViewModel>();
-
-    #endregion
-
-    /// <summary>
-    /// Converts to a <see cref="Pool"/>
-    /// </summary>
-    public Pool ToModel() => new()
-    {
-        Squadron = Squadron.Guid,
-        MatchGroup = MatchGroup.ToModel()
-    };
-
-    public MatchGroupState ToState() => new()
-    {
-        Name = Squadron.Name,
-        Color = Squadron.Color.ToString(),
-        IsCompleted = MatchGroup.IsCompleted
-    };
-
-    #region Statistics
-
-    /// <summary>
-    /// A match from a participants's perspective
-    /// </summary>
-    internal record PovMatchStatistics(ParticipantViewModel Opponent, int PlayerScore, int OpponentScore, bool Winner);
-
     /// <summary>
     /// A participant's matches and statistics
     /// </summary>
-    internal class ParticipantStatistics(ParticipantViewModel participant)
+    private class ParticipantStatistics(ParticipantViewModel participant)
     {
         public ParticipantViewModel Participant = participant;
-        public List<PovMatchStatistics> Matches = [];
+        public List<(ParticipantViewModel Opponent, int PlayerScore, int OpponentScore, bool Winner)> Matches = [];
         public int Wins => Matches.Count(s => s.Winner);
         public int Losses => Matches.Count(s => !s.Winner);
         public int PointsWon => Matches.Sum(s => s.PlayerScore);
@@ -83,7 +42,8 @@ public partial class PoolViewModel(IServiceProvider serviceProvider, IMessenger 
     /// <summary>
     /// Calculates the ranking scores for just this pool
     /// </summary>
-    public IEnumerable<(ParticipantViewModel Participant, int Wins, int Losses, int Points, int PointsAgainst, double Score)> CalculateScores(int winningScore, int maxSingleActionPoints)
+    public IEnumerable<(ParticipantViewModel Participant, int Wins, int Losses, int Points, int PointsAgainst, double Score)>
+        CalculateScores(PoolViewModel pool)
     {
         // This is the furthest from the mean score a player can get before they are
         // removed from the calculation.
@@ -92,22 +52,22 @@ public partial class PoolViewModel(IServiceProvider serviceProvider, IMessenger 
         // The rankings are based on a "score" (not to be confused with points in a match)
         // Each match is given a win value of twice the maximum points possible.
         // The score is ultimately based on the percentage of total points possible.
-        double matchesPerPlayer = Squadron.Participants.Count - 1;
-        double maxPointsPerMatch = winningScore + maxSingleActionPoints - 1.0;
+        double matchesPerPlayer = pool.Squadron.Participants.Count - 1;
+        double maxPointsPerMatch = pool.MatchGroup.Settings.WinningScore + PointValues.Max - 1.0;
         double winValue = maxPointsPerMatch * 2.0;
         double maxScorePerPlayer = (winValue + maxPointsPerMatch) * matchesPerPlayer;
 
         // gather statistics for each player
-        Dictionary<ParticipantViewModel, ParticipantStatistics> stats = new([.. Squadron.Participants
+        Dictionary<ParticipantViewModel, ParticipantStatistics> stats = new([.. pool.Squadron.Participants
             .Select(p => new KeyValuePair<ParticipantViewModel, ParticipantStatistics>(p, new(p)))]);
-        foreach (var match in MatchGroup.Matches.Where(m => m.IsMatchCompleted))
+        foreach (var match in pool.MatchGroup.Matches.Where(m => m.IsMatchCompleted))
         {
             if (match is StandardMatchViewModel stdMatch && stdMatch.First is not null && stdMatch.Second is not null)
             {
                 stats[stdMatch.First.Participant].Matches.Add(
-                    new PovMatchStatistics(stdMatch.Second.Participant, stdMatch.First.Points, stdMatch.Second.Points, stdMatch.IsFirstWinner));
+                    (stdMatch.Second.Participant, stdMatch.First.Points, stdMatch.Second.Points, stdMatch.IsFirstWinner));
                 stats[stdMatch.Second.Participant].Matches.Add(
-                    new PovMatchStatistics(stdMatch.First.Participant, stdMatch.Second.Points, stdMatch.First.Points, stdMatch.IsSecondWinner));
+                    (stdMatch.First.Participant, stdMatch.Second.Points, stdMatch.First.Points, stdMatch.IsSecondWinner));
             }
         }
 
@@ -158,6 +118,4 @@ public partial class PoolViewModel(IServiceProvider serviceProvider, IMessenger 
 
         return (stdDev, mean);
     }
-
-    #endregion
 }

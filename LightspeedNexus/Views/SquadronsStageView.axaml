@@ -5,7 +5,8 @@
              xmlns:vm="clr-namespace:LightspeedNexus.ViewModels"
 			 xmlns:m="clr-namespace:LightspeedNexus.Models"
 			 xmlns:v="clr-namespace:LightspeedNexus.Views"
-			 xmlns:c="clr-namespace:LightspeedNexus.Controls"
+			 xmlns:lslvm="using:Lightspeed.ViewModels"
+			 xmlns:c="using:Lightspeed.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			 ClipToBounds="False"
              x:Class="LightspeedNexus.Views.SquadronsStageView"
@@ -53,7 +54,7 @@
 					VerticalAlignment="Stretch"
 					HorizontalContentAlignment="Center"
 					VerticalContentAlignment="Center"
-					Command="{Binding StartPoolsCommand}">
+					Command="{Binding GoNextCommand}">
 				<StackPanel>
 					<StackPanel Orientation="Horizontal"
 								Spacing="10">
@@ -139,7 +140,7 @@
 											</ItemsPanelTemplate>
 										</ItemsControl.ItemsPanel>
 										<ItemsControl.ItemTemplate>
-											<DataTemplate DataType="vm:ParticipantViewModel">
+											<DataTemplate DataType="lslvm:ParticipantViewModel">
 												<Border CornerRadius="6"
 														Padding="4,0"
 														Height="50"

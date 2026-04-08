@@ -3,7 +3,7 @@ using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using LightspeedNexus.Messages;
+using Lightspeed.ViewModels;
 using LightspeedNexus.Models;
 using LightspeedNexus.Services;
 using System.Collections;
@@ -15,6 +15,10 @@ namespace LightspeedNexus.ViewModels;
 
 public partial class TournamentsViewModel : ViewModelBase, IComparer
 {
+    private readonly StorageService _storageService;
+    private readonly ActiveTournamentService _activeTournamentService;
+    private readonly NavigationService _navigationService;
+
     #region Properties
 
     public ObservableCollection<Tournament> Tournaments { get; set; } = [];
@@ -42,16 +46,16 @@ public partial class TournamentsViewModel : ViewModelBase, IComparer
     private void ClearSearch() => SearchText = "";
 
     [RelayCommand]
-    private static void GoHome() => WeakReferenceMessenger.Default.Send<NavigateHomeMessage>();
+    private void GoHome() => _navigationService.NavigateToHome();
 
     [RelayCommand]
-    private static async Task GoToTournament(Tournament item) => WeakReferenceMessenger.Default.Send(new NavigatePageMessage(new TournamentViewModel(item)));
+    private async Task GoToTournament(Tournament item) => _activeTournamentService.StartLoadedTournament(item);
 
     [RelayCommand]
     private void DeleteTournament(Tournament tournament)
     {
         Tournaments.Remove(tournament);
-        StorageService.Delete<Tournament>(tournament.Id);
+        _storageService.Delete<Tournament>(tournament.Id);
         IncompleteTournaments?.Refresh();
         CompleteTournaments?.Refresh();
     }
@@ -61,13 +65,19 @@ public partial class TournamentsViewModel : ViewModelBase, IComparer
     /// <summary>
     /// Creates a new Fighters view model that loads all known fighters from storage and sorts them.
     /// </summary>
-    public TournamentsViewModel()
+    public TournamentsViewModel(IServiceProvider serviceProvider, IMessenger messenger,
+        NavigationService navigationService, StorageService storageService, ActiveTournamentService activeTournamentService)
+        : base(serviceProvider, messenger)
     {
+        _storageService = storageService;
+        _activeTournamentService = activeTournamentService;
+        _navigationService = navigationService;
+
         if (!Design.IsDesignMode)
         {
             try
             {
-                Tournaments = [.. StorageService.ReadAllTournaments()];
+                Tournaments = [.. _storageService.ReadAllTournaments()];
 
                 IncompleteTournaments = new(Tournaments.Where(t => !t.IsCompleted));
                 IncompleteTournaments.SortDescriptions.Add(new DataGridComparerSortDescription(this, ListSortDirection.Descending));

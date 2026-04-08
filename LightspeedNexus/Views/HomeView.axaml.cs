@@ -1,10 +1,9 @@
 using Avalonia.Controls;
 using Avalonia.Input;
-using CommunityToolkit.Mvvm.Messaging;
-using LightspeedNexus.Messages;
 using LightspeedNexus.Models;
 using LightspeedNexus.Services;
 using LightspeedNexus.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace LightspeedNexus.Views;
 
@@ -16,7 +15,7 @@ public partial class HomeView : UserControl
 
         AttachedToVisualTree += (s, e) =>
         {
-            if (DataContext is HomeViewModel vm && StorageService.Count<Fighter>() == 0)
+            if (DataContext is HomeViewModel vm && App.Services.GetRequiredService<StorageService>().Count<Fighter>() == 0)
                 vm.ImportFightersFirstTimeCommand.Execute(this);
         };
     }
@@ -24,6 +23,6 @@ public partial class HomeView : UserControl
     public void RecentTournament_PointerPressed(object? sender, PointerPressedEventArgs e)
     {
         if (e.Source is Control control && control.DataContext is Tournament t)
-            WeakReferenceMessenger.Default.Send(new NavigatePageMessage(new TournamentViewModel(t)));
+            App.Services.GetRequiredService<ActiveTournamentService>().StartLoadedTournament(t);
     }
 }

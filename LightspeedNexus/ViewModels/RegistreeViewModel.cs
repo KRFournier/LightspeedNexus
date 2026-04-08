@@ -1,13 +1,14 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using LightspeedNexus.Models;
 
 namespace LightspeedNexus.ViewModels;
 
-public partial class RegistreeViewModel : ViewModelBase, IComparable<RegistreeViewModel>
+public partial class RegistreeViewModel : ObservableObject, IComparable<RegistreeViewModel>
 {
     #region Properties
 
     [ObservableProperty]
-    public partial Guid Guid { get; protected set; } = Guid.Empty;
+    public partial Guid Guid { get; set; } = Guid.Empty;
 
     [ObservableProperty]
     public partial int? OnlineId { get; set; }
@@ -106,38 +107,6 @@ public partial class RegistreeViewModel : ViewModelBase, IComparable<RegistreeVi
     };
 
     /// <summary>
-    /// Loads an existing Player
-    /// </summary>
-    public static RegistreeViewModel FromModel(Registree registree) => new()
-    {
-        Guid = registree.Id,
-        OnlineId = registree.OnlineId,
-        FirstName = registree.FirstName,
-        LastName = registree.LastName,
-        Club = registree.Club,
-        ReyRank = registree.Rey,
-        RenRank = registree.Ren,
-        TanoRank = registree.Tano,
-        UseEffectiveRank = registree.UsesEffectiveRank,
-        WeaponOfChoice = registree.WeaponOfChoice
-    };
-
-    /// <summary>
-    /// Converts to a <see cref="FighterViewModel"/>
-    /// </summary>
-    public FighterViewModel ToFighterViewModel() => new()
-    {
-        Guid = Guid,
-        OnlineId = OnlineId,
-        FirstName = FirstName,
-        LastName = LastName,
-        Club = Club,
-        ReyRank = ReyRank,
-        RenRank = RenRank,
-        TanoRank = TanoRank
-    };
-
-    /// <summary>
     /// Updates this registree with values from the given fighter. Useful for dialog boxes that edit fighter info.
     /// </summary>
     public void Update(FighterViewModel fighter)
@@ -198,7 +167,8 @@ public partial class RegistreeViewModel : ViewModelBase, IComparable<RegistreeVi
     /// <summary>
     /// Determines if the current weapon meets the given requirements
     /// </summary>
-    public void Validate(bool allowARanks, bool allowBRanks, bool allowCRanks, bool allowDRanks, bool allowERanks, bool allowURanks) => MeetsRequirements = ValidateWeapon(WeaponOfChoice, allowARanks, allowBRanks, allowCRanks, allowDRanks, allowERanks, allowURanks);
+    public void Validate(bool allowARanks, bool allowBRanks, bool allowCRanks, bool allowDRanks, bool allowERanks, bool allowURanks) =>
+        MeetsRequirements = ValidateWeapon(WeaponOfChoice, allowARanks, allowBRanks, allowCRanks, allowDRanks, allowERanks, allowURanks);
 
     /// <summary>
     /// Determines if the current weapon meets the given requirements

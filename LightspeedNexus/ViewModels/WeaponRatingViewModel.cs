@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace LightspeedNexus.ViewModels;
 
-public partial class WeaponRatingViewModel : ViewModelBase
+public partial class WeaponRatingViewModel : ObservableObject
 {
     public WeaponRating Model
     {

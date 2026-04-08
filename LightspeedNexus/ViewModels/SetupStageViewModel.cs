@@ -3,9 +3,9 @@ using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using CommunityToolkit.Mvvm.Messaging.Messages;
 using LightspeedNexus.Models;
 using LightspeedNexus.Services;
+using LightspeedNexus.Transitions;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -20,35 +20,21 @@ namespace LightspeedNexus.ViewModels;
 /// </summary>
 public class RosterChangedMessage() { }
 
-/// <summary>
-/// Requests the current count of registrees
-/// </summary>
-public class RequestRegistreeCount() : RequestMessage<int> { }
-
-/// <summary>
-/// Requests to know if multiple weapon choices are available,
-/// which affects whether or not we display chosen weapons
-/// </summary>
-public class RequestHasChoice : RequestMessage<bool> { }
-
-/// <summary>
-/// Requests the current roster of registrees
-/// </summary>
-public class RequestRoster : RequestMessage<IEnumerable<RegistreeViewModel>> { }
-
 #endregion
 
 /// <summary>
 /// The tournament settings
 /// </summary>
-public partial class SetupStageViewModel : StageViewModel, IComparer,
-    IRecipient<RequestRegistreeCount>, IRecipient<RequestHasChoice>,
-    IRecipient<RequestRoster>
+public partial class SetupStageViewModel : StageViewModel, IComparer
 {
+    private readonly StorageService _storageService;
+
     #region Properties
 
+    public override string Name => "Setup";
+
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(BeginCommand))]
+    [NotifyCanExecuteChangedFor(nameof(GoNextCommand))]
     [NotifyPropertyChangedFor(nameof(BeginSubText))]
     public partial DateTime? Date { get; set; } = null;
 
@@ -124,37 +110,37 @@ public partial class SetupStageViewModel : StageViewModel, IComparer,
     public ObservableCollection<RegistreeViewModel> Registrees { get; set; } = [];
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(BeginCommand))]
+    [NotifyCanExecuteChangedFor(nameof(GoNextCommand))]
     [NotifyPropertyChangedFor(nameof(Title))]
     public partial bool AllowARanks { get; set; } = true;
     partial void OnAllowARanksChanged(bool value) => ValidateRoster();
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(BeginCommand))]
+    [NotifyCanExecuteChangedFor(nameof(GoNextCommand))]
     [NotifyPropertyChangedFor(nameof(Title))]
     public partial bool AllowBRanks { get; set; } = true;
     partial void OnAllowBRanksChanged(bool value) => ValidateRoster();
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(BeginCommand))]
+    [NotifyCanExecuteChangedFor(nameof(GoNextCommand))]
     [NotifyPropertyChangedFor(nameof(Title))]
     public partial bool AllowCRanks { get; set; } = true;
     partial void OnAllowCRanksChanged(bool value) => ValidateRoster();
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(BeginCommand))]
+    [NotifyCanExecuteChangedFor(nameof(GoNextCommand))]
     [NotifyPropertyChangedFor(nameof(Title))]
     public partial bool AllowDRanks { get; set; } = true;
     partial void OnAllowDRanksChanged(bool value) => ValidateRoster();
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(BeginCommand))]
+    [NotifyCanExecuteChangedFor(nameof(GoNextCommand))]
     [NotifyPropertyChangedFor(nameof(Title))]
     public partial bool AllowERanks { get; set; } = true;
     partial void OnAllowERanksChanged(bool value) => ValidateRoster();
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(BeginCommand))]
+    [NotifyCanExecuteChangedFor(nameof(GoNextCommand))]
     [NotifyPropertyChangedFor(nameof(Title))]
     public partial bool AllowURanks { get; set; } = true;
     partial void OnAllowURanksChanged(bool value) => ValidateRoster();
@@ -165,14 +151,9 @@ public partial class SetupStageViewModel : StageViewModel, IComparer,
 
     #region Next Stage
 
-    [RelayCommand(CanExecute = nameof(CanBegin))]
-    private void Begin()
-    {
-        var players = Registrees.Select(r => PlayerViewModel.FromRegistree(r));
-        Next = new SquadronsStageViewModel(players);
-    }
+    public bool MeetsRequirements => Date is not null && Registrees.Count >= 4 && Registrees.All(r => r.MeetsRequirements);
 
-    public bool CanBegin() => Date is not null && Registrees.Count >= 4 && Registrees.All(r => r.MeetsRequirements);
+    protected override bool CanGoNext() => MeetsRequirements;
 
     public string BeginSubText
     {
@@ -191,43 +172,30 @@ public partial class SetupStageViewModel : StageViewModel, IComparer,
 
     #endregion
 
-    #region Message Handlers
-
-    public void Receive(RequestRegistreeCount message) => message.Reply(Registrees.Count);
-
-    public void Receive(RequestHasChoice message) => message.Reply(HasChoice);
-
-    public void Receive(RequestRoster message) => message.Reply(Registrees);
-
-    #endregion
-
     /// <summary>
     /// Creates brand new settings
     /// </summary>
-    public SetupStageViewModel() : base("Setup")
+    public SetupStageViewModel(IServiceProvider serviceProvider, IMessenger messenger, NavigationService navigationService, StorageService storageService)
+        : base(serviceProvider, messenger, navigationService)
     {
-        Rings = new ObservableCollection<string>(StorageService.ReadRings() ?? []);
+        _storageService = storageService;
+
+        Rings = [.. (_storageService.ReadRings() ?? [])];
         LoadFighters();
         SortedPlayers = new(Registrees);
         SortedPlayers.SortDescriptions.Add(new DataGridComparerSortDescription(this, ListSortDirection.Ascending));
 
-        StrongReferenceMessenger.Default.RegisterAll(this);
-
         Registrees.CollectionChanged += (s, e) =>
         {
             ValidateRoster();
-            StrongReferenceMessenger.Default.Send(new RosterChangedMessage());
+            Send(new RosterChangedMessage());
         };
     }
 
     /// <summary>
-    /// Releases event handlers
+    /// Setup can go straight to squadrons if there are no teams, or go to teams if there are
     /// </summary>
-    protected override void CleanUp()
-    {
-        foreach (var r in Registrees)
-            r.PropertyChanged -= OnRegistreePropertyChanged;
-    }
+    public override IStageTransition GetTransitionToNextStage() => NewTransition<SetupToSquadronsTransition>();
 
     /// <summary>
     /// Converts into a model
@@ -255,46 +223,11 @@ public partial class SetupStageViewModel : StageViewModel, IComparer,
     };
 
     /// <summary>
-    /// Converts from a model
-    /// </summary>
-    public static SetupStageViewModel FromModel(SetupStage model)
-    {
-        var vm = new SetupStageViewModel()
-        {
-            Date = model.Date,
-            GameMode = model.GameMode,
-            Demographic = model.Demographic,
-            SkillLevel = model.SkillLevel,
-            ReyAllowed = model.ReyAllowed,
-            RenAllowed = model.RenAllowed,
-            TanoAllowed = model.TanoAllowed,
-            EventName = model.Event,
-            SubTitle = model.SubTitle,
-            AllowARanks = model.AllowARanks,
-            AllowBRanks = model.AllowBRanks,
-            AllowCRanks = model.AllowCRanks,
-            AllowDRanks = model.AllowDRanks,
-            AllowERanks = model.AllowERanks,
-            AllowURanks = model.AllowURanks,
-            Rings = [.. model.Rings],
-        };
-
-        foreach (var r in model.Registrees)
-            vm.AddPlayer(RegistreeViewModel.FromModel(r));
-
-        vm.ValidateRoster();
-
-        vm.Next = FromModel(model.Next);
-
-        return vm;
-    }
-
-    /// <summary>
     /// Called when the tournament is saved
     /// </summary>
     public override void OnTournamentSaved()
     {
-        StorageService.WriteRings(Rings);
+        _storageService.WriteRings(Rings);
         base.OnTournamentSaved();
     }
 
@@ -357,7 +290,7 @@ public partial class SetupStageViewModel : StageViewModel, IComparer,
 
         try
         {
-            foreach (var f in StorageService.ReadAll<Fighter>())
+            foreach (var f in _storageService.ReadAll<Fighter>())
             {
                 FighterNames.Add(f.Name);
                 FighterLookup[f.Name] = f;
@@ -415,7 +348,7 @@ public partial class SetupStageViewModel : StageViewModel, IComparer,
         {
             if (Registrees.FirstOrDefault(p => p.Guid == fighter.Id) is null)
             {
-                CreateAndAddPlayer(fighter);
+                CreateAndAddRegistreeFromFighter(fighter, UseEffectiveRank);
                 SelectedFighter = string.Empty;
                 FighterSearchText = string.Empty;
             }
@@ -430,15 +363,15 @@ public partial class SetupStageViewModel : StageViewModel, IComparer,
     {
         try
         {
-            var result = await EditDialog(new FighterViewModel(), "New Fighter");
+            var result = await EditDialog(New<FighterViewModel>(), "New Fighter");
             if (result.IsOk)
             {
                 var fighter = result.Item.ToModel();
-                CreateAndAddPlayer(fighter);
+                CreateAndAddRegistreeFromFighter(fighter, UseEffectiveRank);
                 FighterNames.Add(result.Item.FullName);
                 FighterNames = [.. FighterNames.Order()];
                 FighterLookup[result.Item.FullName] = fighter;
-                StorageService.Write(fighter);
+                _storageService.Write(fighter);
                 SelectedFighter = string.Empty;
                 FighterSearchText = string.Empty;
             }
@@ -453,15 +386,25 @@ public partial class SetupStageViewModel : StageViewModel, IComparer,
     /// Edit's a registree's fighter information
     /// </summary>
     [RelayCommand]
-    private static async Task EditPlayer(RegistreeViewModel registree)
+    private async Task EditPlayer(RegistreeViewModel registree)
     {
         try
         {
-            var result = await EditDialog(registree.ToFighterViewModel(), "Edit Fighter");
+            var fighter = New<FighterViewModel>();
+            fighter.Guid = registree.Guid;
+            fighter.OnlineId = registree.OnlineId;
+            fighter.FirstName = registree.FirstName;
+            fighter.LastName = registree.LastName;
+            fighter.Club = registree.Club;
+            fighter.ReyRank = registree.ReyRank;
+            fighter.RenRank = registree.RenRank;
+            fighter.TanoRank = registree.TanoRank;
+
+            var result = await EditDialog(fighter, "Edit Fighter");
             if (result.IsOk)
             {
                 registree.Update(result.Item);
-                StorageService.Write(result.Item.ToModel());
+                _storageService.Write(result.Item.ToModel());
             }
         }
         catch (Exception e)
@@ -471,10 +414,10 @@ public partial class SetupStageViewModel : StageViewModel, IComparer,
     }
 
     /// <summary>
-    /// Removes a player
+    /// Removes a registree
     /// </summary>
     [RelayCommand]
-    private void RemovePlayer(RegistreeViewModel item)
+    private void RemoveRegistree(RegistreeViewModel item)
     {
         Registrees.Remove(item);
         item.PropertyChanged -= OnRegistreePropertyChanged;
@@ -482,23 +425,34 @@ public partial class SetupStageViewModel : StageViewModel, IComparer,
     }
 
     /// <summary>
-    /// Creates a new player view model for the specified fighter, adds it to the collection of players, and updates
+    /// Creates a new registree view model for the specified fighter, adds it to the collection of registrees, and updates
     /// squadron assignments as needed.
     /// </summary>
-    /// <remarks>The returned RegistreeViewModel is added to the Players collection. Squadron assignments are
-    /// updated immediately and whenever the player's rank changes, if automatic updates are enabled.</remarks>
-    protected RegistreeViewModel CreateAndAddPlayer(Fighter fighter)
+    /// <remarks>The returned RegistreeViewModel is added to the Registrees collection. Squadron assignments are
+    /// updated immediately and whenever the registree's rank changes, if automatic updates are enabled.</remarks>
+    protected RegistreeViewModel CreateAndAddRegistreeFromFighter(Fighter fighter, bool usesEffectiveRank = false, WeaponClass weaponOfChoice = WeaponClass.Rey)
     {
-        var player = RegistreeViewModel.FromModel(fighter.ToRegistree(UseEffectiveRank));
-        AddPlayer(player);
-        return player;
+        var registree = New<RegistreeViewModel>();
+        registree.Guid = fighter.Id;
+        registree.OnlineId = fighter.OnlineId;
+        registree.FirstName = fighter.FirstName;
+        registree.LastName = fighter.LastName;
+        registree.Club = fighter.Club;
+        registree.ReyRank = fighter.Rey;
+        registree.RenRank = fighter.Ren;
+        registree.TanoRank = fighter.Tano;
+        registree.UseEffectiveRank = usesEffectiveRank;
+        registree.WeaponOfChoice = weaponOfChoice;
+
+        AddRegistree(registree);
+
+        return registree;
     }
 
     /// <summary>
-    /// Adds a player. Always add a player using this method
+    /// Adds a registree. Always add a registree using this method
     /// </summary>
-    /// <param name="registree"></param>
-    protected void AddPlayer(RegistreeViewModel registree)
+    public void AddRegistree(RegistreeViewModel registree)
     {
         Registrees.Add(registree);
         registree.PropertyChanged += OnRegistreePropertyChanged;
@@ -512,9 +466,9 @@ public partial class SetupStageViewModel : StageViewModel, IComparer,
         if (sender is RegistreeViewModel r && e.PropertyName == nameof(RegistreeViewModel.WeaponOfChoice))
         {
             r.Validate(AllowARanks, AllowBRanks, AllowCRanks, AllowDRanks, AllowERanks, AllowURanks);
-            BeginCommand.NotifyCanExecuteChanged();
+            GoNextCommand.NotifyCanExecuteChanged();
             OnPropertyChanged(nameof(BeginSubText));
-            StrongReferenceMessenger.Default.Send(new RosterChangedMessage());
+            Send(new RosterChangedMessage());
         }
     }
 
@@ -535,11 +489,11 @@ public partial class SetupStageViewModel : StageViewModel, IComparer,
     /// <summary>
     /// Checks each registree to see if they meet the rank requirements
     /// </summary>
-    protected void ValidateRoster()
+    public void ValidateRoster()
     {
         foreach (var r in Registrees)
             r.Validate(AllowARanks, AllowBRanks, AllowCRanks, AllowDRanks, AllowERanks, AllowURanks);
-        BeginCommand.NotifyCanExecuteChanged();
+        GoNextCommand.NotifyCanExecuteChanged();
         OnPropertyChanged(nameof(BeginSubText));
     }
 
@@ -549,7 +503,7 @@ public partial class SetupStageViewModel : StageViewModel, IComparer,
     protected void ValidateRegistree(RegistreeViewModel registree)
     {
         registree.Validate(AllowARanks, AllowBRanks, AllowCRanks, AllowDRanks, AllowERanks, AllowURanks);
-        BeginCommand.NotifyCanExecuteChanged();
+        GoNextCommand.NotifyCanExecuteChanged();
         OnPropertyChanged(nameof(BeginSubText));
     }
 }

@@ -5,7 +5,7 @@
              xmlns:vm="clr-namespace:LightspeedNexus.ViewModels"
 			 xmlns:m="clr-namespace:LightspeedNexus.Models"
 			 xmlns:v="clr-namespace:LightspeedNexus.Views"
-			 xmlns:c="clr-namespace:LightspeedNexus.Controls"
+			 xmlns:c="using:Lightspeed.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			 ClipToBounds="False"
              x:Class="LightspeedNexus.Views.ResultsStageView"
@@ -51,7 +51,7 @@
 					VerticalAlignment="Stretch"
 					HorizontalContentAlignment="Center"
 					VerticalContentAlignment="Center"
-					Command="{Binding CloseCommand}">
+					Command="{Binding GoNextCommand}">
 				<TextBlock Classes="large" Text="Close"/>
 			</Button>
 

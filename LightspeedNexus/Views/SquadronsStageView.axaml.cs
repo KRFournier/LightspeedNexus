@@ -2,7 +2,8 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
-using LightspeedNexus.Controls;
+using Lightspeed.Controls;
+using Lightspeed.ViewModels;
 using LightspeedNexus.ViewModels;
 
 namespace LightspeedNexus.Views;

@@ -5,6 +5,7 @@
              xmlns:vm="clr-namespace:LightspeedNexus.ViewModels"
 			 xmlns:v="clr-namespace:LightspeedNexus.Views"
 			 xmlns:c="clr-namespace:LightspeedNexus.Controls"
+			 xmlns:lslc="using:Lightspeed.Controls"
              mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
 			 ClipToBounds="False"
              x:Class="LightspeedNexus.Views.TournamentView"
@@ -50,27 +51,27 @@
 				<TextBlock Classes="medium" HorizontalAlignment="Center" Text="{Binding Address}"/>
 
 				<!--Value-->
-				<c:LightspeedBorder Classes="small color"
+				<lslc:LightspeedBorder Classes="small color"
 									Padding="6"
 									IsVisible="{Binding IsRanked}">
 					<StackPanel>
 						<TextBlock Classes="small" HorizontalAlignment="Center">Value</TextBlock>
 						<TextBlock Classes="medium" HorizontalAlignment="Center" Text="{Binding Value}"/>
 					</StackPanel>
-				</c:LightspeedBorder>
+				</lslc:LightspeedBorder>
 
 				<!--Initial Rating-->
-				<c:LightspeedBorder Classes="small color"
+				<lslc:LightspeedBorder Classes="small color"
 									Padding="6"
 									IsVisible="{Binding IsRanked}">
 					<StackPanel>
 						<TextBlock Classes="small" HorizontalAlignment="Center">Initial Rating</TextBlock>
 						<TextBlock Classes="medium" HorizontalAlignment="Center" Text="{Binding InitialRank}"/>
 					</StackPanel>
-				</c:LightspeedBorder>
+				</lslc:LightspeedBorder>
 
 				<!--Final Rating-->
-				<c:LightspeedBorder Classes="small color"
+				<lslc:LightspeedBorder Classes="small color"
 									Padding="6"
 									IsVisible="{Binding IsRanked}">
 					<StackPanel>
@@ -82,7 +83,7 @@
 								IsVisible="{Binding FinalRank, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
 						</Panel>
 					</StackPanel>
-				</c:LightspeedBorder>
+				</lslc:LightspeedBorder>
 
 				<!--Save-->
 				<Button Classes="clear focus"

@@ -1,39 +1,33 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Lightspeed.Network;
-using LightspeedNexus.Messages;
-using LightspeedNexus.Networking;
+using Lightspeed.Network.Messages;
+using Lightspeed.ViewModels;
+using LightspeedNexus.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace LightspeedNexus.ViewModels;
 
 public partial class MainViewModel : ViewModelBase,
     IRecipient<NavigatePageMessage>, IRecipient<NavigateHomeMessage>, IRecipient<RequestOpenTournaments>
 {
-    [ObservableProperty]
-    public partial ViewModelBase CurrentPage { get; set; } = new HomeViewModel();
+    private readonly IServiceProvider _serviceProvider;
 
-    public MainViewModel()
+    [ObservableProperty]
+    public partial ViewModelBase CurrentPage { get; set; }
+
+    public MainViewModel(IServiceProvider serviceProvider, IMessenger messenger) : base(serviceProvider, messenger)
     {
-        WeakReferenceMessenger.Default.RegisterAll(this);
+        _serviceProvider = serviceProvider;
+        CurrentPage = _serviceProvider.GetRequiredService<HomeViewModel>();
+        messenger.RegisterAll(this);
     }
 
     #region Message Handlers
 
-    public void Receive(NavigatePageMessage message)
-    {
-        if (CurrentPage is IDisposable d)
-            d.Dispose();
+    public void Receive(NavigatePageMessage message) => CurrentPage = message.Page;
 
-        CurrentPage = message.Page;
-    }
-
-    public void Receive(NavigateHomeMessage message)
-    {
-        if (CurrentPage is IDisposable d)
-            d.Dispose();
-
-        CurrentPage = new HomeViewModel();
-    }
+    public void Receive(NavigateHomeMessage message) => CurrentPage = _serviceProvider.GetRequiredService<HomeViewModel>();
 
     public void Receive(RequestOpenTournaments message)
     {

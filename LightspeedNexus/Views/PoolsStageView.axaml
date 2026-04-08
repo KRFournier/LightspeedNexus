@@ -3,9 +3,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:LightspeedNexus.ViewModels"
-			 xmlns:m="clr-namespace:LightspeedNexus.Models"
 			 xmlns:v="clr-namespace:LightspeedNexus.Views"
-			 xmlns:c="clr-namespace:LightspeedNexus.Controls"
+			 xmlns:lslvm="using:Lightspeed.ViewModels"
+			 xmlns:c="using:Lightspeed.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			 ClipToBounds="False"
              x:Class="LightspeedNexus.Views.PoolsStageView"
@@ -34,7 +34,7 @@
 				</StackPanel>
 			</Button>
 
-			<!--Dengerous! Back Button-->
+			<!--Dangerous! Back Button-->
 			<c:HoldButton Classes="red"
 						  x:Name="WarningBackButton"
 						  HorizontalAlignment="Stretch"
@@ -80,7 +80,7 @@
 					VerticalAlignment="Stretch"
 					HorizontalContentAlignment="Center"
 					VerticalContentAlignment="Center"					
-					Command="{Binding GoToResultsCommand}">
+					Command="{Binding GoNextCommand}">
 				<StackPanel>
 					<StackPanel Orientation="Horizontal"
 								Spacing="10">
@@ -97,7 +97,8 @@
 
 			<ScrollViewer x:Name="PoolsScrollViewer" 
 						  HorizontalScrollBarVisibility="Auto"
-						  VerticalScrollBarVisibility="Hidden">
+						  VerticalScrollBarVisibility="Hidden"
+						  DoubleTapped="PoolsScrollViewer_DoubleTapped">
 				<ItemsControl ItemsSource="{Binding Pools}"
 							  Height="{Binding $parent.Bounds.Height}">
 					<ItemsControl.ItemsPanel>
@@ -125,7 +126,7 @@
 										</ItemsPanelTemplate>
 									</ItemsControl.ItemsPanel>
 									<ItemsControl.ItemTemplate>
-										<DataTemplate DataType="vm:MatchViewModel">
+										<DataTemplate DataType="lslvm:MatchViewModel">
 											<c:SimpleLightspeedBorder Classes="small growcorners"
 																	  Margin="5"
 																	  Padding="0"

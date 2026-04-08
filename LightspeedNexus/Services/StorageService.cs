@@ -3,9 +3,9 @@ using LiteDB;
 
 namespace LightspeedNexus.Services;
 
-public static class StorageService
+public class StorageService
 {
-    public static void RegisterSerializers()
+    public StorageService()
     {
         // DateOnly
         BsonMapper.Global.RegisterType<DateOnly>(
@@ -41,7 +41,7 @@ public static class StorageService
 #if DEBUG
         new(Path.Combine(Dir, "debug_data.db"));
 #else
-        return new LiteDatabase(Path.Combine(Dir, "data.db"));
+        new LiteDatabase(Path.Combine(Dir, "data.db"));
 #endif
 
 
@@ -55,7 +55,7 @@ public static class StorageService
     ///// <summary>
     ///// Writes a document to the database in the specified collection
     ///// </summary>
-    //public static void WriteSettings(BsonDocument document)
+    //public  void WriteSettings(BsonDocument document)
     //{
     //    using var db = GetDatabase();
     //    var collection = db.GetCollection("settings");
@@ -65,7 +65,7 @@ public static class StorageService
     ///// <summary>
     ///// Gets the document with the given id
     ///// </summary>
-    //public static BsonDocument? ReadSettings(BsonValue id)
+    //public  BsonDocument? ReadSettings(BsonValue id)
     //{
     //    using var db = GetDatabase();
     //    var collection = db.GetCollection("settings");
@@ -75,7 +75,7 @@ public static class StorageService
     /// <summary>
     /// Writes a document to the database in the specified collection
     /// </summary>
-    public static void WriteRings(IEnumerable<string> rings)
+    public void WriteRings(IEnumerable<string> rings)
     {
         string[] ringArray = [.. rings];
         if (ringArray.Length > 0 && !string.IsNullOrEmpty(ringArray[0]))
@@ -96,7 +96,7 @@ public static class StorageService
     /// <summary>
     /// Gets the document with the given id
     /// </summary>
-    public static string[]? ReadRings()
+    public string[]? ReadRings()
     {
         using var db = GetDatabase();
         var collection = db.GetCollection("settings");
@@ -110,7 +110,7 @@ public static class StorageService
     /// <summary>
     /// Writes a tournament item, ensuring proper indexes
     /// </summary>
-    public static void WriteTournament(Tournament item)
+    public void WriteTournament(Tournament item)
     {
         using var db = GetDatabase();
         var collection = db.GetCollection<Tournament>(GetCollectionName<Tournament>());
@@ -119,21 +119,21 @@ public static class StorageService
         collection.EnsureIndex("IsCompleted");
     }
 
-    public static Tournament? GetTournament(Guid guid)
+    public Tournament? GetTournament(Guid guid)
     {
         using var db = GetDatabase();
         var collection = db.GetCollection<Tournament>(GetCollectionName<Tournament>());
         return collection.FindOne(t => t.Id == guid);
     }
 
-    public static Tournament[] ReadAllTournaments()
+    public Tournament[] ReadAllTournaments()
     {
         using var db = GetDatabase();
         var collection = db.GetCollection<Tournament>(GetCollectionName<Tournament>());
         return [.. collection.FindAll()];
     }
 
-    public static Tournament[] ReadRecentTournaments()
+    public Tournament[] ReadRecentTournaments()
     {
         using var db = GetDatabase();
         var collection = db.GetCollection<Tournament>(GetCollectionName<Tournament>());
@@ -143,7 +143,7 @@ public static class StorageService
             .ToArray();
     }
 
-    public static int CountTournaments()
+    public int CountTournaments()
     {
         using var db = GetDatabase();
         var collection = db.GetCollection<Tournament>(GetCollectionName<Tournament>());
@@ -158,7 +158,7 @@ public static class StorageService
     /// Writes a bunch of matches
     /// </summary>
     /// <param name="matches"></param>
-    public static void WriteMatches(IEnumerable<Match?> matches)
+    public void WriteMatches(IEnumerable<Match?> matches)
     {
         using var db = GetDatabase();
         var collection = db.GetCollection<Match>(GetCollectionName<Match>());
@@ -168,7 +168,7 @@ public static class StorageService
     /// <summary>
     /// Writes a match item, ensuring proper indexes
     /// </summary>
-    public static void WriteMatch(Match? match)
+    public void WriteMatch(Match? match)
     {
         if (match is not null)
         {
@@ -181,7 +181,7 @@ public static class StorageService
     /// <summary>
     /// Gets the match with the given id
     /// </summary>
-    public static Match? GetMatch(Guid id)
+    public Match? GetMatch(Guid id)
     {
         using var db = GetDatabase();
         var fightersCollection = db.GetCollection<Match>(GetCollectionName<Match>());
@@ -193,7 +193,7 @@ public static class StorageService
     /// <summary>
     /// Counts a type of collection
     /// </summary>
-    public static int Count<T>() where T : CollectionObject
+    public int Count<T>() where T : CollectionObject
     {
         using var db = GetDatabase();
         var collection = db.GetCollection<T>(GetCollectionName<T>());
@@ -203,7 +203,7 @@ public static class StorageService
     /// <summary>
     /// Saves an item
     /// </summary>
-    public static void Write<T>(T item) where T : CollectionObject
+    public void Write<T>(T item) where T : CollectionObject
     {
         using var db = GetDatabase();
         var collection = db.GetCollection<T>(GetCollectionName<T>());
@@ -213,7 +213,7 @@ public static class StorageService
     /// <summary>
     /// Gets all items in the collection
     /// </summary>
-    public static T[] ReadAll<T>() where T : CollectionObject
+    public T[] ReadAll<T>() where T : CollectionObject
     {
         using var db = GetDatabase();
         var fightersCollection = db.GetCollection<T>(GetCollectionName<T>());
@@ -223,7 +223,7 @@ public static class StorageService
     /// <summary>
     /// Gets the item with the given id
     /// </summary>
-    public static T Get<T>(Guid id) where T : CollectionObject
+    public T Get<T>(Guid id) where T : CollectionObject
     {
         using var db = GetDatabase();
         var fightersCollection = db.GetCollection<T>(GetCollectionName<T>());
@@ -233,7 +233,7 @@ public static class StorageService
     /// <summary>
     /// Deletes the given item
     /// </summary>
-    public static void Delete<T>(T item) where T : CollectionObject
+    public void Delete<T>(T item) where T : CollectionObject
     {
         using var db = GetDatabase();
         var fightersCollection = db.GetCollection<T>(GetCollectionName<T>());
@@ -243,7 +243,7 @@ public static class StorageService
     /// <summary>
     /// Deletes the given item
     /// </summary>
-    public static void Delete<T>(Guid id) where T : CollectionObject
+    public void Delete<T>(Guid id) where T : CollectionObject
     {
         using var db = GetDatabase();
         var fightersCollection = db.GetCollection<T>(GetCollectionName<T>());

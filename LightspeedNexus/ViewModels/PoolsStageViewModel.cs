@@ -1,20 +1,16 @@
-﻿using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
-using CommunityToolkit.Mvvm.Messaging.Messages;
+﻿using CommunityToolkit.Mvvm.Messaging;
 using LightspeedNexus.Models;
+using LightspeedNexus.Services;
+using LightspeedNexus.Transitions;
 using System.Collections.ObjectModel;
 
 namespace LightspeedNexus.ViewModels;
 
-#region Messages
-
-public sealed class RequestPoolsMessage : RequestMessage<PoolsStageViewModel> { }
-
-#endregion
-
-public partial class PoolsStageViewModel : StageViewModel, IRecipient<RequestPoolsMessage>
+public partial class PoolsStageViewModel(IServiceProvider serviceProvider, IMessenger messenger, NavigationService navigationService) : StageViewModel(serviceProvider, messenger, navigationService)
 {
     #region Properties
+
+    public override string Name => "Pools";
 
     public ObservableCollection<PoolViewModel> Pools { get; set; } = [];
 
@@ -24,27 +20,9 @@ public partial class PoolsStageViewModel : StageViewModel, IRecipient<RequestPoo
 
     #endregion
 
-    #region Commands
+    protected override bool CanGoNext() => IsCompleted;
 
-    /// <summary>
-    /// Go to the Pools Stage
-    /// </summary>
-    [RelayCommand(CanExecute = nameof(CanGoToResults))]
-    private void GoToResults() => Next = SeedingStageViewModel.FromPools(this);
-    public bool CanGoToResults() => IsCompleted;
-
-    #endregion
-
-    #region Message Handlers
-
-    public void Receive(RequestPoolsMessage message) => message.Reply(this);
-
-    #endregion
-
-    public PoolsStageViewModel() : base("Pools")
-    {
-        StrongReferenceMessenger.Default.RegisterAll(this);
-    }
+    public override IStageTransition GetTransitionToNextStage() => New<PoolsToSeedTransition>();
 
     public override PoolsStage ToModel() => new()
     {
@@ -52,24 +30,7 @@ public partial class PoolsStageViewModel : StageViewModel, IRecipient<RequestPoo
         Next = Next?.ToModel()
     };
 
-    public static PoolsStageViewModel FromModel(PoolsStage model)
-    {
-        var stage = new PoolsStageViewModel();
-        foreach (var pool in model.Pools)
-            stage.AddPool(PoolViewModel.FromModel(pool));
-        stage.Next = FromModel(model.Next);
-        return stage;
-    }
-
-    public static PoolsStageViewModel FromSquadrons(IEnumerable<SquadronViewModel> sqaudrons)
-    {
-        var stage = new PoolsStageViewModel();
-        foreach (var squadron in sqaudrons)
-            stage.AddPool(PoolViewModel.FromSquadron(squadron));
-        return stage;
-    }
-
-    protected void AddPool(PoolViewModel pool)
+    public void AddPool(PoolViewModel pool)
     {
         Pools.Add(pool);
         pool.MatchGroup.PropertyChanged += (_, e) =>
@@ -79,12 +40,12 @@ public partial class PoolsStageViewModel : StageViewModel, IRecipient<RequestPoo
             else if (e.PropertyName == nameof(MatchGroupViewModel.IsCompleted))
             {
                 OnPropertyChanged(nameof(IsCompleted));
-                GoToResultsCommand.NotifyCanExecuteChanged();
+                GoNextCommand.NotifyCanExecuteChanged();
             }
         };
         OnPropertyChanged(nameof(IsStarted));
         OnPropertyChanged(nameof(IsCompleted));
-        GoToResultsCommand.NotifyCanExecuteChanged();
+        GoNextCommand.NotifyCanExecuteChanged();
     }
 
     public override void OnTournamentSaved()

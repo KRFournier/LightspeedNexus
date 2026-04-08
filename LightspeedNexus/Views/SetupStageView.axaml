@@ -5,7 +5,7 @@
 			 xmlns:lsl="using:Lightspeed"
              xmlns:vm="clr-namespace:LightspeedNexus.ViewModels"
 			 xmlns:v="clr-namespace:LightspeedNexus.Views"
-			 xmlns:c="clr-namespace:LightspeedNexus.Controls"
+			 xmlns:c="using:Lightspeed.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			 ClipToBounds="False"
              x:Class="LightspeedNexus.Views.SetupStageView"
@@ -32,7 +32,7 @@
 					VerticalAlignment="Stretch"
 					HorizontalContentAlignment="Center"
 					VerticalContentAlignment="Center"
-					Command="{Binding BeginCommand}">
+					Command="{Binding GoNextCommand}">
 				<StackPanel>
 					<StackPanel Orientation="Horizontal"
 								Spacing="10">
@@ -351,7 +351,7 @@
 									</StackPanel>
 									<Button Classes="clear"
 											Grid.Column="6"
-											Command="{Binding #Root.((vm:SetupStageViewModel)DataContext).RemovePlayerCommand}"
+											Command="{Binding #Root.((vm:SetupStageViewModel)DataContext).RemoveRegistreeCommand}"
 											CommandParameter="{Binding .}"
 											HorizontalAlignment="Right"
 											VerticalAlignment="Center">

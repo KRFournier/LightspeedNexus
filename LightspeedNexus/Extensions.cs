@@ -1,46 +1,23 @@
-﻿using Lightspeed.Network;
+﻿using LightspeedNexus.Models;
 
 namespace LightspeedNexus;
 
 public static class Extensions
 {
-    public static string? ToSaberScore(this ActionType type) => type switch
+    /// <summary>
+    /// Convenient method to convert this Fighter into a Registree.
+    /// </summary>
+    public static Registree ToRegistree(this Fighter fighter, bool usesEffectiveRank = false, WeaponClass weaponOfChoice = WeaponClass.Rey) => new()
     {
-        ActionType.Card => "T",
-        ActionType.Clean => "C",
-        ActionType.Conceded => "H",
-        ActionType.Disarm => "D",
-        ActionType.FirstContact => "F",
-        ActionType.Headshot => "A",
-        ActionType.Indirect => "I",
-        ActionType.OutOfBounds => "O",
-        ActionType.Penalty => "S",
-        ActionType.Priority => "P",
-        ActionType.HeadshotOverride => "V",
-        _ => null,
-    };
-
-    public static IEnumerable<string> ToSaberScore(this IEnumerable<Lightspeed.Action> actions) => actions
-            .Select(a => a.Type.ToSaberScore())
-            .Where(s => s != null)!;
-
-    public static ActionState ToState(this Lightspeed.Action action) => new()
-    {
-        Id = action.Id,
-        Actor = action.Actor,
-        Scorer = action.Scorer,
-        Points = action.Points,
-        Type = action.Type,
-        SubType = action.SubType
-    };
-
-    public static Lightspeed.Action ToModel(this ActionState state) => new()
-    {
-        Id = state.Id,
-        Actor = state.Actor,
-        Scorer = state.Scorer,
-        Points = state.Points,
-        Type = state.Type,
-        SubType = state.SubType
+        Id = fighter.Id,
+        OnlineId = fighter.OnlineId,
+        FirstName = fighter.FirstName,
+        LastName = fighter.LastName,
+        Club = fighter.Club,
+        Rey = fighter.Rey,
+        Ren = fighter.Ren,
+        Tano = fighter.Tano,
+        UsesEffectiveRank = usesEffectiveRank,
+        WeaponOfChoice = weaponOfChoice
     };
 }

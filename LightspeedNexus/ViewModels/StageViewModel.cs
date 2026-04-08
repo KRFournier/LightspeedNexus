@@ -1,23 +1,24 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using LightspeedNexus.Messages;
+using Lightspeed.ViewModels;
 using LightspeedNexus.Models;
+using LightspeedNexus.Services;
+using LightspeedNexus.Transitions;
 
 namespace LightspeedNexus.ViewModels;
 
 /// <summary>
 /// A tournament stage. Base class for all stages
 /// </summary>
-public abstract partial class StageViewModel(string name) : ViewModelBase, IDisposable
+public abstract partial class StageViewModel(IServiceProvider serviceProvider, IMessenger messenger, NavigationService navigationService) : ViewModelBase(serviceProvider, messenger)
 {
     #region Properties
 
     /// <summary>
     /// The name of this stage
     /// </summary>
-    [ObservableProperty]
-    public partial string Name { get; set; } = name;
+    public abstract string Name { get; }
 
     /// <summary>
     /// The next stage of the tournament. Setting this automatically
@@ -25,14 +26,6 @@ public abstract partial class StageViewModel(string name) : ViewModelBase, IDisp
     /// </summary>
     [ObservableProperty]
     public partial StageViewModel? Next { get; set; }
-    partial void OnNextChanged(StageViewModel? value)
-    {
-        if (value is not null)
-        {
-            value.Previous = this;
-            StrongReferenceMessenger.Default.Send(new NextStageMessage(this, value));
-        }
-    }
 
     /// <summary>
     /// The previous stage of the tournament
@@ -63,40 +56,59 @@ public abstract partial class StageViewModel(string name) : ViewModelBase, IDisp
     public abstract Stage ToModel();
 
     /// <summary>
-    /// Converts from a model
-    /// </summary>
-    public static StageViewModel? FromModel(Stage? model) => model switch
-    {
-        SetupStage ss => SetupStageViewModel.FromModel(ss),
-        SquadronsStage sqs => SquadronsStageViewModel.FromModel(sqs),
-        PoolsStage ps => PoolsStageViewModel.FromModel(ps),
-        SeedingStage sds => SeedingStageViewModel.FromModel(sds),
-        BracketStage bs => BracketStageViewModel.FromModel(bs),
-        ResultsStage rs => ResultsStageViewModel.FromModel(rs),
-        null => null,
-        _ => throw new NotSupportedException("Unsupported stage type"),
-    };
-
-    /// <summary>
     /// Called when the tournament is saved
     /// </summary>
     public virtual void OnTournamentSaved() => Next?.OnTournamentSaved();
 
     /// <summary>
-    /// Unregisters this stage's message handlers
+    /// Helper function to get transitions from the service provider
     /// </summary>
-    public void Dispose()
+    protected T NewTransition<T>() where T : class, IStageTransition => New<T>();
+
+    /// <summary>
+    /// Looks for the given previous stage. Returns null if not found
+    /// </summary>
+    public T? FindPreviousStage<T>() where T : StageViewModel
     {
-        Next?.Dispose();
-        StrongReferenceMessenger.Default.UnregisterAll(this);
-        CleanUp();
-        GC.SuppressFinalize(this);
+        var prev = Previous;
+        while (prev is not null)
+        {
+            if (prev is T target)
+                return target;
+            prev = prev.Previous;
+        }
+        return null;
+    }
+
+    #region Next Navigation
+
+    /// <summary>
+    /// Returns to the previous stage
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanGoNext))]
+    private void GoNext()
+    {
+        OnGoingNext();
+        navigationService.NextStage(this);
     }
 
     /// <summary>
-    /// Allows for cleanup when disposing
+    /// Determines whether navigation to a previous item is possible.
     /// </summary>
-    protected virtual void CleanUp() { }
+    protected virtual bool CanGoNext() => true;
+
+    /// <summary>
+    /// Called before going back to the previous stage
+    /// </summary>
+    protected virtual void OnGoingNext() { }
+
+    /// <summary>
+    /// While stages don't know details about the next stage, they do know what the next stage ought to be
+    /// based on their current state. This method returns a transition that can be used to generate the next stage.
+    /// </summary>
+    public abstract IStageTransition GetTransitionToNextStage();
+
+    #endregion
 
     #region Back Navigation
 
@@ -107,7 +119,7 @@ public abstract partial class StageViewModel(string name) : ViewModelBase, IDisp
     private void GoBack()
     {
         OnGoingBack();
-        StrongReferenceMessenger.Default.Send(new PreviousStageMessage(this, Previous));
+        navigationService.PreviousStage(this);
     }
 
     /// <summary>

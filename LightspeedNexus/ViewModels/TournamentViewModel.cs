@@ -1,43 +1,44 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using CommunityToolkit.Mvvm.Messaging.Messages;
 using Lightspeed.Network;
-using LightspeedNexus.Messages;
+using Lightspeed.Network.Messages;
+using Lightspeed.ViewModels;
 using LightspeedNexus.Models;
 using LightspeedNexus.Networking;
 using LightspeedNexus.Services;
-using System.Text.Json.Nodes;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace LightspeedNexus.ViewModels;
 
 #region Messages
 
-public sealed class RequestIsRanked : RequestMessage<bool?> { }
-public sealed class RequestFinalGrading : RequestMessage<Grading?> { }
-public sealed class RequestTournamentValue : RequestMessage<int> { }
+/// <summary>
+/// Send when it's time to save everything and close this tournament
+/// </summary>
 public sealed class SaveAndCloseMessage { }
-public sealed class RequestSubmittable : RequestMessage<bool> { }
-public sealed class RequestSaberScoreJson(string signature) : RequestMessage<string>
-{
-    public readonly string Signature = signature;
-}
+
+/// <summary>
+/// Sent when a view model thinks it's a good idea to save the tournament
+/// </summary>
+public sealed class SaveMessage { }
 
 #endregion
 
-public partial class TournamentViewModel : ViewModelBase, IDisposable,
-    IRecipient<NextStageMessage>, IRecipient<PreviousStageMessage>,
+public partial class TournamentViewModel : ViewModelBase,
     IRecipient<RosterChangedMessage>, IRecipient<BracketRoundCompleted>,
-    IRecipient<RequestIsRanked>, IRecipient<RequestFinalGrading>,
-    IRecipient<RequestTournamentValue>, IRecipient<SaveAndCloseMessage>,
-    IRecipient<RequestSubmittable>, IRecipient<RequestSaberScoreJson>
+    IRecipient<SaveAndCloseMessage>, IRecipient<SaveMessage>,
+    IRecipient<StageChangedMessage>, IRecipient<NetworkConnectionsChangedMessage>, IRecipient<RequestActiveMatchGroups>
 {
+    private readonly StorageService _storageService;
+    private readonly NavigationService _navigationService;
+
     #region Properties
 
     /// <summary>
     /// The tournament's unique identifier
     /// </summary>
-    public Guid Guid { get; protected set; } = Guid.NewGuid();
+    public Guid Guid { get; set; } = Guid.NewGuid();
 
     /// <summary>
     /// The initial stage of the tournament
@@ -105,36 +106,14 @@ public partial class TournamentViewModel : ViewModelBase, IDisposable,
     private void GoHome()
     {
         Save();
-        WeakReferenceMessenger.Default.Send<NavigateHomeMessage>();
+        _navigationService.NavigateToHome();
     }
 
     #endregion
 
     #region Message Handlers
 
-    public void Receive(NextStageMessage message)
-    {
-        OnPropertyChanged(nameof(PreviousStages));
-        OnPropertyChanged(nameof(CurrentStage));
-        OnPropertyChanged(nameof(Value));
-        OnPropertyChanged(nameof(InitialRank));
-        OnPropertyChanged(nameof(FinalRank));
-        Save();
-    }
-
-    public void Receive(PreviousStageMessage message)
-    {
-        message.CurrentStage?.Dispose();
-        message.PreviousStage?.Next = null;
-        OnPropertyChanged(nameof(PreviousStages));
-        OnPropertyChanged(nameof(CurrentStage));
-        OnPropertyChanged(nameof(Value));
-        OnPropertyChanged(nameof(InitialRank));
-        OnPropertyChanged(nameof(FinalRank));
-        Save();
-    }
-
-    public void Receive(RosterChangedMessage message)
+    public void Receive(RosterChangedMessage _)
     {
         OnPropertyChanged(nameof(IsRanked));
         OnPropertyChanged(nameof(InitialRank));
@@ -142,59 +121,88 @@ public partial class TournamentViewModel : ViewModelBase, IDisposable,
         OnPropertyChanged(nameof(FinalRank));
     }
 
-    public void Receive(BracketRoundCompleted message) => OnPropertyChanged(nameof(FinalRank));
+    public void Receive(BracketRoundCompleted _) => OnPropertyChanged(nameof(FinalRank));
 
-    public void Receive(RequestIsRanked message) => message.Reply(IsRanked);
+    /// <summary>
+    /// Saves the tournament and goes back to the main menu. This is typically sent by the last stage when it determines that the tournament is completed,
+    /// but it can be sent by any stage that thinks it's a good idea to save and close.
+    /// </summary>
+    public void Receive(SaveAndCloseMessage _) => GoHome();
 
-    public void Receive(RequestFinalGrading message) => message.Reply(GetFinalGrading());
+    /// <summary>
+    /// Saves the whole tournament. This can be triggered by any stage when it thinks it's a good idea to save, such as after completing a round or making a big change to the roster.
+    /// The tournament view model doesn't need to know about the stages to allow them to trigger saves, which is nice for separation of concerns.
+    /// </summary>
+    public void Receive(SaveMessage _) => Save();
 
-    public void Receive(RequestTournamentValue message) => message.Reply(Value);
-
-    public void Receive(SaveAndCloseMessage message) => GoHome();
-
-    public void Receive(RequestSubmittable message)
+    /// <summary>
+    /// Notification that we have moved to a new stage. This is sent by the navigation service whenever we navigate to a new stage, and lets us update the UI to reflect the new stage.
+    /// </summary>
+    public void Receive(StageChangedMessage message)
     {
-        bool canSubmit = SetupStage is not null && SetupStage.GameMode == GameMode.Standard;
-        message.Reply(canSubmit);
+        OnPropertyChanged(nameof(PreviousStages));
+        OnPropertyChanged(nameof(CurrentStage));
+        OnPropertyChanged(nameof(Value));
+        OnPropertyChanged(nameof(InitialRank));
+        OnPropertyChanged(nameof(FinalRank));
     }
 
-    public void Receive(RequestSaberScoreJson message)
+    /// <summary>
+    /// Notification that the number of network connections has changed.
+    /// </summary>
+    public void Receive(NetworkConnectionsChangedMessage _) => OnPropertyChanged(nameof(Connections));
+
+    /// <summary>
+    /// Handles the network's request for the active match groups of this tournament. We use the Guid as a token to ensure we only respond to requests for this tournament.
+    /// This is used by the network service to know which matches to send to connected clients.
+    /// </summary>
+    public void Receive(RequestActiveMatchGroups message)
     {
-        var node = ToSaberSportsSubmission();
-        node["signature"] = message.Signature;
-        message.Reply(node.ToJsonString());
+        MatchGroupsState result = new();
+        var bracket = FindStage<BracketStageViewModel>();
+        if (bracket is not null)
+        {
+            result = new()
+            {
+                Type = "Bracket",
+                Groups = [.. bracket.GetMatchGroupsStates()]
+            };
+        }
+        else
+        {
+            var pools = FindStage<PoolsStageViewModel>();
+            if (pools is not null)
+            {
+                result = new()
+                {
+                    Type = "Pool",
+                    Groups = [.. pools.Pools.Select(p => p.ToState())]
+                };
+            }
+        }
+        message.Reply(result);
     }
 
     #endregion
 
-    private readonly bool _loading = true;
-
     /// <summary>
     /// Creates a brand new tournament
     /// </summary>
-    public TournamentViewModel()
+    public TournamentViewModel(IServiceProvider serviceProvider, IMessenger messenger, StorageService storageService, NavigationService navigationService)
+        : base(serviceProvider, messenger)
     {
-        SetupStage = new();
-        StrongReferenceMessenger.Default.RegisterAll(this);
-        _loading = false;
+        _storageService = storageService;
+        _navigationService = navigationService;
 
-        SetupNetworkListeners();
-    }
+        SetupStage = serviceProvider.GetRequiredService<SetupStageViewModel>();
 
-    /// <summary>
-    /// Loads an existing tournament
-    /// </summary>
-    public TournamentViewModel(Tournament model)
-    {
-        Guid = model.Id;
-        StrongReferenceMessenger.Default.RegisterAll(this);
-        SetupStage = SetupStageViewModel.FromModel(model.SetupStage);
-
-        // have to set this manually since the stages are loaded in bulk and won't trigger the property changed events
-        FindStage<BracketStageViewModel>()?.IsRanked = IsRanked;
-        _loading = false;
-
-        SetupNetworkListeners();
+        messenger.Register<RosterChangedMessage>(this);
+        messenger.Register<BracketRoundCompleted>(this);
+        messenger.Register<SaveAndCloseMessage>(this);
+        messenger.Register<SaveMessage>(this);
+        messenger.Register<StageChangedMessage>(this);
+        messenger.Register<NetworkConnectionsChangedMessage>(this);
+        messenger.Register<RequestActiveMatchGroups, Guid>(this, Guid);
     }
 
     /// <summary>
@@ -212,21 +220,11 @@ public partial class TournamentViewModel : ViewModelBase, IDisposable,
     /// </summary>
     public void Save()
     {
-        if (!_loading && SetupStage.CanBegin())
+        if (SetupStage.MeetsRequirements)
         {
-            StorageService.WriteTournament(ToModel());
+            _storageService.WriteTournament(ToModel());
             SetupStage.OnTournamentSaved();
         }
-    }
-
-    /// <summary>
-    /// Cleans up messenger registrations
-    /// </summary>
-    public void Dispose()
-    {
-        StrongReferenceMessenger.Default.UnregisterAll(this);
-        SetupStage.Dispose();
-        GC.SuppressFinalize(this);
     }
 
     #region Value and Rank
@@ -236,6 +234,9 @@ public partial class TournamentViewModel : ViewModelBase, IDisposable,
     /// </summary>
     public bool IsRanked => SetupStage.GameMode == GameMode.Standard && GradingsChart.IsRankable(SetupStage.Registrees.Count);
 
+    /// <summary>
+    /// Indicates which players are eligible for promotion
+    /// </summary>
     [ObservableProperty]
     public partial string? TopRanked { get; protected set; }
 
@@ -282,7 +283,7 @@ public partial class TournamentViewModel : ViewModelBase, IDisposable,
     /// Finds the grading that corresponds to the tournament's final rank, or null if it can't be determined
     /// </summary>
     /// <returns></returns>
-    protected Grading? GetFinalGrading()
+    public Grading? GetFinalGrading()
     {
         int topX = GradingsChart.GetTopX(SetupStage.Registrees.Count);
         if (topX > 0)
@@ -305,88 +306,11 @@ public partial class TournamentViewModel : ViewModelBase, IDisposable,
 
     #endregion
 
-    #region Saber Sports
-
-    /// <summary>
-    /// Creates the json for submitting the tournament to saber-sports
-    /// </summary>
-    public JsonNode ToSaberSportsSubmission()
-    {
-        PoolsStageViewModel pools = FindStage<PoolsStageViewModel>() ??
-            throw new InvalidOperationException("Cannot create Saber Sports submission for tournament without pools stage.");
-        BracketStageViewModel bracket = FindStage<BracketStageViewModel>() ??
-            throw new InvalidOperationException("Cannot create Saber Sports submission for tournament without bracket stage.");
-        ResultsStageViewModel results = FindStage<ResultsStageViewModel>() ??
-            throw new InvalidOperationException("Cannot create Saber Sports submission for tournament without results stage.");
-
-        var rounds = new JsonArray();
-        for (int i = 0; i < pools.Pools.Count; i++)
-            rounds.Add(pools.Pools[i].ToSaberSportsSubmission(i));
-        rounds.Add(bracket.ToSaberSportsSubmission());
-
-        var node = new JsonObject
-        {
-            ["uuid"] = $"lsn{Guid}",
-            ["title"] = SetupStage.EventName is not null ? $"{SetupStage.EventName} {SetupStage.Title}" : SetupStage.Title,
-            ["date"] = SetupStage.Date?.ToString("yyyy-MM-dd"),
-            ["gender"] = SetupStage.Demographic switch { Demographic.Women => "women", Demographic.Cadet => "cadet", _ => "mixed" },
-            ["level"] = SetupStage.ReyAllowed && !SetupStage.RenAllowed && !SetupStage.TanoAllowed ? "rey" :
-                        !SetupStage.ReyAllowed && SetupStage.RenAllowed && !SetupStage.TanoAllowed ? "ren" : "mixed",
-            ["completed"] = CurrentStage.IsTournamentCompleted,
-            ["participants"] = new JsonArray([.. results.Placements.Select(p => p.ToSaberSportsSubmission())]),
-            ["rounds"] = rounds
-        };
-        return node;
-    }
-
-    #endregion
-
     #region Networking
 
     public static int Connections => NetworkService.Connections;
 
     public static string? Address => NetworkService.GetIPAddress();
-
-    /// <summary>
-    /// Sets up handlers for messages that come from the network service
-    /// </summary>
-    private void SetupNetworkListeners()
-    {
-        WeakReferenceMessenger.Default.Register<NetworkConnectionsChangedMessage>(this, (_, _) => OnPropertyChanged(nameof(Connections)));
-
-        // returns the active match groups of this tournament. We use the Guid as a token
-        // to ensure we only respond to requests for this tournament
-        WeakReferenceMessenger.Default.Register<RequestActiveMatchGroups, Guid>(this, Guid,
-            (r, m) =>
-            {
-                MatchGroupsState result = new();
-
-                var bracket = FindStage<BracketStageViewModel>();
-                if (bracket is not null)
-                {
-                    result = new()
-                    {
-                        Type = "Bracket",
-                        Groups = [.. bracket.GetMatchGroupsState()]
-                    };
-                }
-                else
-                {
-                    var pools = FindStage<PoolsStageViewModel>();
-                    if (pools is not null)
-                    {
-                        result = new()
-                        {
-                            Type = "Pool",
-                            Groups = [.. pools.Pools.Select(p => p.ToState())]
-                        };
-                    }
-                }
-
-                m.Reply(result);
-            }
-        );
-    }
 
     #endregion
 }
