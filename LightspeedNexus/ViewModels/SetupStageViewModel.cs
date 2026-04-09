@@ -35,7 +35,6 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(GoNextCommand))]
-    [NotifyPropertyChangedFor(nameof(BeginSubText))]
     public partial DateTime? Date { get; set; } = null;
 
     [ObservableProperty]
@@ -151,24 +150,13 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
 
     #region Next Stage
 
-    public bool MeetsRequirements => Date is not null && Registrees.Count >= 4 && Registrees.All(r => r.MeetsRequirements);
+    public bool MeetsRequirements => !string.IsNullOrEmpty(EventName) && Date is not null && Registrees.Count >= 4 && Registrees.All(r => r.MeetsRequirements);
 
     protected override bool CanGoNext() => MeetsRequirements;
 
-    public string BeginSubText
-    {
-        get
-        {
-            if (Date is null)
-                return "Set a date.";
-            else if (Registrees.Count < 4)
-                return $"Add {4 - Registrees.Count} more player{(Registrees.Count == 3 ? "" : "s")}.";
-            else if (Registrees.Any(r => !r.MeetsRequirements))
-                return "Meet rank requirements.";
+    public bool MeetsCountRequirement => Registrees.Count >= 4;
 
-            return string.Empty;
-        }
-    }
+    public string CountRequirement => $"Add {4 - Registrees.Count} more player{(Registrees.Count == 3 ? "" : "s")}.";
 
     #endregion
 
@@ -467,7 +455,8 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
         {
             r.Validate(AllowARanks, AllowBRanks, AllowCRanks, AllowDRanks, AllowERanks, AllowURanks);
             GoNextCommand.NotifyCanExecuteChanged();
-            OnPropertyChanged(nameof(BeginSubText));
+            OnPropertyChanged(nameof(CountRequirement));
+            OnPropertyChanged(nameof(MeetsCountRequirement));
             Send(new RosterChangedMessage());
         }
     }
@@ -494,7 +483,8 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
         foreach (var r in Registrees)
             r.Validate(AllowARanks, AllowBRanks, AllowCRanks, AllowDRanks, AllowERanks, AllowURanks);
         GoNextCommand.NotifyCanExecuteChanged();
-        OnPropertyChanged(nameof(BeginSubText));
+        OnPropertyChanged(nameof(CountRequirement));
+        OnPropertyChanged(nameof(MeetsCountRequirement));
     }
 
     /// <summary>
@@ -504,6 +494,7 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
     {
         registree.Validate(AllowARanks, AllowBRanks, AllowCRanks, AllowDRanks, AllowERanks, AllowURanks);
         GoNextCommand.NotifyCanExecuteChanged();
-        OnPropertyChanged(nameof(BeginSubText));
+        OnPropertyChanged(nameof(CountRequirement));
+        OnPropertyChanged(nameof(MeetsCountRequirement));
     }
 }

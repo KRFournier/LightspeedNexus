@@ -13,6 +13,12 @@
 	<Grid RowDefinitions="Auto,32,*"
 		  Margin="16">
 
+		<TextBlock HorizontalAlignment="Right"
+				   VerticalAlignment="Bottom"
+				   Grid.RowSpan="3"
+				   Classes="info small"
+				   Text="{Binding Version}"/>
+
 		<!--Title-->
 		<Viewbox ClipToBounds="False">
 			<StackPanel Orientation="Horizontal"

@@ -33,16 +33,11 @@
 					HorizontalContentAlignment="Center"
 					VerticalContentAlignment="Center"
 					Command="{Binding GoNextCommand}">
-				<StackPanel>
-					<StackPanel Orientation="Horizontal"
-								Spacing="10">
-						<TextBlock Classes="large"
-								   Text="Begin"/>
-						<PathIcon Data="{StaticResource arrow_right_regular}"/>
-					</StackPanel>
-					<TextBlock Classes="info"
-							   IsVisible="{Binding BeginSubText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
-							   Text="{Binding BeginSubText}"/>
+				<StackPanel Orientation="Horizontal"
+							Spacing="10">
+					<TextBlock Classes="large"
+								Text="Begin"/>
+					<PathIcon Data="{StaticResource arrow_right_regular}"/>
 				</StackPanel>
 			</Button>
 		</Grid>
@@ -176,12 +171,13 @@
 				<!--Additional Info-->
 				<Grid ColumnDefinitions="Auto,10,*,10,Auto,10,Auto,10,Auto,10,*">
 									
-					<!--Subtitle-->
+					<!--Event Name-->
 					<TextBlock Grid.Column="0"
 							   VerticalAlignment="Center"
 							   Text="Event"/>
 					<TextBox Grid.Column="2"
 							 VerticalContentAlignment="Center"
+							 Classes.required="{Binding EventName, Converter={x:Static ObjectConverters.IsNull}}"
 							 Text="{Binding EventName}"/>
 
 					<!--Date-->
@@ -189,6 +185,7 @@
 							   VerticalAlignment="Center"
 							   Text="When"/>
 					<CalendarDatePicker Grid.Column="6"
+										Classes.required="{Binding Date, Converter={x:Static ObjectConverters.IsNull}}"
 										SelectedDate="{Binding Date}"/>
 					
 					<!--Subtitle-->
@@ -197,7 +194,7 @@
 							   Text="Tagline"/>
 					<TextBox Grid.Column="10"
 							 VerticalContentAlignment="Center"
-							 Watermark="Additional Description"
+							 PlaceholderText="Additional Description"
 							 Text="{Binding SubTitle}"/>
 				</Grid>
 			
@@ -208,7 +205,7 @@
 							   Text="Rings"/>
 					<TextBox Grid.Column="2"
 							 VerticalContentAlignment="Center"
-							 Watermark="Comma separated list, e.g., Red, Blue, Green"
+							 PlaceholderText="Comma separated list, e.g., Red, Blue, Green"
 							 Text="{Binding Rings, Converter={StaticResource CommaList}}"/>
 				</Grid>
 		
@@ -217,7 +214,7 @@
 		</c:LightspeedBorder>
 		
 		<!--Roster-->
-		<Grid Grid.Row="4" RowDefinitions="Auto,10,*">
+		<Grid Grid.Row="4" RowDefinitions="Auto,10,*,Auto">
 
 			<Grid ColumnDefinitions="*,10,Auto,10,Auto"
 				  RowDefinitions="Auto,10,Auto">
@@ -234,7 +231,7 @@
 								 ItemsSource="{Binding FighterNames}"
 								 SelectedItem="{Binding SelectedFighter}"
 								 Text="{Binding FighterSearchText}"
-								 Watermark="Search existing fighters..."
+								 PlaceholderText="Search existing fighters..."
 								 IsTextCompletionEnabled="True">
 					<AutoCompleteBox.KeyBindings>
 						<KeyBinding Gesture="Enter"
@@ -261,9 +258,9 @@
 						  Content="Use Balanced Ranks"
 						  ToolTip.Tip="When enabled, the players' selected weapon rank is adjusted to account for their highest recorded rank."/>
 			</Grid>
-			
+
 			<!-- Players -->
-			<ScrollViewer Grid.Row="4">
+			<ScrollViewer Grid.Row="2">
 				<ItemsControl ItemsSource="{Binding SortedPlayers}">
 					<ItemsControl.ItemsPanel>
 						<ItemsPanelTemplate>
@@ -362,7 +359,15 @@
 						</DataTemplate>
 					</ItemsControl.ItemTemplate>
 				</ItemsControl>
-			</ScrollViewer>
+			</ScrollViewer>			
+			
+			<!-- Requirement Check -->
+			<TextBlock Grid.Row="3" Classes="large"
+					   Foreground="{StaticResource Orange}"
+					   Margin="0,10,0,0"
+					   HorizontalAlignment="Center"
+					   IsVisible="{Binding !MeetsCountRequirement}"
+					   Text="{Binding CountRequirement}"/>
 
 		</Grid>
 		

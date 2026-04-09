@@ -2,7 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
-using Avalonia.Utilities;
+using Lightspeed.Utilities;
 
 namespace LightspeedNexus.Controls;
 
@@ -124,7 +124,7 @@ public class BracketLines : Control
                 var borderThickness = LineThickness;
 
                 if (UseLayoutRounding)
-                    borderThickness = LayoutHelper.RoundLayoutThickness(borderThickness, _scale, _scale);
+                    borderThickness = LayoutHelper.RoundLayoutThickness(borderThickness, _scale);
 
                 _layoutThickness = borderThickness;
             }

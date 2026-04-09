@@ -19,6 +19,8 @@ public partial class HomeViewModel : ViewModelBase
 
     public bool HasTournaments { get; set; } = false;
 
+    public static string? Version => System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString();
+
     public HomeViewModel(IServiceProvider serviceProvider, IMessenger messenger, StorageService storageService, SaberSportsService saberSportsService,
         NavigationService navigationService, ActiveTournamentService activeTournamentService)
         : base(serviceProvider, messenger)

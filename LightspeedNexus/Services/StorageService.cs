@@ -41,7 +41,7 @@ public class StorageService
 #if DEBUG
         new(Path.Combine(Dir, "debug_data.db"));
 #else
-        new LiteDatabase(Path.Combine(Dir, "data.db"));
+        new(Path.Combine(Dir, "data.db"));
 #endif
 
 

@@ -43,7 +43,7 @@
 				<PathIcon Data="{StaticResource arrow_left_regular}"/>
 			</Button>
 			<TextBox Grid.Column="2"
-					 Watermark="Search..."
+					 PlaceholderText="Search..."
 					 Text="{Binding SearchText}">
 				<TextBox.InnerRightContent>
 					<Button Classes="clear"

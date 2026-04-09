@@ -30,7 +30,7 @@
 
 	<TextBox Grid.Column="2"
 			 VerticalAlignment="Top"
-			 Watermark="Search..."
+			 PlaceholderText="Search..."
 			 Text="{Binding SearchText}">
 		<TextBox.InnerRightContent>
 			<Button Classes="clear"
