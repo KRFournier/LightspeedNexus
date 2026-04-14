@@ -30,22 +30,12 @@ public partial class PoolsStageView : UserControl
         }
     }
 
-    public async void Match_DoubleTapped(object? sender, TappedEventArgs e)
+    public async void Match_Tapped(object? sender, TappedEventArgs e)
     {
-        if (sender is Decorator border && border.DataContext is MatchViewModel match)
+        if (e.KeyModifiers == KeyModifiers.None && sender is Decorator border && border.DataContext is MatchViewModel match)
         {
             if (match.First is not null && match.Second is not null)
             {
-#if DEBUG
-                if (e.KeyModifiers == (KeyModifiers.Control | KeyModifiers.Shift))
-                {
-                    var (first, second) = ScoreGenerator.GenerateScores(match);
-                    match.UpdateMatch(first, second);
-                    App.Services.GetRequiredService<StorageService>().WriteMatch(match.ToModel());
-                    e.Handled = true;
-                    return;
-                }
-#endif
                 var editViewModel = new MatchEditViewModel()
                 {
                     First = [new() { Name = match.First.Participant.Name, Points = match.First.Points }],
@@ -59,13 +49,28 @@ public partial class PoolsStageView : UserControl
                 }
             }
         }
+    }
 
+    public async void Match_DoubleTapped(object? sender, TappedEventArgs e)
+    {
+#if DEBUG
+        if (e.KeyModifiers == (KeyModifiers.Control | KeyModifiers.Shift) &&sender is Decorator border && border.DataContext is MatchViewModel match)
+        {
+            if (match.First is not null && match.Second is not null)
+            {
+                var (first, second) = ScoreGenerator.GenerateScores(match);
+                match.UpdateMatch(first, second);
+                App.Services.GetRequiredService<StorageService>().WriteMatch(match.ToModel());
+                e.Handled = true;
+            }
+        }
+#endif
     }
 
     private void PoolsScrollViewer_DoubleTapped(object? sender, TappedEventArgs e)
     {
 #if DEBUG
-        if (sender is ScrollViewer && DataContext is PoolsStageViewModel poolStage && e.KeyModifiers == (KeyModifiers.Control | KeyModifiers.Shift))
+        if (e.KeyModifiers == (KeyModifiers.Control | KeyModifiers.Shift) && sender is ScrollViewer && DataContext is PoolsStageViewModel poolStage)
         {
             foreach (var pool in poolStage.Pools)
             {

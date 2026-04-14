@@ -14,20 +14,10 @@ public partial class BracketMatchView : UserControl
         InitializeComponent();
     }
 
-    public async void Match_DoubleTapped(object? sender, TappedEventArgs e)
+    public async void Match_Tapped(object? sender, TappedEventArgs e)
     {
-        if (sender is Decorator border && border.DataContext is MatchViewModel match)
+        if (e.KeyModifiers == KeyModifiers.None && sender is Decorator border && border.DataContext is MatchViewModel match)
         {
-#if DEBUG
-            if (e.KeyModifiers == (KeyModifiers.Control | KeyModifiers.Shift))
-            {
-                var (first, second) = ScoreGenerator.GenerateScores(match);
-                match.UpdateMatch(first, second);
-                App.Services.GetRequiredService<StorageService>().WriteMatch(match.ToModel());
-                e.Handled = true;
-                return;
-            }
-#endif
             if (match.First is not null && match.Second is not null)
             {
                 var editViewModel = new MatchEditViewModel()
@@ -43,5 +33,19 @@ public partial class BracketMatchView : UserControl
                 }
             }
         }
+    }
+
+    public async void Match_DoubleTapped(object? sender, TappedEventArgs e)
+    {
+#if DEBUG
+        if (e.KeyModifiers == (KeyModifiers.Control | KeyModifiers.Shift) && sender is Decorator border && border.DataContext is MatchViewModel match)
+        {
+            var (first, second) = ScoreGenerator.GenerateScores(match);
+            match.UpdateMatch(first, second);
+            App.Services.GetRequiredService<StorageService>().WriteMatch(match.ToModel());
+            e.Handled = true;
+            return;
+        }
+#endif
     }
 }

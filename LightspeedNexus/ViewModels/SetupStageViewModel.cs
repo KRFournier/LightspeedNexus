@@ -222,7 +222,7 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
     /// <summary>
     /// The name of the event in which the tournament is held
     /// </summary>
-    public override string? Event => base.Event;
+    public override string? Event => EventName;
 
     /// <summary>
     /// The name of the tournament, e.g., Open Rey

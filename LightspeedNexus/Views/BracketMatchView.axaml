@@ -22,6 +22,7 @@
 					 Padding="0"
 					 ClipToBounds="False"
 					 BorderBrush="{StaticResource BlueRed}"
+					 Tapped="Match_Tapped"
 					 DoubleTapped="Match_DoubleTapped"
 					 Opacity="{Binding IsMatchCompleted, Converter={StaticResource TrueToFaded}}">
 		<Panel>

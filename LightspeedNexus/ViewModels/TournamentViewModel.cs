@@ -140,6 +140,7 @@ public partial class TournamentViewModel : ViewModelBase,
     /// </summary>
     public void Receive(StageChangedMessage message)
     {
+        Save();
         OnPropertyChanged(nameof(PreviousStages));
         OnPropertyChanged(nameof(CurrentStage));
         OnPropertyChanged(nameof(Value));

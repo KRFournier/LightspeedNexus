@@ -8,8 +8,8 @@
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Nexus.ico</ApplicationIcon>
-    <AssemblyVersion>0.9.0.0</AssemblyVersion>
-    <FileVersion>0.9.0.0</FileVersion>
+    <AssemblyVersion>0.9.0.2</AssemblyVersion>
+    <FileVersion>0.9.0.2</FileVersion>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="Nexus.ico" />

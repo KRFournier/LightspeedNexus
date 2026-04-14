@@ -134,6 +134,7 @@
 																	  SelectionBrush="{StaticResource HilightBrush}"
 																	  IsSelected="{Binding IsLive}"
 																	  DoubleTapped="Match_DoubleTapped"
+																	  Tapped="Match_Tapped"
 																	  Opacity="{Binding IsMatchCompleted, Converter={StaticResource TrueToFaded}}">
 												<ContentControl Content="{Binding .}"/>
 											</c:SimpleLightspeedBorder>

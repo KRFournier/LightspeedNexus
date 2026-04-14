@@ -160,18 +160,24 @@ public partial class BracketStageViewModel : StageViewModel, IRecipient<MatchWin
 
         // advance the winner. If index is even, winner goes to first slot, else second slot
         if (index % 2 == 0)
-            nextGroup[nextIndex].First.Participant = match.Winner?.Participant ?? New<EmptyParticipantViewModel>();
+            SetSlot(nextGroup[nextIndex].First, match.Winner);
         else
-            nextGroup[nextIndex].Second.Participant = match.Winner?.Participant ?? New<EmptyParticipantViewModel>();
+            SetSlot(nextGroup[nextIndex].Second, match.Winner);
 
         // advance the loser to the third place match if this is the semifinals
         if (group == Semifinals)
         {
             if (index % 2 == 0)
-                Third[0].First.Participant = match.Loser?.Participant ?? New<EmptyParticipantViewModel>();
+                SetSlot(Third[0].First, match.Loser);
             else
-                Third[0].Second.Participant = match.Loser?.Participant ?? New<EmptyParticipantViewModel>();
+                SetSlot(Third[0].Second, match.Loser);
         }
+    }
+
+    private void SetSlot(ScoreViewModel dest, ScoreViewModel? source)
+    {
+        dest.Participant = source?.Participant ?? New<EmptyParticipantViewModel>();
+        dest.Seed = source?.Seed;
     }
 
     #endregion
