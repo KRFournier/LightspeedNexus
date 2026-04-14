@@ -56,7 +56,7 @@
 					<ItemsControl.ItemTemplate>
 						<DataTemplate DataType="m:Tournament">
 							<c:LightspeedBorder Classes="item"
-												DoubleTapped="Tournament_DoubleTapped">
+												Tapped="Tournament_Tapped">
 								<StackPanel Spacing="10">
 									<Grid ColumnDefinitions="*,10,Auto">
 										<TextBlock Classes="medium"
@@ -106,7 +106,7 @@
 					<ItemsControl.ItemTemplate>
 						<DataTemplate DataType="m:Tournament">
 							<c:LightspeedBorder Classes="item gold"
-												DoubleTapped="Tournament_DoubleTapped">
+												Tapped="Tournament_Tapped">
 								<StackPanel Spacing="10">
 									<Grid ColumnDefinitions="*,10,Auto">
 										<TextBlock Classes="medium"

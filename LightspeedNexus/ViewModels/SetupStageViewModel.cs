@@ -374,7 +374,7 @@ public partial class SetupStageViewModel : StageViewModel, IComparer
     /// Edit's a registree's fighter information
     /// </summary>
     [RelayCommand]
-    private async Task EditPlayer(RegistreeViewModel registree)
+    private async Task EditRegistree(RegistreeViewModel registree)
     {
         try
         {

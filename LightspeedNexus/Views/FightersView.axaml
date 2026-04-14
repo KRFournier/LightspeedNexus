@@ -92,7 +92,7 @@
 						<c:LightspeedBorder Classes="item"
 						                    Classes.gold="{Binding IsNew}"
 											Padding="0"
-											DoubleTapped="LightspeedBorder_DoubleTapped">
+											Tapped="LightspeedBorder_Tapped">
 							<StackPanel Margin="12">
 
 								<Grid ColumnDefinitions="*,10,Auto,10,Auto">

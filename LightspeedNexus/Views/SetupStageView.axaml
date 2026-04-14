@@ -346,14 +346,23 @@
 											</Panel>
 										</RadioButton>
 									</StackPanel>
-									<Button Classes="clear"
-											Grid.Column="6"
-											Command="{Binding #Root.((vm:SetupStageViewModel)DataContext).RemoveRegistreeCommand}"
-											CommandParameter="{Binding .}"
-											HorizontalAlignment="Right"
-											VerticalAlignment="Center">
-										<PathIcon Data="{StaticResource delete_regular}"/>
-									</Button>
+									<StackPanel Orientation="Horizontal" Spacing="10"
+												Grid.Column="6">
+										<Button Classes="clear"
+												Command="{Binding #Root.((vm:SetupStageViewModel)DataContext).EditRegistreeCommand}"
+												CommandParameter="{Binding .}"
+												HorizontalAlignment="Right"
+												VerticalAlignment="Center">
+											<PathIcon Data="{StaticResource edit_regular}"/>
+										</Button>
+										<Button Classes="clear"
+												Command="{Binding #Root.((vm:SetupStageViewModel)DataContext).RemoveRegistreeCommand}"
+												CommandParameter="{Binding .}"
+												HorizontalAlignment="Right"
+												VerticalAlignment="Center">
+											<PathIcon Data="{StaticResource delete_regular}"/>
+										</Button>
+									</StackPanel>
 								</Grid>
 							</c:LightspeedBorder>
 						</DataTemplate>

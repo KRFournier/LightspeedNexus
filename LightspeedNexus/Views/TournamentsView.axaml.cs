@@ -13,7 +13,7 @@ public partial class TournamentsView : UserControl
         InitializeComponent();
     }
 
-    public void Tournament_DoubleTapped(object? sender, TappedEventArgs e)
+    public void Tournament_Tapped(object? sender, TappedEventArgs e)
     {
         if (sender is LightspeedBorder border && border.DataContext is Tournament t)
         {

@@ -12,7 +12,7 @@ public partial class FightersView : UserControl
         InitializeComponent();
     }
 
-    public void LightspeedBorder_DoubleTapped(object? sender, TappedEventArgs e)
+    public void LightspeedBorder_Tapped(object? sender, TappedEventArgs e)
     {
         if (sender is LightspeedBorder border && border.DataContext is FighterViewModel fighter)
         {

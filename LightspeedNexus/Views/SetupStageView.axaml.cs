@@ -16,8 +16,8 @@ public partial class SetupStageView : UserControl
     {
         if (sender is LightspeedBorder border && border.DataContext is RegistreeViewModel registree)
         {
-            if (this.DataContext is SetupStageViewModel vm && vm.EditPlayerCommand.CanExecute(registree))
-                vm.EditPlayerCommand.Execute(registree);
+            if (this.DataContext is SetupStageViewModel vm && vm.EditRegistreeCommand.CanExecute(registree))
+                vm.EditRegistreeCommand.Execute(registree);
         }
     }
 }
